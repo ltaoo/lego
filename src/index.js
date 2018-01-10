@@ -8,6 +8,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { observe } from './components/Game';
 
 observe(knightPosition => {
+    console.log('change position');
     ReactDOM.render(
         <App knightPosition={knightPosition} />,
         document.getElementById('root')
