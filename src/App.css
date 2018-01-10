@@ -1,3 +1,19 @@
 .app {
   padding: 20px;
 }
+
+.component-item {
+  padding-left: 20px;
+  min-height: 48px;
+  line-height: 48px;
+  color: #fff;
+  cursor: pointer;
+}
+.nav-text {
+  margin-left: 20px;
+}
+
+.dropTarget {
+  min-width: 300px;
+  min-height: 180px;
+}
