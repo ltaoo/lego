@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   // layout
   Layout,
+  Row,
+  Col,
   // basic
   Button,
   Icon,
@@ -60,10 +62,14 @@ import {
 } from 'antd';
 import styled, { injectGlobal } from 'styled-components';
 // DragDropContext 应该是 drop target
-import { DragSource, DragDropContext } from 'react-dnd';
+import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 import Board from './components/Board';
+import wrapItem from './components/Item';
+import DropContainer from './components/DropContainer';
+import Sources from './components/Sources';
+import FormDemo from './demo/Form';
 
 import logo from './logo.svg';
 import './App.css';
@@ -94,26 +100,97 @@ const container =
     <Tabs />
   </div>;
 
-class App extends Component {
+const DragButton = wrapItem(
+  <div className="component-item">
+    <Icon type="upload" />
+    <span className="nav-text">按钮</span>
+  </div>, 'BUTTON');
+
+const DragInput = wrapItem(
+  <div className="component-item">
+    <Icon type="upload" />
+    <span className="nav-text">输入框</span>
+  </div>, 'BUTTON');
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      visible: false,
+      components: [],
+    };
+  }
+  preview = (components) => {
+    this.setState({
+      components,
+    });
+  }
+
+  /**
+   * 根据组件得到源码
+   */
+  createSourceCode = (components) => {
+    let code = '';
+    for (let i = 0, l = components.length; i < l; i += 1) {
+      console.log(components);
+      const Component = components[i];
+      if (!Component) {
+        continue;
+      }
+      if (typeof Component === 'string') {
+        continue;
+      }
+      const type = Component.type;
+      const props = Component.props;
+      const tag = type.name;
+      // props
+      const propsArr = [];
+      Object.keys(props).forEach(key => {
+        console.log(key);
+      });
+      console.log(propsArr);
+      code += `<${tag}>`;
+      if (Component.props.children) {
+        code += this.createSourceCode([Component.props.children]);
+      }
+      code += `</${tag}>`;
+    }
+    console.log(code);
+    return code;
+  }
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  }
+  hideModal = () => {
+    this.setState({
+      visible: false,
+    });
+  }
   render() {
+    const { components } = this.state;
+
+    const realComponents = components.map(item => {
+      return item.component;
+    });
     return (
       <Layout>
-        <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0 }}>
-            <div className="component-item">
-              <Icon type="video-camera" />
-              <span className="nav-text">输入框</span>
-            </div>
-            <div className="component-item">
-              <Icon type="upload" />
-              <span className="nav-text">按钮</span>
-            </div>
+        <Sider>
+          <Sources
+            handleClick={this.preview}
+          />
         </Sider>
-        <Layout style={{ marginLeft: 200 }}>
-          <Header style={{ background: '#fff', padding: 0 }} />
+        <Layout>
+          <Header style={{ background: '#fff', paddingLeft: 24 }}>
+            <Button type="primary" onClick={this.createSourceCode.bind(this, realComponents)}>查看源码</Button>
+            <Button style={{ marginLeft: 20 }} type="primary" onClick={this.showModal}>查看示例</Button>
+          </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-            <div style={{ padding: 24, background: '#fff', textAlign: 'center' }}>
+            <div style={{ padding: 24, background: '#fff' }}>
               <div style={{ height: 600 }}>
-                <Board knightPosition={this.props.knightPosition} />
+                {realComponents}
               </div>
             </div>
           </Content>
@@ -121,9 +198,17 @@ class App extends Component {
             Ant Design ©2016 Created by Ant UED
           </Footer>
         </Layout>
+        <Modal
+          title="demo"
+          visible={this.state.visible}
+          onOk={this.hideModal}
+          onCancel={this.hideModal}
+        >
+          <FormDemo />
+        </Modal>
       </Layout>
     );
   }
 }
 
-export default App;
+export default DragDropContext(HTML5Backend)(App);

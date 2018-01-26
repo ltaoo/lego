@@ -1,3 +1,5 @@
 export const ItemTypes = {
-  KNIGHT: 'knight'
+  KNIGHT: 'knight',
+  INPUT: 'input',
+  BUTTON: 'button',
 };

@@ -1,0 +1,12 @@
+.sidebar__components {
+    padding: 10px;
+    margin: 0;
+}
+.sidebar__component {
+    padding: 20px;
+    border: 1px dashed #ccc;
+    margin: 0 0 10px 0;;
+    list-style: none;
+    color: #fff;
+    cursor: pointer;
+}

@@ -7,10 +7,10 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { observe } from './components/Game';
 
-observe(knightPosition => {
-    console.log('change position');
+observe(components => {
+    console.log('add component');
     ReactDOM.render(
-        <App knightPosition={knightPosition} />,
+        <App components={components} />,
         document.getElementById('root')
     );
 });

@@ -1,8 +1,10 @@
 let knightPosition = [1, 4];
 let observer = null;
 
+const components = [];
+
 function emitChange() {
-  observer(knightPosition);
+  observer(components);
 }
 
 export function observe(o) {
@@ -26,4 +28,23 @@ export function canMoveKnight(toX, toY) {
 export function moveKnight(toX, toY) {
   knightPosition = [toX, toY];
   emitChange();
+}
+
+let currentComponent = null;
+
+/**
+ * 保存当前正在拖动的节点
+ * @param {*} component 
+ */
+export function saveComponent(component) {
+  currentComponent = component;
+  components.push(component);
+  emitChange();
+}
+
+/** 
+ * 获取当前正在拖动的节点
+ */
+export function fetchComponent() {
+  return currentComponent;
 }
