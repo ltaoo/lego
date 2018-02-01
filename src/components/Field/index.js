@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropType from 'prop-types';
 import { Form, Modal, Icon } from 'antd';
 
+import EventEmitter from '../../common/emitter';
 import ComponentEditor from '../Editor';
 
 const { Item: FormItem } = Form;
@@ -22,13 +23,26 @@ class Field extends Component {
       editorModalVisible: false,
     };
   }
+  componentDidMount() {
+    const { item: { uuid } } = this.props;
+    const code = this.previewSource();
+    EventEmitter.emit('updateComponent', {
+        [uuid]: code,
+    });
+  }
   /**
    * 更新属性
    */
   updateProps = (values) => {
+    const { item: { uuid } } = this.props;
     const currentState = {...this.state};
     const newState = Object.assign({}, currentState, values);
-    this.setState(newState);
+    this.setState(newState, function () {
+        const code = this.previewSource();
+        EventEmitter.emit('updateComponent', {
+            [uuid]: code,
+        });
+    });
     this.hideEditorModal();
   }
   /**
@@ -109,7 +123,7 @@ class Field extends Component {
   previewSource = () => {
     const { item: { component }} = this.props;
     const code = this.createSourceCode([component], true);
-    console.log(code);
+    return code;
   }
   showEditorModal = () => {
       this.setState({
