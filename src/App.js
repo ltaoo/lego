@@ -1,107 +1,18 @@
 import React from 'react';
-import { findDOMNode } from 'react-dom';
 import {
-  // layout
   Layout,
-  Row,
-  Col,
-  // basic
   Button,
   Icon,
-  // navigation
-  Breadcrumb,
-  Dropdown,
-  Menu,
-  Pagination,
-  Steps,
-  // data entry
-  AutoComplete,
-  Cascader,
-  Checkbox,
-  DatePicker,
-  Form,
-  InputNumber,
-  Input,
-  Mention,
-  Rate,
-  Radio,
-  Select,
-  Slider,
-  Switch,
-  TreeSelect,
-  TimePicker,
-  Transfer,
-  Upload,
-  // date display
-  Avatar,
-  Badge,
-  Calendar,
-  // Card,
-  Carousel,
-  Collapse,
-  List,
-  Popover,
-  Tooltip,
-  Table,
-  Tabs,
-  Tag,
-  Timeline,
-  Tree,
-  // feedback
-  Alert,
   Modal,
-  Message,
-  notification,
-  Progress,
-  Popconfirm,
-  Spin,
-  // other
-  Anchor,
-  BackTop,
-  Divider,
-  LocaleProvider,
 } from 'antd';
-import styled, { injectGlobal } from 'styled-components';
-import MonacoEditor from 'react-monaco-editor'
-import CodeMirror from 'react-codemirror';
-
-// DragDropContext 应该是 drop target
-import { DragDropContext } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 
 import Sources from './components/Sources';
 import ComponentEditor from './components/Editor';
 import FormDemo from './demo/Form';
 
-import logo from './logo.svg';
 import './App.css';
-import FormItem from 'antd/lib/form/FormItem';
 
 const { Header, Content, Footer, Sider } = Layout;
-
-const container = 
-  <div className="app">
-    <h3>通用</h3>
-    <Button>Btn</Button>
-    <h3>导航</h3>
-    <Pagination />
-    <h3>表单</h3>
-    <AutoComplete />
-    <Cascader />
-    <Checkbox />
-    <DatePicker />
-    <InputNumber />
-    <Input />
-    <Radio />
-    <Select />
-    <Slider />
-    <Switch />
-    <TreeSelect />
-    <TimePicker />
-    <h3>数据展示</h3>
-    <Table />
-    <Tabs />
-  </div>;
 
 class App extends React.Component {
   constructor(props) {
@@ -298,7 +209,6 @@ class App extends React.Component {
           onOk={this.hideCodeModal}
           onCancel={this.hideCodeModal}
         >
-          <CodeMirror value={code} />
         </Modal>
         <Modal
           title="编辑组件"
@@ -313,4 +223,4 @@ class App extends React.Component {
   }
 }
 
-export default DragDropContext(HTML5Backend)(App);
+export default App;
