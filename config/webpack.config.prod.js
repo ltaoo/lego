@@ -344,4 +344,9 @@ module.exports = {
     tls: 'empty',
     child_process: 'empty',
   },
+  externals: {
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    antd: 'antd'
+  }
 };
