@@ -16,7 +16,7 @@ class Sidebar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            components: [],
+            components: props.components,
         };
     }
 
@@ -64,14 +64,9 @@ class Sidebar extends Component {
             field: 'field',
             component: COMPONENT_MAP[tag],
         };
-        components.push(component);
-        this.setState({
-            components: [...components],
-        });
-
-        this.props.handleClick([...components]);
-
+        
         uuid += 1;
+        this.props.handleClick(component);
     }
 
     render() {

@@ -4,11 +4,16 @@
   "private": true,
   "dependencies": {
     "antd": "^3.1.1",
+    "copy-webpack-plugin": "^4.3.1",
+    "monaco-editor": "^0.10.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
+    "react-codemirror": "^1.0.0",
+    "react-codemirror2": "^4.0.0",
     "react-dnd": "^2.5.4",
     "react-dnd-html5-backend": "^2.5.4",
     "react-dom": "^16.2.0",
+    "react-monaco-editor": "^0.13.0",
     "react-scripts": "1.0.17",
     "styled-components": "^2.4.0"
   },
