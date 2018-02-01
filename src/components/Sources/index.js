@@ -38,6 +38,7 @@ class Sidebar extends Component {
                 props: Object.assign({}, props, {
                     notfield: "true",
                     type: 'primary',
+                    onClick: this.handleClick,
                 }),
             }),
         };

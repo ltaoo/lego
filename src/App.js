@@ -50,6 +50,17 @@ function getIndexPageCode(components, code) {
   import styles from './IndexPage.css';
   
   class IndexPage extends Component {
+    constructor(props) {
+      super(props);
+
+      this.handleClick = this.handleClick.bind(this);
+    }
+    handleClick () {
+      const { getFieldsValue } = this.props.form;
+      const values = getFieldsValue();
+      console.log(values);
+      alert(JSON.stringify(values));
+    }
     render() {
       const { getFieldDecorator } = this.props.form;
       return (
@@ -140,6 +151,30 @@ class App extends React.Component {
     console.log(this.editor);
     const { editor } = this.editor;
     editor.getAction('editor.action.formatDocument').run();
+  }
+  editorDidMount(editor, monaco) {
+    // compiler options
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ES2016,
+      allowNonTsExtensions: true,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      module: monaco.languages.typescript.ModuleKind.CommonJS,
+      noEmit: true,
+      typeRoots: ["node_modules/@types"]
+    });
+
+    // extra libraries
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(
+      `export declare function next() : string`,
+      'node_modules/@types/external/index.d.ts');
+
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false
+    })
+    setTimeout(function() {
+      editor.getAction('editor.action.formatDocument').run();
+    }, 300);
   }
   /** 
    * 删除该组件
@@ -253,7 +288,7 @@ class App extends React.Component {
                 autoIndent: true,
               }}
             />
-            <Button type="primary" onClick={this.formatCode}>格式化代码</Button>
+            <Button style={{ marginLeft: 20 }} type="primary" onClick={this.createZip}>生成代码压缩包</Button>
           </div>
         </Modal>
       </Layout>

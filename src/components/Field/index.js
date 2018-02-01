@@ -56,6 +56,7 @@ class Field extends Component {
    * 得到属性
    */
   writeProps = Component => {
+      console.log(Component);
     const { props, type } = Component;
     const { propTypes, defaultProps } = type;
     const propsText = [];
@@ -74,6 +75,9 @@ class Field extends Component {
           propsText.push(`${key}=${props[key]}`);
           propsMap[key] = val;
         }
+      }
+      if (key === 'onClick') {
+          propsText.push(`${key}={this.handleClick}`);
       }
     }
     return {
