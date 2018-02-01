@@ -6,6 +6,8 @@ import {
 } from 'antd';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
+// 代码编辑器
+import MonacoEditor from 'react-monaco-editor'
 
 import JSZipUtils from './common/jszip-utils';
 
@@ -36,11 +38,42 @@ function urlToPromise(url) {
   });
 }
 
+function getIndexPageCode(components, code) {
+  const componentText = Array.from(new Set(components.map(item => item.tag))).join(', ');
+  const source = 
+  `import React, { Component } from 'react';
+  import {
+    Form,
+    ${componentText},
+  } from 'antd';
+  
+  import styles from './IndexPage.css';
+  
+  class IndexPage extends Component {
+    render() {
+      const { getFieldDecorator } = this.props.form;
+      return (
+        <div className={styles.container}>
+          ${code}
+        </div>
+      );
+    }
+  }
+  
+  IndexPage.propTypes = {
+  };
+  
+  export default Form.create()(IndexPage);
+  `;
+  return source;
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
+      code: '',
       editorModalVisible: false,
       codeVisible: false,
       components: [],
@@ -66,13 +99,22 @@ class App extends React.Component {
     EventEmitter.emit('addComponent');
   }
   previewSource = () => {
+    const { components } = this.state;
+    const source = this.createSource();
+    this.showCodeModal();
+    const code = getIndexPageCode(components, source);
+    this.setState({
+      code,
+    });
+  }
+  createSource = () => {
     const codeObj = this.code;
     let source = '';
-      Object.keys(codeObj).forEach(key => {
-        const c = codeObj[key];
-        source += c;
-      })
-      return source;
+    Object.keys(codeObj).forEach(key => {
+      const c = codeObj[key];
+      source += c;
+    })
+    return source;
   }
   showModal = () => {
     this.setState({
@@ -84,10 +126,20 @@ class App extends React.Component {
       visible: false,
     });
   }
+  showCodeModal = () => {
+    this.setState({
+      codeVisible: true,
+    });
+  }
   hideCodeModal = () => {
     this.setState({
       codeVisible: false,
     });
+  }
+  formatCode = () => {
+    console.log(this.editor);
+    const { editor } = this.editor;
+    editor.getAction('editor.action.formatDocument').run();
   }
   /** 
    * 删除该组件
@@ -102,34 +154,9 @@ class App extends React.Component {
   }
   createZip = () => {
     const { components } = this.state;
-    const code = this.previewSource();
-    const componentText = Array.from(new Set(components.map(item => item.tag))).join(', ');
+    const code = this.createSource();
     var zip = new JSZip();
-    const source = 
-`import React, { Component } from 'react';
-import {
-  Form,
-  ${componentText},
-} from 'antd';
-
-import styles from './IndexPage.css';
-
-class IndexPage extends Component {
-  render() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <div className={styles.container}>
-        ${code}
-      </div>
-    );
-  }
-}
-
-IndexPage.propTypes = {
-};
-
-export default Form.create()(IndexPage);
-`;
+    const source = getIndexPageCode(components, code);
     // / folder
     const rootDir = '/template';
     const webpackConfigJs = 'webpack.config.js';
@@ -204,10 +231,30 @@ export default Form.create()(IndexPage);
         </Modal>
         <Modal
           title="查看代码"
+          width="80%"
           visible={this.state.codeVisible}
           onOk={this.hideCodeModal}
           onCancel={this.hideCodeModal}
         >
+          <div>
+            <MonacoEditor
+              ref={r => this.editor = r}
+              height='600'
+              language='javascript'
+              theme='vs-dark'
+              value={code}
+              onChange={this.onChange}
+              editorDidMount={this.editorDidMount}
+              options={{
+                formatOnType: true,
+                language: 'javascript',
+                minimap: false,
+                readOnly: true,
+                autoIndent: true,
+              }}
+            />
+            <Button type="primary" onClick={this.formatCode}>格式化代码</Button>
+          </div>
         </Modal>
       </Layout>
     );
