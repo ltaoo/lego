@@ -36,6 +36,7 @@ class Sidebar extends Component {
                 Component: Button,
                 innerText: 'Click it',
                 props: Object.assign({}, props, {
+                    notfield: "true",
                     type: 'primary',
                 }),
             }),
@@ -44,7 +45,6 @@ class Sidebar extends Component {
         const component = {
             uuid,
             tag,
-            field: 'field',
             component: COMPONENT_MAP[tag],
         };
         

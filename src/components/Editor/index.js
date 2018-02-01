@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {
-    Input,
-    Button,
     Form,
+    Input,
+    Switch,
+    Button,
 } from 'antd';
 
 const { Item: FormItem } = Form;
@@ -21,6 +22,11 @@ class Sidebar extends Component {
         return (
             <div className="editor__form">
                 <Form>
+                    {/* <FormItem label="是否表单">
+                        {getFieldDecorator('field')(
+                            <Switch defaultChecked />
+                        )}
+                    </FormItem> */}
                     <FormItem label="title">
                         {getFieldDecorator('title')(
                             <Input />

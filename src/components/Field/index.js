@@ -1,3 +1,7 @@
+/**
+ * @file Field - 即一个字段，由自身维护一个模态框、源码字符串
+ * @author ltaoo<litaowork@aliyun.com>
+ */
 import React, { Component } from 'react';
 import PropType from 'prop-types';
 import { Form, Modal, Icon } from 'antd';
@@ -14,23 +18,14 @@ class Field extends Component {
       title: 'label',
       label: 'label',
       options: {},
+      isField: true,
       editorModalVisible: false,
     };
-  }
-  /**
-   * 编辑属性
-   * @param {ReactComponent} component - 要编辑的组件
-   */
-  handleEditProps = (component) => {
-    console.log(component);
-    this.showEditorModal();
   }
   /**
    * 更新属性
    */
   updateProps = (values) => {
-    // const { props } = this.writeProps(component.component);
-    // console.log(props);
     const currentState = {...this.state};
     const newState = Object.assign({}, currentState, values);
     this.setState(newState);
@@ -76,7 +71,8 @@ class Field extends Component {
    * 根据组件得到源码
    */
   createSourceCode = (components, root) => {
-      const { title, label } = this.state;
+    const { title, label } = this.state;
+    const { notfield } = this.props.children.props;
     let code = '';
     for (let i = 0, l = components.length; i < l; i += 1) {
       const Component = components[i];
@@ -87,11 +83,11 @@ class Field extends Component {
         code += Component;
         continue;
       }
-      const { type, props } = Component;
+      const { type } = Component;
       const { name: tag } = type;
       // props
       const { text: propsText } = this.writeProps(Component);
-      if (root) {
+      if (root && notfield !== 'true') {
         code += `<Form.Item label="${title}">{getFieldDecorator("${label}")(<${tag} ${propsText}>`;
       } else {
         code += `<${tag} ${propsText}>`;
@@ -99,7 +95,7 @@ class Field extends Component {
       if (Component.props.children) {
         code += this.createSourceCode([Component.props.children]);
       }
-      if (root) {
+      if (root && notfield !== 'true') {
         code += `</${tag}>)}</Form.Item>`;
       } else {
         code += `</${tag}>`;
@@ -132,12 +128,13 @@ class Field extends Component {
       children,
     } = this.props;
     const { title, label, options, editorModalVisible } = this.state;
+    const { props: { notfield }} = children;
     const { getFieldDecorator } = form;
     return (
       <div className="field">
         <div className="edit__wrapper">
           <div>
-            <div className="edit__btn" onClick={this.handleEditProps}>
+            <div className="edit__btn" onClick={this.showEditorModal}>
               <Icon type="edit" />
             </div>
             <div className="edit__btn" onClick={this.removeComponent}>
@@ -147,9 +144,10 @@ class Field extends Component {
                 <Icon type="eye-o" />
             </div>
           </div>
-          <FormItem label={title}>
+          {notfield !== 'true' ? <FormItem label={title}>
             {getFieldDecorator(label, options)(children)}
           </FormItem>
+          : children}
         </div>
         <Modal
           title="编辑组件"
@@ -158,7 +156,10 @@ class Field extends Component {
           onCancel={this.hideEditorModal}
           footer={null}
         >
-          <ComponentEditor submit={this.updateProps} />
+          <ComponentEditor
+            submit={this.updateProps}
+            Component={children}
+          />
         </Modal>
       </div>
     );
