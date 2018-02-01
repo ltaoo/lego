@@ -2,15 +2,11 @@ import React, { Component } from 'react';
 import {
     Input,
     Button,
-    Form,
 } from 'antd';
 
 import './index.css';
 
-const { Item: FormItem } = Form;
-
 let uuid = 1;
-
 
 class Sidebar extends Component {
     constructor(props) {
@@ -21,20 +17,12 @@ class Sidebar extends Component {
     }
 
     renderComponent = ({ Component, label, name, props, innerText, options }) => {
-        const { getFieldDecorator } = this.props.form;
         return (
-            <FormItem label={label}>
-                {getFieldDecorator(name, {
-                    rules: [],
-                })(
-                    <Component {...props}>{innerText && innerText}</Component>
-                )}
-            </FormItem>
+            <Component {...props}>{innerText && innerText}</Component>
         );
     }
 
     handleClick = (tag) => {
-        const { components } = this.state;
         const props = Object.assign({}, {
             key: uuid,
         });
@@ -42,21 +30,16 @@ class Sidebar extends Component {
         const COMPONENT_MAP = {
             Input: this.renderComponent({
                 Component: Input,
-                label: 'label',
-                name: 'key',
                 props,
             }),
             Button: this.renderComponent({
                 Component: Button,
-                name: 'password',
                 innerText: 'Click it',
                 props: Object.assign({}, props, {
                     type: 'primary',
                 }),
             }),
         };
-
-        console.log(COMPONENT_MAP);
         // 新增组件
         const component = {
             uuid,
@@ -87,4 +70,4 @@ class Sidebar extends Component {
     }
 }
 
-export default Form.create()(Sidebar);
+export default Sidebar;
