@@ -102,6 +102,7 @@ class Field extends React.Component {
    * 根据组件得到源码
    */
   createSourceCode = (components, root) => {
+    console.log(components);
     const { formProps: { title, label, rules } } = this.state;
     const { notfield } = this.props.item;
     let code = '';

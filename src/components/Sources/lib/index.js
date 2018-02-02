@@ -18,6 +18,8 @@ function exportPlugins(exports, plugins) {
 
 exportPlugins((exports.optimize = {}), [
   'Input',
+  'TextArea',
+  'DatePicker',
   'Button',
 ]);
 

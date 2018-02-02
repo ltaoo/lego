@@ -5,6 +5,7 @@ import {
 export default {
     Component: Button,
     label: 'Button',
+    import: 'Button',
     notfield: 'true',
     props:{
         children: 'Click it',
