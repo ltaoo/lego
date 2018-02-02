@@ -76,7 +76,6 @@ class Sidebar extends Component {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     const commonInputs = this.renderCommonInput();
-    const validateInputs = this.renderValidateInput();
 
     return (
       <div className="editor__form">
@@ -88,7 +87,6 @@ class Sidebar extends Component {
             {getFieldDecorator('label')(<Input />)}
           </FormItem>
           {commonInputs}
-          {validateInputs}
           <Button type="primary" onClick={this.handleClick}>
             提交
           </Button>

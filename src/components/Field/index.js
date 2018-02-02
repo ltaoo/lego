@@ -16,11 +16,13 @@ class Field extends React.Component {
     super(props);
 
     this.state = {
+      // 表单相关的字段
       formProps: {
         title: 'label',
         label: 'label',
         rules: [],
       },
+      // antd 组件会添加的属性
       props: {},
       options: {},
       isField: true,
@@ -102,7 +104,6 @@ class Field extends React.Component {
    * 根据组件得到源码
    */
   createSourceCode = (components, root) => {
-    console.log(components);
     const { formProps: { title, label, rules } } = this.state;
     const { notfield } = this.props.item;
     let code = '';
@@ -172,16 +173,16 @@ class Field extends React.Component {
       // 包装对象
       item = {},
     } = this.props;
-    console.log(this, this.props);
-    console.log(item);
     const { formProps: { title, label, rules }, props: changedProps, editorModalVisible } = this.state;
     const { notfield, container, Component, props, children = [] } = item;
-    console.log(children, 'children');
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
       return <WrappedField key={i} item={child} removeComponent={this.removeComponent} />;
     }) : null;
     const { getFieldDecorator } = form;
-    const instance = <Component {...props} {...changedProps}>{childrenComponent && childrenComponent}</Component>;
+    let instance = <Component {...props} {...changedProps}></Component>;
+    if (childrenComponent) {
+      instance = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
+    }
     return (
       <div className="field">
         <div className="edit__wrapper">
@@ -192,7 +193,7 @@ class Field extends React.Component {
             <div className="edit__btn" onClick={this.removeComponent}>
               <Icon type="delete" />
             </div>
-            {container && <Checkbox onChange={this.selectRow}></Checkbox>}
+            {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
           </div>
           {notfield !== 'true' ? <FormItem label={title}>
             {getFieldDecorator(label, {

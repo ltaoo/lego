@@ -4,7 +4,7 @@ import { Layout, Button, Modal } from 'antd';
 import MonacoEditor from 'react-monaco-editor';
 
 import Sources from './components/Sources';
-import Field from './components/Field';
+import Container from './components/Container';
 
 // util
 import EventEmitter from './common/emitter';
@@ -41,20 +41,19 @@ class App extends React.Component {
   /**
    * 添加组件
    */
-  addComponent = component => {
-    console.log(this, this.state.currentContainer);
-    const { components, currentContainer } = this.state;
-    // 如果是容器组件
-    if (currentContainer && currentContainer.container === 'true') {
-      currentContainer.children = currentContainer.children || [];
-      currentContainer.children.push(component);
-    } else {
-      components.push(component);
-    }
-    this.setState({
-      components: [...components],
-    });
-    EventEmitter.emit('addComponent');
+  addComponent = obj => {
+    // const { components, currentContainer } = this.state;
+    // // 如果是容器组件
+    // if (currentContainer && currentContainer.container === 'true') {
+    //   currentContainer.children = currentContainer.children || [];
+    //   currentContainer.children.push(component);
+    // } else {
+    //   components.push(component);
+    // }
+    // this.setState({
+    //   components: [...components],
+    // });
+    EventEmitter.emit('addComponent', obj);
   };
   /**
    * 预览源代码
@@ -140,27 +139,6 @@ class App extends React.Component {
     }, 300);
   }
   /**
-   * 删除该组件
-   */
-  removeComponent = item => {
-    const { components } = this.state;
-    const index = components.indexOf(item);
-    components.splice(index, 1);
-    const codeObj = this.code;
-    this.setState(
-      {
-        components: [...components],
-      },
-      () => {
-        delete codeObj[item.uuid];
-        const code = this.createSource();
-        this.setState({
-          code,
-        });
-      },
-    );
-  };
-  /**
    * 生成 Zip 包
    */
   createZip = () => {
@@ -178,17 +156,6 @@ class App extends React.Component {
   }
   render() {
     const { components, code } = this.state;
-
-    const realComponents = components.map((item, i) => {
-      return (
-        <Field
-          key={i}
-          item={item}
-          removeComponent={this.removeComponent}
-          switchContainer={this.switchContainer}
-        />
-      );
-    });
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
@@ -209,7 +176,9 @@ class App extends React.Component {
           </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
-              {realComponents}
+              <Container
+                components={components}
+              />
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
