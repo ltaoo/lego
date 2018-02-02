@@ -305,13 +305,6 @@ class App extends React.Component {
                 autoIndent: true,
               }}
             />
-            <Button
-              style={{ marginLeft: 20 }}
-              type="primary"
-              onClick={this.createZip}
-            >
-              生成代码压缩包
-            </Button>
           </div>
         </Modal>
       </Layout>

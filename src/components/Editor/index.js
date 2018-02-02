@@ -32,7 +32,7 @@ class Sidebar extends Component {
         if (typeof val === 'string') {
           formItems.push(
             <FormItem key={i} label={key}>
-              {getFieldDecorator(key, {
+              {getFieldDecorator(`props.${key}`, {
                 initialValue: mergedProps[key],
               })(<Input />)}
             </FormItem>
@@ -40,7 +40,7 @@ class Sidebar extends Component {
         } else if (typeof val === 'boolean') {
           formItems.push(
             <FormItem key={i} label={key}>
-              {getFieldDecorator(key, {
+              {getFieldDecorator(`props.${key}`, {
                 initialValue: mergedProps[key],
               })(<Select><Option val={true}>True</Option><Option val={false}>False</Option></Select>)}
             </FormItem>

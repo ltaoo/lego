@@ -18,6 +18,7 @@ class Field extends React.Component {
     this.state = {
       title: 'label',
       label: 'label',
+      props: {},
       options: {},
       isField: true,
       editorModalVisible: false,
@@ -34,10 +35,15 @@ class Field extends React.Component {
    * 更新属性
    */
   updateProps = (values) => {
+    console.log(values);
     const { item: { uuid } } = this.props;
     const currentState = {...this.state};
     const newState = Object.assign({}, currentState, values);
-    this.setState(newState, function () {
+    this.setState({
+      title: values.title,
+      label: values.label,
+      props: {...values.props},
+    }, function () {
         const code = this.previewSource();
         EventEmitter.emit('updateComponent', {
             [uuid]: code,
@@ -92,7 +98,7 @@ class Field extends React.Component {
    * 根据组件得到源码
    */
   createSourceCode = (components, root) => {
-    const { title, label } = this.state;
+    const { title, label, props } = this.state;
     const { notfield } = this.props.item;
     let code = '';
     for (let i = 0, l = components.length; i < l; i += 1) {
@@ -128,9 +134,10 @@ class Field extends React.Component {
    * 查看源码
    */
   previewSource = () => {
+    const { props: changedProps } = this.state;
     const { item } = this.props;
     const { Component, props } = item;
-    const instance = <Component {...props}></Component>;
+    const instance = <Component {...props} {...changedProps}></Component>;
     return this.createSourceCode([instance], true);
   }
   showEditorModal = () => {
@@ -150,11 +157,10 @@ class Field extends React.Component {
       // 包装对象
       item,
     } = this.props;
-    const { title, label, options, editorModalVisible } = this.state;
+    const { title, label, props: changedProps, options, editorModalVisible } = this.state;
     const { notfield, Component, props } = item;
     const { getFieldDecorator } = form;
-
-    const instance = <Component {...props}></Component>;
+    const instance = <Component {...props} {...changedProps}></Component>;
     return (
       <div className="field">
         <div className="edit__wrapper">

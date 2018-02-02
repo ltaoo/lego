@@ -12,11 +12,6 @@ class Sidebar extends Component {
       components: props.components,
     };
   }
-
-  // renderComponent = ({ Component, label, name, props, innerText, options }) => {
-  //   return <Component {...props}>{innerText && innerText}</Component>;
-  // };
-
   handleClick = tag => {
     const props = Object.assign(
       {},
@@ -24,24 +19,6 @@ class Sidebar extends Component {
         key: uuid,
       },
     );
-
-    // const COMPONENT_MAP = {
-    //   Input: this.renderComponent({
-    //     Component: Input,
-    //     props: Object.assign({}, props, {
-    //       placeholder: '请输入用户名',
-    //     }),
-    //   }),
-    //   Button: this.renderComponent({
-    //     Component: Button,
-    //     innerText: 'Click it',
-    //     props: Object.assign({}, props, {
-    //       notfield: 'true',
-    //       type: 'primary',
-    //       onClick: this.handleClick,
-    //     }),
-    //   }),
-    // };
     const COMPONENT_MAP = {
       Input: {
         Component: Input,
