@@ -28,9 +28,9 @@ class Sidebar extends Component {
       },
       Button: {
         Component: Button,
-        innerText: 'Click it',
         notfield: 'true',
         props: Object.assign({}, props, {
+          children: 'Click it',
           type: 'primary',
           onClick: this.handleClick,
         }),

@@ -177,12 +177,19 @@ class App extends React.Component {
   /**
    * 删除该组件
    */
-  handleDeleteComponent = (component, index) => {
+  removeComponent = (item) => {
     const { components } = this.state;
-    console.log(components, component, index);
+    const index = components.indexOf(item);
     components.splice(index, 1);
+    const codeObj = this.code;
     this.setState({
       components: [...components],
+    }, () => {
+      delete codeObj[item.uuid];
+      const code = this.createSource()
+      this.setState({
+        code,
+      });
     });
   };
   createZip = () => {
@@ -236,7 +243,7 @@ class App extends React.Component {
 
     const realComponents = components.map((item, i) => {
       return (
-        <Field key={i} item={item}></Field>
+        <Field key={i} item={item} removeComponent={this.removeComponent}></Field>
       );
     });
     return (

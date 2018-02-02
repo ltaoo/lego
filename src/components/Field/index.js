@@ -37,8 +37,6 @@ class Field extends React.Component {
   updateProps = (values) => {
     console.log(values);
     const { item: { uuid } } = this.props;
-    const currentState = {...this.state};
-    const newState = Object.assign({}, currentState, values);
     this.setState({
       title: values.title,
       label: values.label,
