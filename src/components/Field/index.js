@@ -16,8 +16,11 @@ class Field extends React.Component {
     super(props);
 
     this.state = {
-      title: 'label',
-      label: 'label',
+      formProps: {
+        title: 'label',
+        label: 'label',
+        rules: [],
+      },
       props: {},
       options: {},
       isField: true,
@@ -38,8 +41,11 @@ class Field extends React.Component {
     console.log(values);
     const { item: { uuid } } = this.props;
     this.setState({
-      title: values.title,
-      label: values.label,
+      formProps: {
+        title: values.title,
+        label: values.label,
+        rules: values.rules,
+      },
       props: {...values.props},
     }, function () {
         const code = this.previewSource();
@@ -96,7 +102,7 @@ class Field extends React.Component {
    * 根据组件得到源码
    */
   createSourceCode = (components, root) => {
-    const { title, label, props } = this.state;
+    const { formProps: { title, label, rules } } = this.state;
     const { notfield } = this.props.item;
     let code = '';
     for (let i = 0, l = components.length; i < l; i += 1) {
@@ -113,7 +119,9 @@ class Field extends React.Component {
       // props
       const { text: propsText } = this.writeProps(Component);
       if (root && notfield !== 'true') {
-        code += `<Form.Item label="${title}">{getFieldDecorator("${label}")(<${tag} ${propsText}>`;
+        code += `<Form.Item label="${title}">{getFieldDecorator("${label}", {
+          rules: ${JSON.stringify(rules)}
+        })(<${tag} ${propsText}>`;
       } else {
         code += `<${tag} ${propsText}>`;
       }
@@ -155,7 +163,7 @@ class Field extends React.Component {
       // 包装对象
       item,
     } = this.props;
-    const { title, label, props: changedProps, options, editorModalVisible } = this.state;
+    const { formProps: { title, label, rules }, props: changedProps, editorModalVisible } = this.state;
     const { notfield, Component, props } = item;
     const { getFieldDecorator } = form;
     const instance = <Component {...props} {...changedProps}></Component>;
@@ -174,7 +182,9 @@ class Field extends React.Component {
             </div>
           </div>
           {notfield !== 'true' ? <FormItem label={title}>
-            {getFieldDecorator(label, options)(instance)}
+            {getFieldDecorator(label, {
+              rules,
+            })(instance)}
           </FormItem>
           : instance}
         </div>
@@ -196,16 +206,7 @@ class Field extends React.Component {
 }
 
 Field.PropType = {
-  // 显示的字段名
-  title: PropType.string,
-  // 该字段对应的 key
-  label: PropType.string,
   item: PropType.object,
-};
-
-Field.defaultProps = {
-  title: 'label',
-  label: 'label',
 };
 
 export default Form.create()(Field);

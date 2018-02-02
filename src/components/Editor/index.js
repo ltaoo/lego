@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, Switch } from 'antd';
 
 const { Item: FormItem } = Form;
 const { Option } = Select;
@@ -57,13 +57,26 @@ class Sidebar extends Component {
    * 渲染校验字段
    */
   renderValidateInput = () => {
-
+    const { getFieldDecorator } = this.props.form;
+    const items = [
+      <FormItem key={0} label="是否必选">
+        {getFieldDecorator('rules[0].required', {
+          initialValue: false,
+        })(<Switch />)}
+      </FormItem>,
+      <FormItem key={0} label="提示文案">
+        {getFieldDecorator('rules[0].message', {
+        })(<Input />)}
+      </FormItem>,
+    ];
+    return items;
   }
 
   render() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     const commonInputs = this.renderCommonInput();
+    const validateInputs = this.renderValidateInput();
 
     return (
       <div className="editor__form">
@@ -75,6 +88,7 @@ class Sidebar extends Component {
             {getFieldDecorator('label')(<Input />)}
           </FormItem>
           {commonInputs}
+          {validateInputs}
           <Button type="primary" onClick={this.handleClick}>
             提交
           </Button>

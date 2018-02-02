@@ -53,10 +53,14 @@ function getIndexPageCode(components, code) {
       this.handleClick = this.handleClick.bind(this);
     }
     handleClick () {
-      const { getFieldsValue } = this.props.form;
-      const values = getFieldsValue();
-      console.log(values);
-      alert(JSON.stringify(values));
+      const { validateFieldsAndScroll } = this.props.form;
+      validateFieldsAndScroll([], function(err, values) {
+        if (err) {
+          return;
+        }
+        console.log(values);
+        alert(JSON.stringify(values));
+      });
     }
     render() {
       const { getFieldDecorator } = this.props.form;
