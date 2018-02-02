@@ -6,15 +6,33 @@
  * @param {string} name - 页面名称
  */
 export default function createPage(components, code, name) {
-  let extraComponent = [];
+  console.log(components);
+  const extraComponent = [];
+  const methods = [];
+  const constructorText = [];
   const componentText = Array.from(
     new Set(components.map(item => {
+      console.log(item);
       if (item.extra) {
         extraComponent.push(item.extra);
+      }
+      if (item.methods) {
+        methods.push(item.methods);
+      }
+      if (item.constructorCode) {
+        constructorText.push(item.constructorCode);
       }
       return item.import;
     })),
   ).filter(item => !!item).join(',\n');
+
+  const constructorCode = constructorText.length ? `
+  constructor(props) {
+    super(props);
+    ${constructorText.join('/n')}
+  }
+  ` : '';
+
   const source = `import React, { Component } from 'react';
 import {
   Form,
@@ -26,21 +44,8 @@ ${extraComponent.join('/n')}
 import styles from './index.css';
 
 class ${name} extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleClick = this.handleClick.bind(this);
-  }
-  handleClick () {
-    const { validateFieldsAndScroll } = this.props.form;
-    validateFieldsAndScroll([], function(err, values) {
-      if (err) {
-        return;
-      }
-      console.log(values);
-      alert(JSON.stringify(values));
-    });
-  }
+  ${constructorCode}
+  ${methods.join('/n')}
   render() {
     const { getFieldDecorator } = this.props.form;
     return (

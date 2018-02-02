@@ -42,17 +42,17 @@ class App extends React.Component {
    * 添加组件
    */
   addComponent = obj => {
-    // const { components, currentContainer } = this.state;
-    // // 如果是容器组件
-    // if (currentContainer && currentContainer.container === 'true') {
-    //   currentContainer.children = currentContainer.children || [];
-    //   currentContainer.children.push(component);
-    // } else {
-    //   components.push(component);
-    // }
-    // this.setState({
-    //   components: [...components],
-    // });
+    const { components, currentContainer } = this.state;
+    // 如果是容器组件
+    if (currentContainer && currentContainer.container === 'true') {
+      currentContainer.children = currentContainer.children || [];
+      currentContainer.children.push(obj);
+    } else {
+      components.push(obj);
+    }
+    this.setState({
+      components: [...components],
+    });
     EventEmitter.emit('addComponent', obj);
   };
   /**

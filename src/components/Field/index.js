@@ -10,6 +10,11 @@ import EventEmitter from '../../common/emitter';
 import ComponentEditor from '../Editor';
 
 const { Item: FormItem } = Form;
+const nativeMethods = [
+  'onClick',
+  'onChange',
+  'onInput',
+];
 
 class Field extends React.Component {
   constructor(props) {
@@ -75,7 +80,9 @@ class Field extends React.Component {
     const propsMap = {};
 
     const mergedProps = Object.assign({}, propTypes, defaultProps, props);
-    for (let key in mergedProps) {
+    const keys = Object.keys(mergedProps);
+    for (let i = 0, l = keys.length; i < l; i += 1) {
+      const key = keys[i];
         // 忽略 children
       if (key === 'children') {
         continue;
@@ -89,10 +96,13 @@ class Field extends React.Component {
           propsText.push(`${key}=${mergedProps[key]}`);
           propsMap[key] = val;
         } else if (typeof val === 'function') {
-          if (key === 'onClick') {
-            propsText.push(`${key}={this.handleClick}`);
+          console.dir(val);
+          if (nativeMethods.indexOf(key) > -1) {
+            propsText.push(`${key}={this.${mergedProps[key].name}}`);
           }
         }
+      } else {
+        propsText.push(`${key}={${mergedProps[key]}}`);
       }
     }
     return {
@@ -109,6 +119,7 @@ class Field extends React.Component {
     let code = '';
     for (let i = 0, l = components.length; i < l; i += 1) {
       const Component = components[i];
+      console.log(Component);
       if (!Component) {
         continue;
       }
@@ -119,7 +130,7 @@ class Field extends React.Component {
       const { type } = Component;
       const { name: tag } = type;
       // props
-      const { text: propsText } = this.writeProps(Component);
+      let { text: propsText } = this.writeProps(Component);
       if (root && notfield !== 'true') {
         code += `<Form.Item label="${title}">{getFieldDecorator("${label}", {
           rules: ${JSON.stringify(rules)}
@@ -178,6 +189,7 @@ class Field extends React.Component {
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
       return <WrappedField key={i} item={child} removeComponent={this.removeComponent} />;
     }) : null;
+
     const { getFieldDecorator } = form;
     let instance = <Component {...props} {...changedProps}></Component>;
     if (childrenComponent) {
