@@ -3,7 +3,7 @@
     margin: 0;
 }
 .sidebar__component {
-    padding: 20px;
+    padding: 10px 20px;
     border: 1px dashed #ccc;
     margin: 0 0 10px 0;;
     list-style: none;

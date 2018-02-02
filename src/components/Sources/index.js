@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import { Input, Button } from 'antd';
 
+import * as lib from './lib';
 import './index.css';
+
+const COMPONENT_MAP = {};
+for (let key in lib.optimize) {
+  COMPONENT_MAP[key] = lib.optimize[key].default;
+}
 
 let uuid = 1;
 
@@ -13,29 +18,6 @@ class Sidebar extends Component {
     };
   }
   handleClick = tag => {
-    const props = Object.assign(
-      {},
-      {
-        key: uuid,
-      },
-    );
-    const COMPONENT_MAP = {
-      Input: {
-        Component: Input,
-        props: Object.assign({}, props, {
-          placeholder: '请输入用户名',
-        }),
-      },
-      Button: {
-        Component: Button,
-        notfield: 'true',
-        props: Object.assign({}, props, {
-          children: 'Click it',
-          type: 'primary',
-          onClick: this.handleClick,
-        }),
-      },
-    };
     // 新增组件
     const component = {
       uuid,
@@ -48,21 +30,22 @@ class Sidebar extends Component {
   };
 
   render() {
+    const items = Object.keys(lib.optimize).map((key, i) => {
+      const item = lib.optimize[key].default;
+      return (
+        <li
+          key={i}
+          className="sidebar__component"
+          onClick={this.handleClick.bind(this, item.label)}
+        >
+          {item.label}
+        </li>
+      );
+    });
     return (
       <div className="sidebar">
         <ul className="sidebar__components">
-          <li
-            className="sidebar__component"
-            onClick={this.handleClick.bind(this, 'Input')}
-          >
-            Text Input
-          </li>
-          <li
-            className="sidebar__component"
-            onClick={this.handleClick.bind(this, 'Button')}
-          >
-            Button
-          </li>
+          {items}
         </ul>
       </div>
     );
