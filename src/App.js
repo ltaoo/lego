@@ -1,84 +1,19 @@
 import React from 'react';
 import { Layout, Button, Modal } from 'antd';
-import JSZip from 'jszip';
-import FileSaver from 'file-saver';
 // 代码编辑器
 import MonacoEditor from 'react-monaco-editor';
-
-import JSZipUtils from './common/jszip-utils';
 
 import Sources from './components/Sources';
 import Field from './components/Field';
 
+// util
 import EventEmitter from './common/emitter';
-
-import FormDemo from './demo/Form';
+import getIndexPageCode from './common/create-page';
+import createZip from './common/create-zip';
 
 import './App.css';
 
 const { Header, Content, Footer, Sider } = Layout;
-
-/**
- * 下载文件脚手架文件
- * @param {string} url - 文件路径
- */
-function urlToPromise(url) {
-  return new Promise(function(resolve, reject) {
-    JSZipUtils.getBinaryContent(url, function(err, data) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
-function getIndexPageCode(components, code) {
-  const componentText = Array.from(
-    new Set(components.map(item => item.tag)),
-  ).join(', ');
-  const source = `import React, { Component } from 'react';
-  import {
-    Form,
-    ${componentText},
-  } from 'antd';
-  
-  import styles from './IndexPage.css';
-  
-  class IndexPage extends Component {
-    constructor(props) {
-      super(props);
-
-      this.handleClick = this.handleClick.bind(this);
-    }
-    handleClick () {
-      const { validateFieldsAndScroll } = this.props.form;
-      validateFieldsAndScroll([], function(err, values) {
-        if (err) {
-          return;
-        }
-        console.log(values);
-        alert(JSON.stringify(values));
-      });
-    }
-    render() {
-      const { getFieldDecorator } = this.props.form;
-      return (
-        <div className={styles.container}>
-          ${code}
-        </div>
-      );
-    }
-  }
-  
-  IndexPage.propTypes = {
-  };
-  
-  export default Form.create()(IndexPage);
-  `;
-  return source;
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -102,7 +37,10 @@ class App extends React.Component {
       this.code = codeObj;
     });
   }
-  preview = component => {
+  /**
+   * 添加组件
+   */
+  addComponent = component => {
     const { components } = this.state;
     components.push(component);
     this.setState({
@@ -110,6 +48,9 @@ class App extends React.Component {
     });
     EventEmitter.emit('addComponent');
   };
+  /**
+   * 预览源代码
+   */
   previewSource = () => {
     const { components } = this.state;
     const source = this.createSource();
@@ -119,6 +60,9 @@ class App extends React.Component {
       code,
     });
   };
+  /**
+   * 根据组件生成源代码
+   */
   createSource = () => {
     const codeObj = this.code;
     let source = '';
@@ -148,11 +92,20 @@ class App extends React.Component {
       codeVisible: false,
     });
   };
+  /**
+   * 格式化代码
+   */
   formatCode = () => {
     console.log(this.editor);
     const { editor } = this.editor;
     editor.getAction('editor.action.formatDocument').run();
   };
+
+  /**
+   * 编辑器加载完成事件
+   * @param {*} editor 
+   * @param {*} monaco 
+   */
   editorDidMount(editor, monaco) {
     // compiler options
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -181,91 +134,49 @@ class App extends React.Component {
   /**
    * 删除该组件
    */
-  removeComponent = (item) => {
+  removeComponent = item => {
     const { components } = this.state;
     const index = components.indexOf(item);
     components.splice(index, 1);
     const codeObj = this.code;
-    this.setState({
-      components: [...components],
-    }, () => {
-      delete codeObj[item.uuid];
-      const code = this.createSource()
-      this.setState({
-        code,
-      });
-    });
+    this.setState(
+      {
+        components: [...components],
+      },
+      () => {
+        delete codeObj[item.uuid];
+        const code = this.createSource();
+        this.setState({
+          code,
+        });
+      },
+    );
   };
+  /**
+   * 生成 Zip 包
+   */
   createZip = () => {
     const { components } = this.state;
     const code = this.createSource();
-    var zip = new JSZip();
-    const source = getIndexPageCode(components, code);
-    // / folder
-    const rootDir = '/template';
-    const webpackConfigJs = 'webpack.config.js';
-    zip.file(webpackConfigJs, urlToPromise(`${rootDir}/${webpackConfigJs}`), {
-      binary: true,
-    });
-    const babelrcFile = 'babelrc';
-    zip.file(`.${babelrcFile}`, urlToPromise(`${rootDir}/${babelrcFile}`), {
-      binary: true,
-    });
-    const packageFile = 'package.json';
-    zip.file(packageFile, urlToPromise(`${rootDir}/${packageFile}`), {
-      binary: true,
-    });
-    const gitignoreFile = 'gitignore';
-    zip.file(`.${gitignoreFile}`, urlToPromise(`${rootDir}/${gitignoreFile}`), {
-      binary: true,
-    });
-    // src folder
-    const srcDir = '/template/src';
-    zip.folder('src');
-    const srcFolder = zip.folder('src');
-    srcFolder.file('index.js', urlToPromise(`${srcDir}/index.js`), {
-      binary: true,
-    });
-    srcFolder.file('index.html', urlToPromise(`${srcDir}/index.html`), {
-      binary: true,
-    });
-    // src/routes
-    const routesFolder = srcFolder.folder('routes');
-    routesFolder.file('IndexPage.js', source);
-    routesFolder.file(
-      'IndexPage.css',
-      urlToPromise(`${srcDir}/routes/IndexPage.css`),
-      { binary: true },
-    );
-    zip.generateAsync({ type: 'blob' }).then(function(content) {
-      // see FileSaver.js
-      FileSaver.saveAs(content, 'example.zip');
-    });
+    createZip(components, code);
   };
   render() {
     const { components, code } = this.state;
 
     const realComponents = components.map((item, i) => {
       return (
-        <Field key={i} item={item} removeComponent={this.removeComponent}></Field>
+        <Field key={i} item={item} removeComponent={this.removeComponent} />
       );
     });
     return (
       <Layout>
         <Sider>
-          <Sources handleClick={this.preview} components={components} />
+          <Sources handleClick={this.addComponent} components={components} />
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', paddingLeft: 24 }}>
             <Button type="primary" onClick={this.previewSource}>
               查看源码
-            </Button>
-            <Button
-              style={{ marginLeft: 20 }}
-              type="primary"
-              onClick={this.showModal}
-            >
-              预览
             </Button>
             <Button
               style={{ marginLeft: 20 }}
@@ -284,14 +195,6 @@ class App extends React.Component {
             Ant Design ©2016 Created by Ant UED
           </Footer>
         </Layout>
-        <Modal
-          title="demo"
-          visible={this.state.visible}
-          onOk={this.hideModal}
-          onCancel={this.hideModal}
-        >
-          <FormDemo />
-        </Modal>
         <Modal
           title="查看代码"
           width="80%"
