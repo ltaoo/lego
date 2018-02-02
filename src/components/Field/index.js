@@ -2,7 +2,7 @@
  * @file Field - 即一个字段，由自身维护一个模态框、源码字符串
  * @author ltaoo<litaowork@aliyun.com>
  */
-import React, { Component } from 'react';
+import React from 'react';
 import PropType from 'prop-types';
 import { Form, Modal, Icon } from 'antd';
 
@@ -11,7 +11,7 @@ import ComponentEditor from '../Editor';
 
 const { Item: FormItem } = Form;
 
-class Field extends Component {
+class Field extends React.Component {
   constructor(props) {
     super(props);
 
@@ -56,28 +56,31 @@ class Field extends Component {
    * 得到属性
    */
   writeProps = Component => {
-      console.log(Component);
     const { props, type } = Component;
     const { propTypes, defaultProps } = type;
+
     const propsText = [];
     const propsMap = {};
-    for (let key in propTypes) {
+
+    const mergedProps = Object.assign({}, propTypes, defaultProps, props);
+    for (let key in mergedProps) {
+        // 忽略 children
       if (key === 'children') {
         continue;
       }
-      const val = props[key];
-      const defaultVal = defaultProps[key];
+      const val = mergedProps[key];
       if (val) {
         if (typeof val === 'string') {
-          propsText.push(`${key}="${props[key]}"`);
+          propsText.push(`${key}="${mergedProps[key]}"`);
           propsMap[key] = `"${val}"`;
         } else if (typeof val === 'boolean') {
-          propsText.push(`${key}=${props[key]}`);
+          propsText.push(`${key}=${mergedProps[key]}`);
           propsMap[key] = val;
+        } else if (typeof val === 'function') {
+          if (key === 'onClick') {
+            propsText.push(`${key}={this.handleClick}`);
+          }
         }
-      }
-      if (key === 'onClick') {
-          propsText.push(`${key}={this.handleClick}`);
       }
     }
     return {
@@ -90,7 +93,7 @@ class Field extends Component {
    */
   createSourceCode = (components, root) => {
     const { title, label } = this.state;
-    const { notfield } = this.props.children.props;
+    const { notfield } = this.props.item;
     let code = '';
     for (let i = 0, l = components.length; i < l; i += 1) {
       const Component = components[i];
@@ -125,9 +128,10 @@ class Field extends Component {
    * 查看源码
    */
   previewSource = () => {
-    const { item: { component }} = this.props;
-    const code = this.createSourceCode([component], true);
-    return code;
+    const { item } = this.props;
+    const { Component, props } = item;
+    const instance = <Component {...props}></Component>;
+    return this.createSourceCode([instance], true);
   }
   showEditorModal = () => {
       this.setState({
@@ -143,11 +147,14 @@ class Field extends Component {
     const {
       //
       form,
-      children,
+      // 包装对象
+      item,
     } = this.props;
     const { title, label, options, editorModalVisible } = this.state;
-    const { props: { notfield }} = children;
+    const { notfield, Component, props } = item;
     const { getFieldDecorator } = form;
+
+    const instance = <Component {...props}></Component>;
     return (
       <div className="field">
         <div className="edit__wrapper">
@@ -163,9 +170,9 @@ class Field extends Component {
             </div>
           </div>
           {notfield !== 'true' ? <FormItem label={title}>
-            {getFieldDecorator(label, options)(children)}
+            {getFieldDecorator(label, options)(instance)}
           </FormItem>
-          : children}
+          : instance}
         </div>
         <Modal
           title="编辑组件"
@@ -176,7 +183,7 @@ class Field extends Component {
         >
           <ComponentEditor
             submit={this.updateProps}
-            Component={children}
+            Component={instance}
           />
         </Modal>
       </div>

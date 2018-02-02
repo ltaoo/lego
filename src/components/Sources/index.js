@@ -1,74 +1,95 @@
 import React, { Component } from 'react';
-import {
-    Input,
-    Button,
-} from 'antd';
+import { Input, Button } from 'antd';
 
 import './index.css';
 
 let uuid = 1;
 
 class Sidebar extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            components: props.components,
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      components: props.components,
+    };
+  }
 
-    renderComponent = ({ Component, label, name, props, innerText, options }) => {
-        return (
-            <Component {...props}>{innerText && innerText}</Component>
-        );
-    }
+  // renderComponent = ({ Component, label, name, props, innerText, options }) => {
+  //   return <Component {...props}>{innerText && innerText}</Component>;
+  // };
 
-    handleClick = (tag) => {
-        const props = Object.assign({}, {
-            key: uuid,
-        });
+  handleClick = tag => {
+    const props = Object.assign(
+      {},
+      {
+        key: uuid,
+      },
+    );
 
-        const COMPONENT_MAP = {
-            Input: this.renderComponent({
-                Component: Input,
-                props,
-            }),
-            Button: this.renderComponent({
-                Component: Button,
-                innerText: 'Click it',
-                props: Object.assign({}, props, {
-                    notfield: "true",
-                    type: 'primary',
-                    onClick: this.handleClick,
-                }),
-            }),
-        };
-        // 新增组件
-        const component = {
-            uuid,
-            tag,
-            component: COMPONENT_MAP[tag],
-        };
-        
-        uuid += 1;
-        this.props.handleClick(component);
-    }
+    // const COMPONENT_MAP = {
+    //   Input: this.renderComponent({
+    //     Component: Input,
+    //     props: Object.assign({}, props, {
+    //       placeholder: '请输入用户名',
+    //     }),
+    //   }),
+    //   Button: this.renderComponent({
+    //     Component: Button,
+    //     innerText: 'Click it',
+    //     props: Object.assign({}, props, {
+    //       notfield: 'true',
+    //       type: 'primary',
+    //       onClick: this.handleClick,
+    //     }),
+    //   }),
+    // };
+    const COMPONENT_MAP = {
+      Input: {
+        Component: Input,
+        props: Object.assign({}, props, {
+          placeholder: '请输入用户名',
+        }),
+      },
+      Button: {
+        Component: Button,
+        innerText: 'Click it',
+        notfield: 'true',
+        props: Object.assign({}, props, {
+          type: 'primary',
+          onClick: this.handleClick,
+        }),
+      },
+    };
+    // 新增组件
+    const component = {
+      uuid,
+      tag,
+      ...COMPONENT_MAP[tag],
+    };
 
-    render() {
-        return (
-            <div className="sidebar">
-                <ul className="sidebar__components">
-                    <li 
-                        className="sidebar__component"
-                        onClick={this.handleClick.bind(this, 'Input')}
-                    >Text Input</li>
-                    <li
-                        className="sidebar__component"
-                        onClick={this.handleClick.bind(this, 'Button')}
-                    >Button</li>
-                </ul>
-            </div>
-        );
-    }
+    uuid += 1;
+    this.props.handleClick(component);
+  };
+
+  render() {
+    return (
+      <div className="sidebar">
+        <ul className="sidebar__components">
+          <li
+            className="sidebar__component"
+            onClick={this.handleClick.bind(this, 'Input')}
+          >
+            Text Input
+          </li>
+          <li
+            className="sidebar__component"
+            onClick={this.handleClick.bind(this, 'Button')}
+          >
+            Button
+          </li>
+        </ul>
+      </div>
+    );
+  }
 }
 
 export default Sidebar;
