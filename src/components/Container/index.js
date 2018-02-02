@@ -12,15 +12,22 @@ class Container extends React.Component {
     super(props);
     this.state = {
       objs: [],
-      currentContainer: null,
+      currentObj: null,
     };
   }
   componentDidMount() {
     EventEmitter.on('addComponent', (obj) => {
-      const { objs } = this.state;
-      const newObjs = objs.concat([obj]);
+      const { objs, currentObj } = this.state;
+      // 如果是布局组件
+      console.log(currentObj);
+      if (currentObj && currentObj.container === 'true') {
+        currentObj.children = currentObj.children || [];
+        currentObj.children.push(obj);
+      } else {
+        objs.push(obj);
+      }
       this.setState({
-        objs: newObjs,
+        objs: [...objs],
       });
     });
   }
@@ -50,7 +57,7 @@ class Container extends React.Component {
    */
   switchContainer = (item, checked) => {
     this.setState({
-      currentContainer: checked ? item : this,
+      currentObj: checked ? item : this,
     });
   };
   /**

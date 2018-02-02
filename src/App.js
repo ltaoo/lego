@@ -39,7 +39,7 @@ class App extends React.Component {
     });
   }
   /**
-   * 添加组件
+   * 添加组件，生成代码时需要用到，todo: 从 store 中获取
    */
   addComponent = obj => {
     const { components, currentContainer } = this.state;

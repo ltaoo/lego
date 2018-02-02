@@ -27,6 +27,7 @@ body {
   border: 0;
 }
 .field .ant-row {
+  padding: 5px;
   border: 1px dashed #ccc;
   min-height: 60px;
 }

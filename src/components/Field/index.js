@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropType from 'prop-types';
-import { Form, Modal, Icon, Checkbox } from 'antd';
+import { Form, Modal, Icon, Checkbox, Col } from 'antd';
 
 import EventEmitter from '../../common/emitter';
 import ComponentEditor from '../Editor';
@@ -185,15 +185,58 @@ class Field extends React.Component {
       item = {},
     } = this.props;
     const { formProps: { title, label, rules }, props: changedProps, editorModalVisible } = this.state;
-    const { notfield, container, Component, props, children = [] } = item;
+    const { notfield, label: objLabel, container, Component, props, children = [] } = item;
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
-      return <WrappedField key={i} item={child} removeComponent={this.removeComponent} />;
+      return <WrappedField key={i} item={child} removeComponent={this.removeComponent}
+        switchContainer={this.props.switchContainer}
+       />;
     }) : null;
 
     const { getFieldDecorator } = form;
     let instance = <Component {...props} {...changedProps}></Component>;
     if (childrenComponent) {
       instance = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
+    }
+
+    if (objLabel === 'Col') {
+      instance = <div>{childrenComponent}</div>;
+    }
+
+    const modal = <Modal
+          title="编辑组件"
+          visible={editorModalVisible}
+          onOk={this.hideEditorModal}
+          onCancel={this.hideEditorModal}
+          footer={null}
+        >
+          <ComponentEditor
+            submit={this.updateProps}
+            Component={instance}
+          />
+        </Modal>;
+    if (item.label === 'Col') {
+      return <Col {...props}>
+        <div className="field">
+          <div className="edit__wrapper">
+            <div>
+              <div className="edit__btn" onClick={this.showEditorModal}>
+                <Icon type="edit" />
+              </div>
+              <div className="edit__btn" onClick={this.removeComponent}>
+                <Icon type="delete" />
+              </div>
+              {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
+            </div>
+            {notfield !== 'true' ? <FormItem label={title}>
+              {getFieldDecorator(label, {
+                rules,
+              })(instance)}
+            </FormItem>
+            : instance}
+          </div>
+          {modal}
+        </div>
+      </Col>
     }
     return (
       <div className="field">
@@ -214,18 +257,7 @@ class Field extends React.Component {
           </FormItem>
           : instance}
         </div>
-        <Modal
-          title="编辑组件"
-          visible={editorModalVisible}
-          onOk={this.hideEditorModal}
-          onCancel={this.hideEditorModal}
-          footer={null}
-        >
-          <ComponentEditor
-            submit={this.updateProps}
-            Component={instance}
-          />
-        </Modal>
+        {modal}
       </div>
     );
   }
