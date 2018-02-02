@@ -17,6 +17,8 @@ function exportPlugins(exports, plugins) {
 }
 
 exportPlugins((exports.optimize = {}), [
+  'Row',
+  'Col',
   'Input',
   'TextArea',
   'DatePicker',

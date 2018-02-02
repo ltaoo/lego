@@ -10,6 +10,7 @@ body {
 }
 
 .edit__wrapper {
+  overflow: hidden;
   margin-bottom: 24px;
   padding: 10px;
 }
@@ -21,3 +22,16 @@ body {
   margin-right: 20px;
   cursor: pointer;
 }
+
+.field .ant-row.ant-form-item {
+  border: 0;
+}
+.field .ant-row {
+  border: 1px dashed #ccc;
+  min-height: 60px;
+}
+.field .ant-col-8 {
+  border: 1px dashed #eee;
+  min-height: 60px;
+}
+

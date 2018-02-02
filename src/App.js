@@ -25,6 +25,7 @@ class App extends React.Component {
       codeVisible: false,
       components: [],
       edittingComponent: null,
+      currentContainer: null,
     };
     this.code = {};
   }
@@ -41,8 +42,15 @@ class App extends React.Component {
    * 添加组件
    */
   addComponent = component => {
-    const { components } = this.state;
-    components.push(component);
+    console.log(this, this.state.currentContainer);
+    const { components, currentContainer } = this.state;
+    // 如果是容器组件
+    if (currentContainer && currentContainer.container === 'true') {
+      currentContainer.children = currentContainer.children || [];
+      currentContainer.children.push(component);
+    } else {
+      components.push(component);
+    }
     this.setState({
       components: [...components],
     });
@@ -68,7 +76,7 @@ class App extends React.Component {
     let source = '';
     Object.keys(codeObj).forEach(key => {
       const c = codeObj[key];
-      source += c;
+      source += `${c}\n`;
     });
     return source;
   };
@@ -160,12 +168,25 @@ class App extends React.Component {
     const code = this.createSource();
     createZip(components, code, 'Page');
   };
+  /**
+   * 切换容器
+   */
+  switchContainer = (item, checked) => {
+    this.setState({
+      currentContainer: checked ? item : this,
+    });
+  }
   render() {
     const { components, code } = this.state;
 
     const realComponents = components.map((item, i) => {
       return (
-        <Field key={i} item={item} removeComponent={this.removeComponent} />
+        <Field
+          key={i}
+          item={item}
+          removeComponent={this.removeComponent}
+          switchContainer={this.switchContainer}
+        />
       );
     });
     return (
@@ -188,7 +209,7 @@ class App extends React.Component {
           </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
-              <div>{realComponents}</div>
+              {realComponents}
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>

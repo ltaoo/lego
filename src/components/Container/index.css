@@ -1,0 +1,9 @@
+.layout__row {
+    border: 1px dashed #ccc;
+    min-height: 60px;
+}
+
+.layout__col {
+    border: 1px dashed #ccc;
+    min-height: 60px;
+}

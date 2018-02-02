@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropType from 'prop-types';
-import { Form, Modal, Icon } from 'antd';
+import { Form, Modal, Icon, Checkbox } from 'antd';
 
 import EventEmitter from '../../common/emitter';
 import ComponentEditor from '../Editor';
@@ -157,17 +157,31 @@ class Field extends React.Component {
           editorModalVisible: false,
       });
   }
+  /**
+   * 选中 Row，接下来选择的组件都会填充到该组件内
+   */
+  selectRow = (e) => {
+    const checked = e.target.checked;
+    const { item } = this.props;
+    this.props.switchContainer(item, checked);
+  }
   render() {
     const {
       //
       form,
       // 包装对象
-      item,
+      item = {},
     } = this.props;
+    console.log(this, this.props);
+    console.log(item);
     const { formProps: { title, label, rules }, props: changedProps, editorModalVisible } = this.state;
-    const { notfield, Component, props } = item;
+    const { notfield, container, Component, props, children = [] } = item;
+    console.log(children, 'children');
+    const childrenComponent = children.length > 0 ? children.map((child, i) => {
+      return <WrappedField key={i} item={child} removeComponent={this.removeComponent} />;
+    }) : null;
     const { getFieldDecorator } = form;
-    const instance = <Component {...props} {...changedProps}></Component>;
+    const instance = <Component {...props} {...changedProps}>{childrenComponent && childrenComponent}</Component>;
     return (
       <div className="field">
         <div className="edit__wrapper">
@@ -178,9 +192,7 @@ class Field extends React.Component {
             <div className="edit__btn" onClick={this.removeComponent}>
               <Icon type="delete" />
             </div>
-            <div className="edit__btn" onClick={this.previewSource}>
-                <Icon type="eye-o" />
-            </div>
+            {container && <Checkbox onChange={this.selectRow}></Checkbox>}
           </div>
           {notfield !== 'true' ? <FormItem label={title}>
             {getFieldDecorator(label, {
@@ -210,4 +222,6 @@ Field.PropType = {
   item: PropType.object,
 };
 
-export default Form.create()(Field);
+// 在 Field 内渲染 Field 没有 form 属性
+const WrappedField = Form.create()(Field);
+export default WrappedField;
