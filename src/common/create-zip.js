@@ -24,9 +24,15 @@ function urlToPromise(url) {
   });
 }
 
-export default function createZip(components, code) {
+/**
+ * 生成 Zip 并下载
+ * @param {Array} components 
+ * @param {string} code 
+ * @param {strin} name 
+ */
+export default function createZip(components, code, name) {
     const zip = new JSZip();
-    const source = getIndexPageCode(components, code);
+    const source = getIndexPageCode(components, code, name);
     // / folder
     const rootDir = '/template';
     const webpackConfigJs = 'webpack.config.js';

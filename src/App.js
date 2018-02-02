@@ -55,7 +55,7 @@ class App extends React.Component {
     const { components } = this.state;
     const source = this.createSource();
     this.showCodeModal();
-    const code = getIndexPageCode(components, source);
+    const code = getIndexPageCode(components, source, 'Page');
     this.setState({
       code,
     });
@@ -158,7 +158,7 @@ class App extends React.Component {
   createZip = () => {
     const { components } = this.state;
     const code = this.createSource();
-    createZip(components, code);
+    createZip(components, code, 'Page');
   };
   render() {
     const { components, code } = this.state;
@@ -169,7 +169,7 @@ class App extends React.Component {
       );
     });
     return (
-      <Layout>
+      <Layout style={{ height: '100vh' }}>
         <Sider>
           <Sources handleClick={this.addComponent} components={components} />
         </Sider>
@@ -188,7 +188,7 @@ class App extends React.Component {
           </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
-              <div style={{ height: 600 }}>{realComponents}</div>
+              <div>{realComponents}</div>
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
