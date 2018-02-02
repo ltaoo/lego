@@ -73,6 +73,8 @@ class Container extends React.Component {
         <Field
           key={i}
           item={item}
+          // 用在获取嵌套组件代码的时候，只当 root === true 时才获取代码
+          root
           removeComponent={this.removeComponent}
           switchContainer={this.switchContainer}
         />

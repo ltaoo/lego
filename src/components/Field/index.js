@@ -7,14 +7,10 @@ import PropType from 'prop-types';
 import { Form, Modal, Icon, Checkbox, Col } from 'antd';
 
 import EventEmitter from '../../common/emitter';
+import createSource from '../../common/create-source';
 import ComponentEditor from '../Editor';
 
 const { Item: FormItem } = Form;
-const nativeMethods = [
-  'onClick',
-  'onChange',
-  'onInput',
-];
 
 class Field extends React.Component {
   constructor(props) {
@@ -70,94 +66,15 @@ class Field extends React.Component {
     this.props.removeComponent(item);
   };
   /**
-   * 得到属性
-   */
-  writeProps = Component => {
-    const { props, type } = Component;
-    const { propTypes, defaultProps } = type;
-
-    const propsText = [];
-    const propsMap = {};
-
-    const mergedProps = Object.assign({}, propTypes, defaultProps, props);
-    const keys = Object.keys(mergedProps);
-    for (let i = 0, l = keys.length; i < l; i += 1) {
-      const key = keys[i];
-        // 忽略 children
-      if (key === 'children') {
-        continue;
-      }
-      const val = mergedProps[key];
-      if (val) {
-        if (typeof val === 'string') {
-          propsText.push(`${key}="${mergedProps[key]}"`);
-          propsMap[key] = `"${val}"`;
-        } else if (typeof val === 'boolean') {
-          propsText.push(`${key}=${mergedProps[key]}`);
-          propsMap[key] = val;
-        } else if (typeof val === 'function') {
-          console.dir(val);
-          if (nativeMethods.indexOf(key) > -1) {
-            propsText.push(`${key}={this.${mergedProps[key].name}}`);
-          }
-        }
-      } else {
-        propsText.push(`${key}={${mergedProps[key]}}`);
-      }
-    }
-    return {
-      props: propsMap,
-      text: propsText.join(' '),
-    };
-  };
-  /**
-   * 根据组件得到源码
-   */
-  createSourceCode = (components, root) => {
-    const { formProps: { title, label, rules } } = this.state;
-    const { notfield } = this.props.item;
-    let code = '';
-    for (let i = 0, l = components.length; i < l; i += 1) {
-      const Component = components[i];
-      console.log(Component);
-      if (!Component) {
-        continue;
-      }
-      if (typeof Component === 'string') {
-        code += Component;
-        continue;
-      }
-      const { type } = Component;
-      const { name: tag } = type;
-      // props
-      let { text: propsText } = this.writeProps(Component);
-      if (root && notfield !== 'true') {
-        code += `<Form.Item label="${title}">{getFieldDecorator("${label}", {
-          rules: ${JSON.stringify(rules)}
-        })(<${tag} ${propsText}>`;
-      } else {
-        code += `<${tag} ${propsText}>`;
-      }
-      if (Component.props.children) {
-        code += this.createSourceCode([Component.props.children]);
-      }
-      if (root && notfield !== 'true') {
-        code += `</${tag}>)}</Form.Item>`;
-      } else {
-        code += `</${tag}>`;
-      }
-    }
-    return code;
-  };
-  /**
    * 查看源码
    */
   previewSource = () => {
     const { props: changedProps } = this.state;
-    const { item } = this.props;
-    const { Component, props } = item;
-    const instance = <Component {...props} {...changedProps}></Component>;
-    return this.createSourceCode([instance], true);
+    const { item, root } = this.props;
+    const { props } = item;
+    const newProps = Object.assign({}, {...props}, changedProps);
+    const code = root ? createSource(item, newProps) : '';
+    console.log(code);
   }
   showEditorModal = () => {
       this.setState({
@@ -214,42 +131,25 @@ class Field extends React.Component {
             Component={instance}
           />
         </Modal>;
-    if (item.label === 'Col') {
-      return <Col {...props}>
-        <div className="field">
-          <div className="edit__wrapper">
-            <div>
-              <div className="edit__btn" onClick={this.showEditorModal}>
-                <Icon type="edit" />
-              </div>
-              <div className="edit__btn" onClick={this.removeComponent}>
-                <Icon type="delete" />
-              </div>
-              {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
-            </div>
-            {notfield !== 'true' ? <FormItem label={title}>
-              {getFieldDecorator(label, {
-                rules,
-              })(instance)}
-            </FormItem>
-            : instance}
-          </div>
-          {modal}
+
+    const operators = (
+      <div>
+        <div className="edit__btn" onClick={this.showEditorModal}>
+          <Icon type="edit" />
         </div>
-      </Col>
-    }
-    return (
+        <div className="edit__btn" onClick={this.removeComponent}>
+          <Icon type="delete" />
+        </div>
+        <div className="edit__btn" onClick={this.previewSource}>
+          <Icon type="eye-o" />
+        </div>
+        {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
+      </div>
+    );
+    const content = (
       <div className="field">
         <div className="edit__wrapper">
-          <div>
-            <div className="edit__btn" onClick={this.showEditorModal}>
-              <Icon type="edit" />
-            </div>
-            <div className="edit__btn" onClick={this.removeComponent}>
-              <Icon type="delete" />
-            </div>
-            {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
-          </div>
+          {operators}
           {notfield !== 'true' ? <FormItem label={title}>
             {getFieldDecorator(label, {
               rules,
@@ -260,6 +160,12 @@ class Field extends React.Component {
         {modal}
       </div>
     );
+    if (item.label === 'Col') {
+      return <Col {...props}>
+        {content}
+      </Col>
+    }
+    return content;
   }
 }
 
