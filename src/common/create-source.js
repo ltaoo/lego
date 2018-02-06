@@ -36,9 +36,10 @@ function createPropsText(props) {
         if (nativeMethods.indexOf(key) > -1) {
           propsText.push(`${key}={this.${props[key].name}}`);
         }
+      } else {
+        propsText.push(`${key}={${props[key]}}`);
       }
     } else {
-      propsText.push(`${key}={${props[key]}}`);
     }
   }
   return propsText.join(' ');
