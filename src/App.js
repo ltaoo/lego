@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Button, Modal } from 'antd';
+import { Layout, Button, Form, Modal } from 'antd';
 // 代码编辑器
 import MonacoEditor from 'react-monaco-editor';
 
@@ -11,6 +11,8 @@ import EventEmitter from './common/emitter';
 import createSourceCode from './common/create-source';
 import createPageCode from './common/create-page';
 import createZip from './common/create-zip';
+
+import renderComponent from './common/renderComponent';
 
 import './App.css';
 
@@ -42,13 +44,14 @@ class App extends React.Component {
     super(props);
     this.state = {
       visible: false,
-      code: '',
-      editorModalVisible: false,
       codeVisible: false,
+      previewModalVisible: false,
+      code: '',
       instances: [],
       edittingComponent: null,
       currentContainer: null,
     };
+    this.container = {};
   }
 
   addComponent = (instance) => {
@@ -63,6 +66,19 @@ class App extends React.Component {
 
       // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
       updateProps(uuid, instances, newFieldProps, newProps);
+    });
+  }
+  /**
+   * 预览组件
+   */
+  preview = () => {
+    this.setState({
+      previewModalVisible: true,
+    });
+  }
+  hidePreviewModal = () => {
+    this.setState({
+      previewModalVisible: false,
     });
   }
   /**
@@ -114,7 +130,14 @@ class App extends React.Component {
     createZip(instances, code, 'Page');
   };
   render() {
-    const { instances, code } = this.state;
+    const {
+      codeVisible,
+      previewModalVisible,
+      code,
+    } = this.state;
+    const { state = {} } = this.container;
+    const { instances = [] } = state;
+    const content = renderComponent(instances, this.props);
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
@@ -124,6 +147,11 @@ class App extends React.Component {
           <Header style={{ background: '#fff', paddingLeft: 24 }}>
             <Button type="primary" onClick={this.previewSource}>
               查看源码
+            </Button>
+            <Button type="primary"
+              style={{ marginLeft: 20 }}
+              onClick={this.preview}>
+              预览
             </Button>
             <Button
               style={{ marginLeft: 20 }}
@@ -148,7 +176,7 @@ class App extends React.Component {
         <Modal
           title="查看代码"
           width="80%"
-          visible={this.state.codeVisible}
+          visible={codeVisible}
           onOk={this.hideCodeModal}
           onCancel={this.hideCodeModal}
         >
@@ -167,9 +195,18 @@ class App extends React.Component {
             />
           </div>
         </Modal>
+        <Modal
+          visible={previewModalVisible}
+          onOk={this.hidePreviewModal}
+          onCancel={this.hidePreviewModal}
+          closable={false}
+          footer={null}
+        >
+          {content}
+        </Modal>
       </Layout>
     );
   }
 }
 
-export default App;
+export default Form.create()(App);
