@@ -5,8 +5,7 @@ import {
 export default {
     Component: Col,
     label: 'Col',
-    notfield: 'true',
-    container: 'true',
+    layout: true,
     props: {
         span: 8,
     },

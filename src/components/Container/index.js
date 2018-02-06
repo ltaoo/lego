@@ -19,7 +19,7 @@ class Container extends React.Component {
     EventEmitter.on('addComponent', (obj) => {
       const { instances, currentInstance } = this.state;
       // 如果是布局组件
-      if (currentInstance && currentInstance.container === 'true') {
+      if (currentInstance && currentInstance.layout) {
         currentInstance.children = currentInstance.children || [];
         currentInstance.children.push(obj);
       } else {
@@ -56,7 +56,7 @@ class Container extends React.Component {
    */
   switchContainer = (item, checked) => {
     this.setState({
-      currentObj: checked ? item : this,
+      currentInstance: checked ? item : this,
     });
   };
   /**

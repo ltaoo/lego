@@ -79,7 +79,16 @@ class Field extends React.Component {
     const { form, item } = this.props;
 
     const { getFieldDecorator } = form;
-    const { label: objLabel, container, Component, props, children = [], isField, fieldProps = {} } = item;
+    const {
+      label: objLabel,
+      // 是否布局容器
+      layout,
+      Component,
+      props,
+      children = [],
+      isField,
+      fieldProps = {},
+    } = item;
     const { title, label, rules } = fieldProps;
 
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
@@ -126,7 +135,7 @@ class Field extends React.Component {
         <div className="edit__btn" onClick={this.previewSource}>
           <Icon type="eye-o" />
         </div>
-        {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
+        {layout && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
       </div>
     );
     const content = (

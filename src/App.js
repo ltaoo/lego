@@ -51,6 +51,10 @@ class App extends React.Component {
     };
   }
 
+  addComponent = (instance) => {
+    EventEmitter.emit('addComponent', instance);
+  }
+
   componentDidMount() {
     const { instances } = this.state;
     EventEmitter.on('updateProps', (item, value) => {
@@ -62,27 +66,10 @@ class App extends React.Component {
     });
   }
   /**
-   * 添加组件，生成代码时需要用到，todo: 从 store 中获取
-   */
-  addComponent = obj => {
-    const { instances, currentContainer } = this.state;
-    // 如果是容器组件
-    if (currentContainer && currentContainer.container === 'true') {
-      currentContainer.children = currentContainer.children || [];
-      currentContainer.children.push(obj);
-    } else {
-      instances.push(obj);
-    }
-    this.setState({
-      instances: [...instances],
-    });
-    EventEmitter.emit('addComponent', obj);
-  };
-  /**
    * 预览源代码
    */
   previewSource = () => {
-    const { instances } = this.state;
+    const { instances } = this.container.state;
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
     this.setState({
@@ -126,14 +113,6 @@ class App extends React.Component {
     const code = this.createSource();
     createZip(instances, code, 'Page');
   };
-  /**
-   * 切换容器
-   */
-  switchContainer = (item, checked) => {
-    this.setState({
-      currentContainer: checked ? item : this,
-    });
-  }
   render() {
     const { instances, code } = this.state;
     return (
@@ -157,6 +136,7 @@ class App extends React.Component {
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
               <Container
+                ref={e => this.container = e}
                 instances={instances}
               />
             </div>
