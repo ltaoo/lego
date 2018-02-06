@@ -1,3 +1,7 @@
+/**
+ * @file 提供实例对象的组件
+ * @author wuya
+ */
 import React, { Component } from 'react';
 
 import * as lib from './lib';
@@ -10,23 +14,17 @@ for (let key in lib.optimize) {
 
 let uuid = 1;
 
-class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      components: props.components,
-    };
-  }
+class Source extends Component {
   handleClick = tag => {
     // 新增组件
-    const component = {
+    const instance = {
       uuid,
       tag,
       ...COMPONENT_MAP[tag],
     };
 
     uuid += 1;
-    this.props.handleClick(component);
+    this.props.handleClick(instance);
   };
 
   render() {
@@ -52,4 +50,4 @@ class Sidebar extends Component {
   }
 }
 
-export default Sidebar;
+export default Source;

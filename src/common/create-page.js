@@ -1,17 +1,22 @@
 
+/** 
+ * @file 生成页面对应的代码
+ * @author wuya
+ */
+
 /**
  * 生成页面代码
- * @param {Array} components 
+ * @param {Array} instances - 实例对象数组
  * @param {string} code 
  * @param {string} name - 页面名称
  */
-export default function createPage(components, code, name) {
-  console.log(components);
+export default function createPageCode(instances, code, name) {
+  // todo: 变量名调整
   const extraComponent = [];
   const methods = [];
   const constructorText = [];
   const componentText = Array.from(
-    new Set(components.map(item => {
+    new Set(instances.map(item => {
       console.log(item);
       if (item.extra) {
         extraComponent.push(item.extra);

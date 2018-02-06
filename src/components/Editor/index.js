@@ -1,3 +1,7 @@
+/**
+ * @file 组件属性编辑组件
+ * @author ltaoo<litaowork@aliyun.com>
+ */
 import React, { Component } from 'react';
 import { Form, Input, Button, Select, Switch } from 'antd';
 

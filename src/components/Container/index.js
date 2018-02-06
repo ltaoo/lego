@@ -1,6 +1,6 @@
 /**
- * @file 预览区
- * @author ltaoo<litaowork@aliyun.com>
+ * @file 组件编辑预览
+ * @author wuya
  */
 import React from 'react';
 
@@ -11,23 +11,22 @@ class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      objs: [],
-      currentObj: null,
+      instances: [],
+      currentInstance: null,
     };
   }
   componentDidMount() {
     EventEmitter.on('addComponent', (obj) => {
-      const { objs, currentObj } = this.state;
+      const { instances, currentInstance } = this.state;
       // 如果是布局组件
-      console.log(currentObj);
-      if (currentObj && currentObj.container === 'true') {
-        currentObj.children = currentObj.children || [];
-        currentObj.children.push(obj);
+      if (currentInstance && currentInstance.container === 'true') {
+        currentInstance.children = currentInstance.children || [];
+        currentInstance.children.push(obj);
       } else {
-        objs.push(obj);
+        instances.push(obj);
       }
       this.setState({
-        objs: [...objs],
+        instances: [...instances],
       });
     });
   }
@@ -61,18 +60,15 @@ class Container extends React.Component {
     });
   };
   /**
-   * 渲染实例
-   * @param {Object} item - 包装实例
-   * @param {Component} item.Component - antd 组件
-   * @param {Object} item.props - 会被添加到 Component 实例上的属性
+   * 渲染实例组件
    */
-  renderComponent = item => {
-    const { objs } = this.state;
-    return objs.map((item, i) => {
+  renderComponent = () => {
+    const { instances } = this.state;
+    return instances.map((instance) => {
       return (
         <Field
-          key={i}
-          item={item}
+          key={instance.uuid}
+          item={instance}
           // 用在获取嵌套组件代码的时候，只当 root === true 时才获取代码
           root
           removeComponent={this.removeComponent}

@@ -8,7 +8,8 @@ import Container from './components/Container';
 
 // util
 import EventEmitter from './common/emitter';
-import getIndexPageCode from './common/create-page';
+import createSourceCode from './common/create-source';
+import createPageCode from './common/create-page';
 import createZip from './common/create-zip';
 
 import './App.css';
@@ -23,35 +24,25 @@ class App extends React.Component {
       code: '',
       editorModalVisible: false,
       codeVisible: false,
-      components: [],
+      instances: [],
       edittingComponent: null,
       currentContainer: null,
     };
-    this.code = {};
-  }
-  componentDidMount() {
-    /**
-     * @param {Object} code - 代码对象 key 是 uuid val 是 code
-     */
-    EventEmitter.on('updateComponent', code => {
-      const codeObj = Object.assign(this.code, code);
-      this.code = codeObj;
-    });
   }
   /**
    * 添加组件，生成代码时需要用到，todo: 从 store 中获取
    */
   addComponent = obj => {
-    const { components, currentContainer } = this.state;
+    const { instances, currentContainer } = this.state;
     // 如果是容器组件
     if (currentContainer && currentContainer.container === 'true') {
       currentContainer.children = currentContainer.children || [];
       currentContainer.children.push(obj);
     } else {
-      components.push(obj);
+      instances.push(obj);
     }
     this.setState({
-      components: [...components],
+      instances: [...instances],
     });
     EventEmitter.emit('addComponent', obj);
   };
@@ -59,25 +50,13 @@ class App extends React.Component {
    * 预览源代码
    */
   previewSource = () => {
-    const { components } = this.state;
-    const source = this.createSource();
-    this.showCodeModal();
-    const code = getIndexPageCode(components, source, 'Page');
+    const { instances } = this.state;
+    const code = createSourceCode(instances);
+    const pageCode = createPageCode(instances, code, 'Index');
     this.setState({
-      code,
+      code: pageCode,
     });
-  };
-  /**
-   * 根据组件生成源代码
-   */
-  createSource = () => {
-    const codeObj = this.code;
-    let source = '';
-    Object.keys(codeObj).forEach(key => {
-      const c = codeObj[key];
-      source += `${c}\n`;
-    });
-    return source;
+    this.showCodeModal();
   };
   showModal = () => {
     this.setState({
@@ -107,44 +86,13 @@ class App extends React.Component {
     const { editor } = this.editor;
     editor.getAction('editor.action.formatDocument').run();
   };
-
-  /**
-   * 编辑器加载完成事件
-   * @param {*} editor 
-   * @param {*} monaco 
-   */
-  editorDidMount(editor, monaco) {
-    // compiler options
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ES2016,
-      allowNonTsExtensions: true,
-      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      module: monaco.languages.typescript.ModuleKind.CommonJS,
-      noEmit: true,
-      typeRoots: ['node_modules/@types'],
-    });
-
-    // extra libraries
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(
-      `export declare function next() : string`,
-      'node_modules/@types/external/index.d.ts',
-    );
-
-    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
-      noSyntaxValidation: false,
-    });
-    setTimeout(function() {
-      editor.getAction('editor.action.formatDocument').run();
-    }, 300);
-  }
   /**
    * 生成 Zip 包
    */
   createZip = () => {
-    const { components } = this.state;
+    const { instances } = this.state;
     const code = this.createSource();
-    createZip(components, code, 'Page');
+    createZip(instances, code, 'Page');
   };
   /**
    * 切换容器
@@ -155,11 +103,11 @@ class App extends React.Component {
     });
   }
   render() {
-    const { components, code } = this.state;
+    const { instances, code } = this.state;
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
-          <Sources handleClick={this.addComponent} components={components} />
+          <Sources handleClick={this.addComponent} />
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', paddingLeft: 24 }}>
@@ -177,7 +125,7 @@ class App extends React.Component {
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
               <Container
-                components={components}
+                instances={instances}
               />
             </div>
           </Content>
@@ -199,14 +147,10 @@ class App extends React.Component {
               language="javascript"
               theme="vs-dark"
               value={code}
-              onChange={this.onChange}
-              editorDidMount={this.editorDidMount}
               options={{
-                formatOnType: true,
                 language: 'javascript',
                 minimap: false,
                 readOnly: true,
-                autoIndent: true,
               }}
             />
           </div>

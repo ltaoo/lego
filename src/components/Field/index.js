@@ -77,14 +77,14 @@ class Field extends React.Component {
     console.log(code);
   }
   showEditorModal = () => {
-      this.setState({
-          editorModalVisible: true,
-      });
+    this.setState({
+      editorModalVisible: true,
+    });
   }
   hideEditorModal = () => {
-      this.setState({
-          editorModalVisible: false,
-      });
+    this.setState({
+      editorModalVisible: false,
+    });
   }
   /**
    * 选中 Row，接下来选择的组件都会填充到该组件内
@@ -95,21 +95,23 @@ class Field extends React.Component {
     this.props.switchContainer(item, checked);
   }
   render() {
-    const {
-      //
-      form,
-      // 包装对象
-      item = {},
-    } = this.props;
     const { formProps: { title, label, rules }, props: changedProps, editorModalVisible } = this.state;
-    const { notfield, label: objLabel, container, Component, props, children = [] } = item;
-    const childrenComponent = children.length > 0 ? children.map((child, i) => {
-      return <WrappedField key={i} item={child} removeComponent={this.removeComponent}
-        switchContainer={this.props.switchContainer}
-       />;
-    }) : null;
+    const { form, item = {} } = this.props;
 
     const { getFieldDecorator } = form;
+    const { notfield, label: objLabel, container, Component, props, children = [] } = item;
+
+    const childrenComponent = children.length > 0 ? children.map((child, i) => {
+      return (
+        <WrappedField
+          key={child.uuid}
+          item={child}
+          removeComponent={this.removeComponent}
+          switchContainer={this.props.switchContainer}
+        />
+      );
+    }) : null;
+
     let instance = <Component {...props} {...changedProps}></Component>;
     if (childrenComponent) {
       instance = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
@@ -118,20 +120,20 @@ class Field extends React.Component {
     if (objLabel === 'Col') {
       instance = <div>{childrenComponent}</div>;
     }
-
-    const modal = <Modal
-          title="编辑组件"
-          visible={editorModalVisible}
-          onOk={this.hideEditorModal}
-          onCancel={this.hideEditorModal}
-          footer={null}
-        >
-          <ComponentEditor
-            submit={this.updateProps}
-            Component={instance}
-          />
-        </Modal>;
-
+    const modal = (
+      <Modal
+        title="编辑组件"
+        visible={editorModalVisible}
+        onOk={this.hideEditorModal}
+        onCancel={this.hideEditorModal}
+        footer={null}
+      >
+        <ComponentEditor
+          submit={this.updateProps}
+          Component={instance}
+        />
+      </Modal>
+    );
     const operators = (
       <div>
         <div className="edit__btn" onClick={this.showEditorModal}>
@@ -140,9 +142,9 @@ class Field extends React.Component {
         <div className="edit__btn" onClick={this.removeComponent}>
           <Icon type="delete" />
         </div>
-        <div className="edit__btn" onClick={this.previewSource}>
+        {/* <div className="edit__btn" onClick={this.previewSource}>
           <Icon type="eye-o" />
-        </div>
+        </div> */}
         {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
       </div>
     );
