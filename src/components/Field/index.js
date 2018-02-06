@@ -1,6 +1,6 @@
 /**
  * @file Field - 即一个字段，由自身维护一个模态框、源码字符串
- * @author ltaoo<litaowork@aliyun.com>
+ * @author wuya
  */
 import React from 'react';
 import PropType from 'prop-types';
@@ -18,10 +18,11 @@ class Field extends React.Component {
 
     this.state = {
       // 表单相关的字段
-      formProps: {
+      fieldProps: {
         title: 'label',
         label: 'label',
         rules: [],
+        initialValue: '',
       },
       // antd 组件会添加的属性
       props: {},
@@ -30,32 +31,11 @@ class Field extends React.Component {
       editorModalVisible: false,
     };
   }
-  componentDidMount() {
-    const { item: { uuid } } = this.props;
-    const code = this.previewSource();
-    EventEmitter.emit('updateComponent', {
-        [uuid]: code,
-    });
-  }
   /**
    * 更新属性
    */
   updateProps = (values) => {
-    console.log(values);
-    const { item: { uuid } } = this.props;
-    this.setState({
-      formProps: {
-        title: values.title,
-        label: values.label,
-        rules: values.rules,
-      },
-      props: {...values.props},
-    }, function () {
-        const code = this.previewSource();
-        EventEmitter.emit('updateComponent', {
-            [uuid]: code,
-        });
-    });
+    EventEmitter.emit('updateProps', values);
     this.hideEditorModal();
   }
   /**
@@ -95,11 +75,12 @@ class Field extends React.Component {
     this.props.switchContainer(item, checked);
   }
   render() {
-    const { formProps: { title, label, rules }, props: changedProps, editorModalVisible } = this.state;
-    const { form, item = {} } = this.props;
+    const { props: changedProps, editorModalVisible } = this.state;
+    const { form, item } = this.props;
 
     const { getFieldDecorator } = form;
-    const { notfield, label: objLabel, container, Component, props, children = [] } = item;
+    const { label: objLabel, container, Component, props, children = [], isField, fieldProps = {} } = item;
+    const { title, label, rules } = fieldProps;
 
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
       return (
@@ -142,9 +123,9 @@ class Field extends React.Component {
         <div className="edit__btn" onClick={this.removeComponent}>
           <Icon type="delete" />
         </div>
-        {/* <div className="edit__btn" onClick={this.previewSource}>
+        <div className="edit__btn" onClick={this.previewSource}>
           <Icon type="eye-o" />
-        </div> */}
+        </div>
         {container && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
       </div>
     );
@@ -152,7 +133,7 @@ class Field extends React.Component {
       <div className="field">
         <div className="edit__wrapper">
           {operators}
-          {notfield !== 'true' ? <FormItem label={title}>
+          {isField ? <FormItem label={title}>
             {getFieldDecorator(label, {
               rules,
             })(instance)}

@@ -58,10 +58,29 @@ function mergeProps(Component, props) {
  * 标签与属性生成代码
  * @param {string} Tag 
  * @param {Object} props 
+ * @param {boolean} isField - 是否是表单
  */
-function createCodeWithProps(Tag, props) {
+function createCodeWithProps(Tag, props, isField, fieldProps) {
   const propsText = createPropsText(props);
-  return `<${Tag} ${propsText}></${Tag}>`;
+  const { children = [] } = props;
+  console.log(children);
+  let code = `<${Tag} ${propsText}>`;
+  // 按钮的文本
+  if (children && typeof children === 'string') {
+    code += children;
+  }
+  code += `</${Tag}>`;
+  if (isField) {
+    const { title, label, rules } = fieldProps;
+    code = `<Form.Item label="${title}">
+          {getFieldDecorator(${label}, {
+            rules: [],
+          })(
+            ${code}
+          )}
+        </Form.Item>`;
+  }
+  return code;
 }
 
 /**
@@ -74,7 +93,7 @@ export default function createSourceCode(instances) {
     const instance = instances[i];
     const { Component, label, props } = instance;
     const mergedProps = mergeProps(Component, props);
-    code += createCodeWithProps(label, mergedProps);
+    code += createCodeWithProps(label, mergedProps, instance.isField, instance.fieldProps);
   }
   return code;
 }

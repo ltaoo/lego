@@ -9,7 +9,6 @@ export default {
     Component: Button,
     label: 'Button',
     import: 'Button',
-    notfield: 'true',
     // 这部分内容会被添加到页面代码中，todo: 自动判断生成
     constructorCode: 'this.handleClick = this.handleClick.bind(this);',
     methods: `
@@ -25,7 +24,7 @@ export default {
     }
     `,
     props:{
-        children: 'Click it',
+        children: '提交',
         type: 'primary',
         onClick: handleClick,
     },

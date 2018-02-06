@@ -16,6 +16,27 @@ import './App.css';
 
 const { Header, Content, Footer, Sider } = Layout;
 
+/**
+ * 递归更新属性
+ * @param {*} uuid 
+ * @param {*} instances 
+ * @param {*} fieldProps 
+ * @param {*} props 
+ */
+function updateProps(uuid, instances, fieldProps, props) {
+  for (let i = 0, l = instances.length; i < l; i += 1) {
+    const instance = instances[i];
+    if (instance.uuid === uuid) {
+      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps);
+      instance.props = Object.assign({}, instance.props, props);
+      break;
+    }
+    if (instance.children && instance.children.length) {
+      updateProps(uuid, instance.children, fieldProps, props);
+    }
+  }
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -28,6 +49,17 @@ class App extends React.Component {
       edittingComponent: null,
       currentContainer: null,
     };
+  }
+
+  componentDidMount() {
+    const { instances } = this.state;
+    EventEmitter.on('updateProps', (item, value) => {
+      const { uuid } = item;
+      const { fieldProps: newFieldProps, props: newProps } = value;
+
+      // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
+      updateProps(uuid, instances, newFieldProps, newProps);
+    });
   }
   /**
    * 添加组件，生成代码时需要用到，todo: 从 store 中获取
