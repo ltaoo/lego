@@ -16,30 +16,36 @@ export default function renderComponent(instances, context) {
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const { label, Component, isField, props, fieldProps, uuid, children } = instance;
-
     if (isField) {
-      const { title, label } = fieldProps;
+      const { title, label: id, rules, initialValue, labelCol, wrapperCol } = fieldProps;
       const { form } = context;
       const { getFieldDecorator } = form;
+
+      let c = <Component {...props}>{renderComponent(children, context)}</Component>;
+      if (label === 'Button') {
+        c = <Component {...props}>{props.children}</Component>;
+      }
+
+      const fieldComponent = id
+        ? getFieldDecorator(id, {
+          rules,
+          initialValue,
+        })(
+          c
+        )
+        : c;
+
       components.push(
-        <Form.Item key={uuid} label={title}>
-          {getFieldDecorator(label)(
-            <Component {...props}>{renderComponent(children, context)}</Component>,
-          )}
+        <Form.Item key={uuid} label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
+          {fieldComponent}
         </Form.Item>,
       );
     } else {
-      if (label === 'Button') {
-        components.push(
-          <Component key={uuid} {...props}></Component>,
-        );
-      } else {
-        components.push(
-          <Component key={uuid} {...props}>
-            {renderComponent(children, context)}
-          </Component>,
-        );
-      }
+      components.push(
+        <Component key={uuid} {...props}>
+          {renderComponent(children, context)}
+        </Component>,
+      );
     }
   }
   return components;

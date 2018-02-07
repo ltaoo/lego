@@ -146,6 +146,7 @@ class App extends React.Component {
           onCancel={this.hidePreviewModal}
           closable={false}
           footer={null}
+          width="90%"
         >
           {content}
         </Modal>
