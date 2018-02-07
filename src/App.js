@@ -17,28 +17,6 @@ import renderComponent from './common/renderComponent';
 import './App.css';
 
 const { Header, Content, Footer, Sider } = Layout;
-
-/**
- * 递归更新属性
- * @param {*} uuid 
- * @param {*} instances 
- * @param {*} fieldProps 
- * @param {*} props 
- */
-function updateProps(uuid, instances, fieldProps, props) {
-  for (let i = 0, l = instances.length; i < l; i += 1) {
-    const instance = instances[i];
-    if (instance.uuid === uuid) {
-      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps);
-      instance.props = Object.assign({}, instance.props, props);
-      break;
-    }
-    if (instance.children && instance.children.length) {
-      updateProps(uuid, instance.children, fieldProps, props);
-    }
-  }
-}
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -47,26 +25,9 @@ class App extends React.Component {
       codeVisible: false,
       previewModalVisible: false,
       code: '',
-      instances: [],
       edittingComponent: null,
-      currentContainer: null,
     };
     this.container = {};
-  }
-
-  addComponent = (instance) => {
-    EventEmitter.emit('addComponent', instance);
-  }
-
-  componentDidMount() {
-    const { instances } = this.state;
-    EventEmitter.on('updateProps', (item, value) => {
-      const { uuid } = item;
-      const { fieldProps: newFieldProps, props: newProps } = value;
-
-      // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
-      updateProps(uuid, instances, newFieldProps, newProps);
-    });
   }
   /**
    * 预览组件
@@ -93,16 +54,6 @@ class App extends React.Component {
     });
     this.showCodeModal();
   };
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-  hideModal = () => {
-    this.setState({
-      visible: false,
-    });
-  };
   showCodeModal = () => {
     this.setState({
       codeVisible: true,
@@ -114,21 +65,15 @@ class App extends React.Component {
     });
   };
   /**
-   * 格式化代码
-   */
-  formatCode = () => {
-    console.log(this.editor);
-    const { editor } = this.editor;
-    editor.getAction('editor.action.formatDocument').run();
-  };
-  /**
    * 生成 Zip 包
    */
   createZip = () => {
-    const { instances } = this.state;
-    const code = this.createSource();
-    createZip(instances, code, 'Page');
-  };
+    const { instances } = this.container.state;
+    const code = createSourceCode(instances);
+    const pageCode = createPageCode(instances, code, 'Index');
+    createZip(pageCode, 'Page');
+  }
+
   render() {
     const {
       codeVisible,
@@ -141,7 +86,7 @@ class App extends React.Component {
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
-          <Sources handleClick={this.addComponent} />
+          <Sources />
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', paddingLeft: 24 }}>

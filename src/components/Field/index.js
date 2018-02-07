@@ -17,17 +17,6 @@ class Field extends React.Component {
     super(props);
 
     this.state = {
-      // 表单相关的字段
-      fieldProps: {
-        title: 'label',
-        label: 'label',
-        rules: [],
-        initialValue: '',
-      },
-      // antd 组件会添加的属性
-      props: {},
-      options: {},
-      isField: true,
       editorModalVisible: false,
     };
   }
@@ -35,7 +24,8 @@ class Field extends React.Component {
    * 更新属性
    */
   updateProps = (values) => {
-    EventEmitter.emit('updateProps', values);
+    const { item } = this.props;
+    EventEmitter.emit('updateComponent', item, values);
     this.hideEditorModal();
   }
   /**
@@ -102,13 +92,13 @@ class Field extends React.Component {
       );
     }) : null;
 
-    let instance = <Component {...props} {...changedProps}></Component>;
+    let instanceCom = <Component {...props} {...changedProps}></Component>;
     if (childrenComponent) {
-      instance = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
+      instanceCom = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
     }
 
     if (objLabel === 'Col') {
-      instance = <div>{childrenComponent}</div>;
+      instanceCom = <div>{childrenComponent}</div>;
     }
     const modal = (
       <Modal
@@ -120,7 +110,7 @@ class Field extends React.Component {
       >
         <ComponentEditor
           submit={this.updateProps}
-          Component={instance}
+          instance={item}
         />
       </Modal>
     );
@@ -145,9 +135,9 @@ class Field extends React.Component {
           {isField ? <FormItem label={title}>
             {getFieldDecorator(label, {
               rules,
-            })(instance)}
+            })(instanceCom)}
           </FormItem>
-          : instance}
+          : instanceCom}
         </div>
         {modal}
       </div>

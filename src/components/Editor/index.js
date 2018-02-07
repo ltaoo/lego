@@ -1,6 +1,6 @@
 /**
  * @file 组件属性编辑组件
- * @author ltaoo<litaowork@aliyun.com>
+ * @author wuya
  */
 import React, { Component } from 'react';
 import { Form, Input, Button, Select, Switch } from 'antd';
@@ -20,12 +20,10 @@ class Sidebar extends Component {
    * 渲染通用的 Input
    */
   renderCommonInput = () => {
-    const { Component } = this.props;
-    const { props, type } = Component;
-    const { propTypes, defaultProps } = type;
-
-    const { form } = this.props;
+    const { form, instance } = this.props;
     const { getFieldDecorator } = form;
+    const { Component, props } = instance;
+    const { propTypes, defaultProps } = Component;
 
     const mergedProps = Object.assign({}, propTypes, defaultProps, props);
     const formItems = [];
@@ -57,6 +55,31 @@ class Sidebar extends Component {
     return formItems;
   };
 
+  renderFieldInputs = () => {
+    const { form, instance } = this.props;
+    const { getFieldDecorator } = form;
+    const { isField, fieldProps } = instance;
+
+    if (!isField) {
+      return null;
+    }
+
+    const {
+      title,
+      label,
+    } = fieldProps;
+    return [<FormItem key={1} label="title">
+      {getFieldDecorator('fieldProps.title', {
+        initialValue: title,
+      })(<Input />)}
+    </FormItem>,
+    <FormItem key={2} label="label">
+      {getFieldDecorator('fieldProps.label', {
+        initialValue: label,
+      })(<Input />)}
+    </FormItem>]
+  }
+
   /** 
    * 渲染校验字段
    */
@@ -77,19 +100,14 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { form } = this.props;
-    const { getFieldDecorator } = form;
+
+    const fieldInputs = this.renderFieldInputs();
     const commonInputs = this.renderCommonInput();
 
     return (
       <div className="editor__form">
         <Form>
-          <FormItem label="title">
-            {getFieldDecorator('title')(<Input />)}
-          </FormItem>
-          <FormItem label="label">
-            {getFieldDecorator('label')(<Input />)}
-          </FormItem>
+          {fieldInputs}
           {commonInputs}
           <Button type="primary" onClick={this.handleClick}>
             提交

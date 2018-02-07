@@ -67,9 +67,7 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   // 按钮的文本
   if (props.children && typeof props.children === 'string') {
     code += props.children;
-  }
-  // 嵌套组件 
-  if (children && children.length > 0) {
+  } else if (children && children.length > 0) {
     code += createSourceCode(children);
   }
   code += `</${Tag}>`;

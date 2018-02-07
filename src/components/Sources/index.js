@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 
 import * as lib from './lib';
 import './index.css';
+import EventEmitter from '../../common/emitter';
 
 const COMPONENT_MAP = {};
 for (let key in lib.optimize) {
@@ -24,7 +25,7 @@ class Source extends Component {
     };
 
     uuid += 1;
-    this.props.handleClick(instance);
+    EventEmitter.emit('addComponent', instance);
   };
 
   render() {

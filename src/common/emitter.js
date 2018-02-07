@@ -12,10 +12,10 @@ function on(type, fn) {
  * @param {*} type 
  * @param {*} val 
  */
-function emit(type, val) {
+function emit(type, ...args) {
     const fn = cache[type];
     if (fn) {
-        fn.call(null, val);
+        fn.apply(null, args);
     }
 }
 

@@ -6,20 +6,21 @@ import React from 'react';
 
 import Field from '../Field';
 import EventEmitter from '../../common/emitter';
+import { updateProps } from '../../common/util';
 
 class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       instances: [],
-      currentInstance: null,
+      currentInstance: {},
     };
   }
   componentDidMount() {
     EventEmitter.on('addComponent', (obj) => {
       const { instances, currentInstance } = this.state;
       // 如果是布局组件
-      if (currentInstance && currentInstance.layout) {
+      if (currentInstance.layout) {
         currentInstance.children = currentInstance.children || [];
         currentInstance.children.push(obj);
       } else {
@@ -28,6 +29,14 @@ class Container extends React.Component {
       this.setState({
         instances: [...instances],
       });
+    });
+    EventEmitter.on('updateComponent', (item, values) => {
+      const { instances } = this.state;
+      const { uuid } = item;
+      const { fieldProps: newFieldProps, props: newProps } = values;
+
+      // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
+      updateProps(uuid, instances, newFieldProps, newProps);
     });
   }
   /**
@@ -55,8 +64,9 @@ class Container extends React.Component {
    * 切换容器
    */
   switchContainer = (item, checked) => {
+    console.log(item, checked);
     this.setState({
-      currentInstance: checked ? item : this,
+      currentInstance: checked ? item : {},
     });
   };
   /**

@@ -30,9 +30,8 @@ function urlToPromise(url) {
  * @param {string} code 
  * @param {strin} name 
  */
-export default function createZip(components, code, name) {
+export default function createZip(code, name) {
     const zip = new JSZip();
-    const source = getIndexPageCode(components, code, name);
     // / folder
     const rootDir = '/template';
     const webpackConfigJs = 'webpack.config.js';
@@ -63,7 +62,7 @@ export default function createZip(components, code, name) {
     });
     // src/routes
     const routesFolder = srcFolder.folder('routes');
-    routesFolder.file('IndexPage.js', source);
+    routesFolder.file(`${name}.js`, code);
     routesFolder.file(
       'IndexPage.css',
       urlToPromise(`${srcDir}/routes/IndexPage.css`),
