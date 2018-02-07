@@ -94,7 +94,6 @@ function getConstructorText(instances) {
   // 去重
   return deduplication(ary);
 }
-
 /**
  * 生成页面代码
  * @param {Array} instances - 实例对象数组
@@ -104,7 +103,7 @@ function getConstructorText(instances) {
 export default function createPageCode(instances, code, name) {
   // todo 优化
   const componentCode = getComponentCode(instances).join(',\n\t');
-  const extraComponentCode = getExtraComponentCode(instances).join('\n\t');
+  const extraComponentCode = getExtraComponentCode(instances).join('\n');
   const methodsCode = getMethods(instances).join('\n');
   const constructorText = getConstructorText(instances).join('\n\t\t');
 

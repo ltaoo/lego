@@ -22,7 +22,9 @@ class Source extends Component {
     const instance = {
       uuid,
       tag,
-      ...COMPONENT_MAP[tag],
+      ...COMPONENT_MAP[tag]({
+        uuid,
+      }),
     };
 
     uuid += 1;
@@ -31,7 +33,7 @@ class Source extends Component {
 
   render() {
     const items = Object.keys(lib.optimize).map((key, i) => {
-      const item = lib.optimize[key].default;
+      const item = lib.optimize[key].default();
       return (
         <li
           key={i}

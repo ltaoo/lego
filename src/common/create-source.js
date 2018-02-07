@@ -35,6 +35,8 @@ function createPropsText(props) {
         if (nativeMethods.indexOf(key) > -1) {
           propsText.push(`${key}={this.${props[key].name}}`);
         }
+      } else if (typeof val === 'object') {
+        propsText.push(`${key}={${JSON.stringify(props[key])}}`);
       } else {
         propsText.push(`${key}={${props[key]}}`);
       }
@@ -70,12 +72,19 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   } else if (children && children.length > 0) {
     code += createSourceCode(children);
   }
+
+  if (Tag === 'Select') {
+    const { options } = instance;
+    const optionCode = options.map(option => `<Option value={${option.value}}>${option.label}</Option>}`).join('');
+    code += optionCode;
+  }
   code += `</${Tag}>`;
   if (isField) {
-    const { title, label, rules } = fieldProps;
-    code = `<Form.Item label="${title}">
+    const { title, label, rules, initialValue, labelCol, wrapperCol } = fieldProps;
+    code = `<Form.Item label="${title}" labelCol={${JSON.stringify(labelCol)}} wrapperCol={${JSON.stringify(wrapperCol)}} >
           {getFieldDecorator('${label}', {
-            rules: [],
+            rules: ${JSON.stringify(rules)},
+            initialValue: ${initialValue},
           })(
             ${code}
           )}
