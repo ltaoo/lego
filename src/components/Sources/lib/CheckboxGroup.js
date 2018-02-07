@@ -36,8 +36,8 @@ export default function (params = {}) {
     // 表单用字段
     isField: true,
     fieldProps: {
-      title: '活动名称',
-      label: 'name',
+      title: '活动性质',
+      label: 'property',
       rules: [],
       initialValue: [2],
       ...layout,
