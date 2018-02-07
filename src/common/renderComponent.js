@@ -3,7 +3,9 @@
  * @author wuya
  */
 import React from 'react';
-import { Form } from 'antd';
+import { Form, Select } from 'antd';
+
+const { Option } = Select;
 
 /**
  * @param {Array} instances - 实例对象数组
@@ -15,7 +17,7 @@ export default function renderComponent(instances, context) {
   const components = [];
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { label, Component, isField, props, fieldProps, uuid, children } = instance;
+    const { label, Component, isField, props, fieldProps, uuid, children, options = [] } = instance;
     if (isField) {
       const { title, label: id, rules, initialValue, labelCol, wrapperCol } = fieldProps;
       const { form } = context;
@@ -24,6 +26,9 @@ export default function renderComponent(instances, context) {
       let c = <Component {...props}>{renderComponent(children, context)}</Component>;
       if (label === 'Button') {
         c = <Component {...props}>{props.children}</Component>;
+      }
+      if (label === 'Select') {
+        c = <Component {...props}>{options.map(option => <Option key={i} value={option.value}>{option.label}</Option>)}</Component>;
       }
 
       const fieldComponent = id
