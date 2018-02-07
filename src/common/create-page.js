@@ -119,7 +119,7 @@ import {
   Form,
   ${componentCode}
 } from 'antd';
-import styles from './index.css';
+import styles from './IndexPage.css';
 
 ${extraComponentCode}
 

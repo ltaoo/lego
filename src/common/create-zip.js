@@ -30,7 +30,7 @@ function urlToPromise(url) {
  * @param {string} code 
  * @param {strin} name 
  */
-export default function createZip(code, name) {
+export default function createZip(code, name = 'IndexPage') {
     const zip = new JSZip();
     // / folder
     const rootDir = '/template';

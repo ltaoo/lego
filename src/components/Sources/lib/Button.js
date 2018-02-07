@@ -11,14 +11,10 @@ export default {
   constructorCode: 'this.handleClick = this.handleClick.bind(this);',
   methods: `
   handleClick () {
-    const { validateFieldsAndScroll } = this.props.form;
-    validateFieldsAndScroll([], function(err, values) {
-      if (err) {
-        return;
-      }
-      console.log(values);
-      alert(JSON.stringify(values));
-    });
+    const { getFieldsValue } = this.props.form;
+    const values = getFieldsValue();
+    console.log(values);
+    alert(JSON.stringify(values));
   }
   `,
   props: {

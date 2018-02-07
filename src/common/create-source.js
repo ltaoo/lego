@@ -74,7 +74,7 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   if (isField) {
     const { title, label, rules } = fieldProps;
     code = `<Form.Item label="${title}">
-          {getFieldDecorator(${label}, {
+          {getFieldDecorator('${label}', {
             rules: [],
           })(
             ${code}

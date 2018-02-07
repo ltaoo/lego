@@ -71,7 +71,7 @@ class App extends React.Component {
     const { instances } = this.container.state;
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
-    createZip(pageCode, 'Page');
+    createZip(pageCode);
   }
 
   render() {
