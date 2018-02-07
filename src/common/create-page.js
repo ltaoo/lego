@@ -16,20 +16,20 @@ function deduplication(ary) {
  * @return {Array}
  */
 function getComponentCode(instances) {
-  let importComponents = [];
+  let ary = [];
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const { import: importText, children } = instance;
     if (importText) {
-      importComponents.push(importText);
+      ary.push(importText);
     }
     if (children && children.length) {
-      importComponents = importComponents.concat(getComponentCode(children));
+      ary = ary.concat(getComponentCode(children));
     }
   }
   // 去重
-  return deduplication(importComponents);
+  return deduplication(ary);
 }
 /**
  * 拼接 const { xx } = Input|Form|DatePicker  中的 xx 部分
@@ -37,20 +37,20 @@ function getComponentCode(instances) {
  * @return {Array}
  */
 function getExtraComponentCode(instances) {
-  let extraImportComponents = [];
+  let ary = [];
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const { extra: importText, children } = instance;
     if (importText) {
-      extraImportComponents.push(importText);
+      ary.push(importText);
     }
     if (children && children.length) {
-      extraImportComponents = extraImportComponents.concat(getComponentCode(children));
+      ary = ary.concat(getExtraComponentCode(children));
     }
   }
   // 去重
-  return deduplication(extraImportComponents);
+  return deduplication(ary);
 }
 /**
  * 拼接 const { xx } = Input|Form|DatePicker  中的 xx 部分
@@ -58,20 +58,20 @@ function getExtraComponentCode(instances) {
  * @return {Array}
  */
 function getMethods(instances) {
-  let extraImportComponents = [];
+  let ary = [];
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const { methods, children } = instance;
     if (methods) {
-      extraImportComponents.push(methods);
+      ary.push(methods);
     }
     if (children && children.length) {
-      extraImportComponents = extraImportComponents.concat(getComponentCode(children));
+      ary = ary.concat(getMethods(children));
     }
   }
   // 去重
-  return deduplication(extraImportComponents);
+  return deduplication(ary);
 }
 /**
  * 拼接 const { xx } = Input|Form|DatePicker  中的 xx 部分
@@ -79,20 +79,20 @@ function getMethods(instances) {
  * @return {Array}
  */
 function getConstructorText(instances) {
-  let extraImportComponents = [];
+  let ary = [];
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const { constructorCode, children } = instance;
     if (constructorCode) {
-      extraImportComponents.push(constructorCode);
+      ary.push(constructorCode);
     }
     if (children && children.length) {
-      extraImportComponents = extraImportComponents.concat(getComponentCode(children));
+      ary = ary.concat(getConstructorText(children));
     }
   }
   // 去重
-  return deduplication(extraImportComponents);
+  return deduplication(ary);
 }
 
 /**
