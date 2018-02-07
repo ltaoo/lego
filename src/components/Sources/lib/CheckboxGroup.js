@@ -22,6 +22,7 @@ const options = [
     value: 3,
   },
 ];
+function onChange() {}
 
 export default function (params = {}) {
   const { uuid } = params;
@@ -31,7 +32,7 @@ export default function (params = {}) {
     import: 'Checkbox',
     extra: 'const { CheckboxGroup } = Checkbox;',
     stateCode: `options${uuid}: ${JSON.stringify(options)}`,
-    renderCode: `const { options${uuid} } = this.state;`,
+    renderCode: `options${uuid}`,
     // 表单用字段
     isField: true,
     fieldProps: {
@@ -42,8 +43,9 @@ export default function (params = {}) {
       ...layout,
     },
     props: {
-      placeholder: '请输入活动名称',
       options,
+      optionsVal: `options${uuid}`,
+      onChange: onChange,
     },
   };
 };

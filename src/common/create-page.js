@@ -95,6 +95,42 @@ function getConstructorText(instances) {
   return deduplication(ary);
 }
 /**
+ * 拼接 const { xx } = Input|Form|DatePicker  中的 xx 部分
+ * @param {Array} instances - 实例对象
+ * @return {Array}
+ */
+function getStateText(instances) {
+  let ary = [];
+
+  for (let i = 0, l = instances.length; i < l; i += 1) {
+    const instance = instances[i];
+    const { stateCode } = instance;
+    if (stateCode) {
+      ary.push(stateCode);
+    }
+  }
+  // 去重
+  return deduplication(ary);
+}
+/**
+ * 拼接 const { xx } = Input|Form|DatePicker  中的 xx 部分
+ * @param {Array} instances - 实例对象
+ * @return {Array}
+ */
+function getRenderCode(instances) {
+  let ary = [];
+
+  for (let i = 0, l = instances.length; i < l; i += 1) {
+    const instance = instances[i];
+    const { renderCode } = instance;
+    if (renderCode) {
+      ary.push(renderCode);
+    }
+  }
+  // 去重
+  return deduplication(ary);
+}
+/**
  * 生成页面代码
  * @param {Array} instances - 实例对象数组
  * @param {string} code 
@@ -106,10 +142,15 @@ export default function createPageCode(instances, code, name) {
   const extraComponentCode = getExtraComponentCode(instances).join('\n');
   const methodsCode = getMethods(instances).join('\n');
   const constructorText = getConstructorText(instances).join('\n\t\t');
+  const stateCode = getStateText(instances).join(',\n\t\t\t');
+  const renderCode = getRenderCode(instances).join(',\n\t\t\t');
 
-  const constructorCode = constructorText ? `constructor(props) {
+  const constructorCode = (constructorText || stateCode) ? `constructor(props) {
     super(props);
     ${constructorText}
+    this.state = {
+      ${stateCode}
+    };
   }
   ` : '';
 
@@ -126,7 +167,11 @@ class ${name} extends Component {
   ${constructorCode}
   ${methodsCode}
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { form } = this.props;
+    const {
+      ${renderCode}
+     } = this.state;
+    const { getFieldDecorator } = form;
     return (
       <div className={styles.container}>
         ${code}
