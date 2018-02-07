@@ -84,14 +84,22 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   }
   code += `</${Tag}>`;
   if (isField) {
-    const { title, label, rules, initialValue, labelCol, wrapperCol } = fieldProps;
-    code = `<Form.Item label="${title}" labelCol={${JSON.stringify(labelCol)}} wrapperCol={${JSON.stringify(wrapperCol)}} >
-          {getFieldDecorator('${label}', {
-            rules: ${JSON.stringify(rules)},
-            initialValue: ${initialValue},
-          })(
-            ${code}
-          )}
+    const { title, label, rules, initialValue = false, labelCol, wrapperCol } = fieldProps;
+    const rulesText = rules ? `rules: ${JSON.stringify(rules)}` : '';
+    const initialValueText = initialValue ? `initialValue: ${initialValue}` : '';
+    const labelColText = labelCol ? ` labelCol={${JSON.stringify(labelCol)}}` : '';
+    const wrapperColText = wrapperCol ? ` wrapperCol={${JSON.stringify(wrapperCol)}}` : '';
+
+    const optionsText = [rulesText, initialValueText].filter(item => !!item).join(',\n\t\t');
+    const decoratorText = label
+      ? `{getFieldDecorator('${label}', {
+        ${optionsText}
+      })(
+        ${code}
+      )}`
+      : code;
+    code = `<Form.Item label="${title}"${labelColText}${wrapperColText}>
+          ${decoratorText}
         </Form.Item>`;
   }
   return code;
