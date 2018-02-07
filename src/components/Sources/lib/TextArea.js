@@ -7,6 +7,11 @@ const { TextArea } = Input;
 export default {
     Component: TextArea,
     label: 'TextArea',
+    isField: true,
+    fieldProps: {
+        title: '文本域',
+        label: 'desc',
+    },
     extra: 'const { TextArea } = Input;',
     props: {
         placeholder: '请输入正文内容',

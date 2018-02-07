@@ -32,7 +32,6 @@ function createPropsText(props) {
         propsText.push(`${key}=${props[key]}`);
         propsMap[key] = val;
       } else if (typeof val === 'function') {
-        console.dir(val);
         if (nativeMethods.indexOf(key) > -1) {
           propsText.push(`${key}={this.${props[key].name}}`);
         }
