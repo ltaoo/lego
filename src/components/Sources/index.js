@@ -3,6 +3,7 @@
  * @author wuya
  */
 import React, { Component } from 'react';
+import { Input } from 'antd';
 
 import * as lib from './lib';
 import './index.css';
@@ -43,6 +44,9 @@ class Source extends Component {
     });
     return (
       <div className="sidebar">
+        <div className="sidebar__search">
+          <Input placeholder="筛选组件" />
+        </div>
         <ul className="sidebar__components">
           {items}
         </ul>

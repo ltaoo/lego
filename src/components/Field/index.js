@@ -4,13 +4,14 @@
  */
 import React from 'react';
 import PropType from 'prop-types';
-import { Form, Modal, Icon, Checkbox, Col } from 'antd';
+import { Form, Modal, Icon, Checkbox, Col, Select } from 'antd';
 
 import EventEmitter from '../../common/emitter';
 import createSource from '../../common/create-source';
 import ComponentEditor from '../Editor';
 
 const { Item: FormItem } = Form;
+const { Option } = Select;
 
 class Field extends React.Component {
   constructor(props) {
@@ -79,7 +80,7 @@ class Field extends React.Component {
       isField,
       fieldProps = {},
     } = item;
-    const { title, label, rules } = fieldProps;
+    const { title, label, rules, initialValue, labelCol, wrapperCol } = fieldProps;
 
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
       return (
@@ -92,6 +93,7 @@ class Field extends React.Component {
       );
     }) : null;
 
+    // todo: 使用策略模式拆分
     let instanceCom = <Component {...props} {...changedProps}></Component>;
     if (childrenComponent) {
       instanceCom = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
@@ -99,6 +101,14 @@ class Field extends React.Component {
 
     if (objLabel === 'Col') {
       instanceCom = <div>{childrenComponent}</div>;
+    }
+    if (objLabel === 'Select') {
+      const { options } = item;
+      const chidlrenOptions = options.map((option, i) => <Option key={i} value={option.value}>{option.label}</Option>);
+      instanceCom = <Component {...props} {...changedProps}>{chidlrenOptions}</Component>;
+    }
+    if (objLabel === 'Checkbox') {
+      // instanceCom = <Component {...props}></Component>;
     }
     const modal = (
       <Modal
@@ -128,14 +138,21 @@ class Field extends React.Component {
         {layout && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
       </div>
     );
+    // Button 要使用 Form.Item 布局但是不是字段，所以判断下要不要 getFieldDecorator
+    const fieldInstance = label
+      ? getFieldDecorator(label, {
+          rules,
+          initialValue,
+        })(instanceCom)
+      : instanceCom;
     const content = (
       <div className="field">
         <div className="edit__wrapper">
           {operators}
-          {isField ? <FormItem label={title}>
-            {getFieldDecorator(label, {
-              rules,
-            })(instanceCom)}
+          {isField ? <FormItem label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
+            { 
+              fieldInstance
+            }
           </FormItem>
           : instanceCom}
         </div>

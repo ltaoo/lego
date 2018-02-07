@@ -1,19 +1,20 @@
-import {
-    Input,
-} from 'antd';
+import { Input } from 'antd';
+
+import layout from './fieldLayout';
 
 const { TextArea } = Input;
 
 export default {
-    Component: TextArea,
-    label: 'TextArea',
-    isField: true,
-    fieldProps: {
-        title: '文本域',
-        label: 'desc',
-    },
-    extra: 'const { TextArea } = Input;',
-    props: {
-        placeholder: '请输入正文内容',
-    },
-}
+  Component: TextArea,
+  label: 'TextArea',
+  isField: true,
+  fieldProps: {
+    title: '活动形式',
+    label: 'type',
+    ...layout,
+  },
+  extra: 'const { TextArea } = Input;',
+  props: {
+    placeholder: '请输入活动形式',
+  },
+};

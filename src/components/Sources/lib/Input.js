@@ -1,5 +1,7 @@
 import { Input } from 'antd';
 
+import layout from './fieldLayout';
+
 export default {
   Component: Input,
   label: 'Input',
@@ -7,11 +9,17 @@ export default {
   // 表单用字段
   isField: true,
   fieldProps: {
-    title: '标题',
+    title: '活动名称',
     label: 'name',
-    rules: [],
+    rules: [
+      {
+        required: true,
+        message: '请输入活动名称',
+      },
+    ],
+    ...layout,
   },
   props: {
-    placeholder: '请输入用户名',
+    placeholder: '请输入活动名称',
   },
 }

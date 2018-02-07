@@ -17,11 +17,16 @@ function exportPlugins(exports, plugins) {
 }
 
 exportPlugins((exports.optimize = {}), [
+  // 这里的会作为每个被导入的 key
   'Row',
   'Col',
   'Input',
   'TextArea',
+  'Select',
   'DatePicker',
+  'CheckboxGroup',
+  'RadioGroup',
+  'Switch',
   'Button',
 ]);
 

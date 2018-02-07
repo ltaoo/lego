@@ -17,6 +17,16 @@ export default {
     alert(JSON.stringify(values));
   }
   `,
+  // 表单用字段
+  isField: true,
+  fieldProps: {
+    title: '',
+    label: null,
+    rules: [],
+    wrapperCol: {
+      offset: 2,
+    },
+  },
   props: {
     children: '提交',
     type: 'primary',
