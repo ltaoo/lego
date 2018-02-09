@@ -3,10 +3,21 @@
  * @author wuya
  */
 import React, { Component } from 'react';
-import { Row, Col, Divider, Icon, Form, Input, Button, Select, Switch } from 'antd';
+import { Row, Col, Divider, Icon, Form, Input, InputNumber, Button, Select, Switch } from 'antd';
 
 const { Item: FormItem } = Form;
 const { Option } = Select;
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 6 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 18 },
+  },
+};
 
 let uuid = 0;
 
@@ -39,7 +50,8 @@ class Sidebar extends Component {
     const { submit, form } = this.props;
     const { getFieldsValue } = form;
     const values = getFieldsValue();
-    submit(values);
+    console.log(values);
+    // submit(values);
   };
   /**
    * 渲染通用的 Input
@@ -139,18 +151,24 @@ class Sidebar extends Component {
     const existOptions = options.map((option, i) => {
       return (
         <Row key={i} gutter={14}>
-          <Col span={12}>
-            <FormItem label="label">
+          <Col span={10}>
+            <FormItem label="label" {...formItemLayout}>
               {getFieldDecorator(`options[${i}].label`, {
                 initialValue: option.label,
               })(<Input />)}
             </FormItem>
           </Col>
-          <Col span={12}>
-            <FormItem label="value">
+          <Col span={14}>
+            <FormItem label="value" {...formItemLayout}>
               {getFieldDecorator(`options[${i}].value`, {
                 initialValue: option.value,
-              })(<Input />)}
+              })(<InputNumber />)}
+              <Icon
+                className="dynamic-delete-button"
+                style={{ marginLeft: 20 }}
+                type="minus-circle-o"
+                onClick={() => this.removeExistOption()}
+              />
             </FormItem>
           </Col>
         </Row>
@@ -164,16 +182,22 @@ class Sidebar extends Component {
       const i = index + options.length;
       return (
         <Row key={i} gutter={14}>
-          <Col span={12}>
-            <FormItem label="label">
+          <Col span={10}>
+            <FormItem label="label" {...formItemLayout}>
               {getFieldDecorator(`options[${i}].label`, {
               })(<Input />)}
             </FormItem>
           </Col>
-          <Col span={12}>
-            <FormItem label="value">
+          <Col span={14}>
+            <FormItem label="value" {...formItemLayout}>
               {getFieldDecorator(`options[${i}].value`, {
-              })(<Input />)}
+              })(<InputNumber />)}
+              <Icon
+                className="dynamic-delete-button"
+                style={{ marginLeft: 20 }}
+                type="minus-circle-o"
+                onClick={() => this.remove(k)}
+              />
             </FormItem>
           </Col>
         </Row>
