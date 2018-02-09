@@ -8,6 +8,7 @@ export default function getTextArea() {
   return {
     Component: TextArea,
     label: 'TextArea',
+    import: 'Input',
     isField: true,
     fieldProps: {
       title: '活动形式',

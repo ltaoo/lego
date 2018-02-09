@@ -79,7 +79,7 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
 
   if (Tag === 'Select') {
     const { options } = instance;
-    const optionCode = options.map(option => `<Option value={${option.value}}>${option.label}</Option>}`).join('');
+    const optionCode = options.map(option => `<Option value={${option.value}}>${option.label}</Option>`).join('');
     code += optionCode;
   }
   code += `</${Tag}>`;
