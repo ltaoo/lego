@@ -33,10 +33,10 @@ class Container extends React.Component {
     EventEmitter.on('updateComponent', (item, values) => {
       const { instances } = this.state;
       const { uuid } = item;
-      const { fieldProps: newFieldProps, props: newProps } = values;
+      const { fieldProps: newFieldProps, props: newProps, options } = values;
 
       // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
-      updateProps(uuid, instances, newFieldProps, newProps);
+      updateProps(uuid, instances, newFieldProps, newProps, options);
     });
   }
   /**

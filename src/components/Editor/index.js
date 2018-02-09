@@ -50,8 +50,7 @@ class Sidebar extends Component {
     const { submit, form } = this.props;
     const { getFieldsValue } = form;
     const values = getFieldsValue();
-    console.log(values);
-    // submit(values);
+    submit(values);
   };
   /**
    * 渲染通用的 Input
@@ -117,7 +116,7 @@ class Sidebar extends Component {
     const fields = ['title', 'label'];
     return fields.map((field, i) => {
       return <FormItem key={i} label={field}>
-        {getFieldDecorator('fieldProps.title', {
+        {getFieldDecorator(`fieldProps.${field}`, {
           initialValue: obj[field],
         })(<Input />)}
       </FormItem>
