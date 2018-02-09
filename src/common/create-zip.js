@@ -62,11 +62,6 @@ export default function createZip(code, name = 'IndexPage') {
     // src/routes
     const routesFolder = srcFolder.folder('routes');
     routesFolder.file(`${name}.js`, code);
-    routesFolder.file(
-      'IndexPage.css',
-      urlToPromise(`${srcDir}/routes/IndexPage.css`),
-      { binary: true },
-    );
     zip.generateAsync({ type: 'blob' }).then(function(content) {
       // see FileSaver.js
       FileSaver.saveAs(content, 'example.zip');

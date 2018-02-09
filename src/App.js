@@ -70,7 +70,7 @@ class App extends React.Component {
   createZip = () => {
     const { instances } = this.container.state;
     const code = createSourceCode(instances);
-    const pageCode = createPageCode(instances, code, 'Index');
+    const pageCode = window.prettier.format(createPageCode(instances, code, 'Index'));
     createZip(pageCode);
   }
 

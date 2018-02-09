@@ -150,16 +150,13 @@ export default function createPageCode(instances, code, name) {
     ${constructorText}
     this.state = {
       ${stateCode}
-    };
-  }
-  ` : '';
+    };}` : '';
 
   return `import React, { Component } from 'react';
 import {
   Form,
   ${componentCode}
 } from 'antd';
-import styles from './IndexPage.css';
 
 ${extraComponentCode}
 
@@ -173,7 +170,7 @@ class ${name} extends Component {
      } = this.state;
     const { getFieldDecorator } = form;
     return (
-      <div className={styles.container}>
+      <div style={{ margin: '0 auto', width: 980 }}>
         ${code}
       </div>
     );

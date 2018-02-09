@@ -33,11 +33,6 @@ module.exports = {
             })
         }]
     },
-    externals: {
-        react: 'React',
-        'react-dom': 'ReactDOM',
-        antd: 'antd'
-    },
     plugins: [
         new ExtractTextPlugin("styles.css"),
         new HtmlWebpackPlugin({
