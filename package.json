@@ -1,7 +1,7 @@
 {
   "name": "lego",
   "version": "0.1.0",
-  "private": true,
+  "homepage" : "https://ltaoo.github.io/lego",
   "dependencies": {
     "antd": "^3.1.1",
     "autoprefixer": "7.1.6",
@@ -59,7 +59,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "jest": {
     "collectCoverageFrom": [
