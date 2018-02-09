@@ -3,19 +3,44 @@
  * @author wuya
  */
 import React, { Component } from 'react';
-import { Form, Input, Button, Select, Switch } from 'antd';
+import { Row, Col, Divider, Icon, Form, Input, Button, Select, Switch } from 'antd';
 
 const { Item: FormItem } = Form;
 const { Option } = Select;
 
+let uuid = 0;
+
 class Sidebar extends Component {
+  /**
+   * 移除 option
+   */
+  remove = (k) => {
+    const { form } = this.props;
+    // can use data-binding to get
+    const keys = form.getFieldValue('keys');
+    // can use data-binding to set
+    form.setFieldsValue({
+      keys: keys.filter(key => key !== k),
+    });
+  }
+  /**
+   * 新增 option
+   */
+  add = () => {
+    const { form } = this.props;
+    const keys = form.getFieldValue('keys');
+    const nextKeys = keys.concat(uuid);
+    uuid++;
+    form.setFieldsValue({
+      keys: nextKeys,
+    });
+  }
   handleClick = () => {
     const { submit, form } = this.props;
     const { getFieldsValue } = form;
     const values = getFieldsValue();
     submit(values);
   };
-
   /**
    * 渲染通用的 Input
    */
@@ -55,6 +80,9 @@ class Sidebar extends Component {
     return formItems;
   };
 
+  /**
+   * 表单字段相关的如 title、label、initialValue、rules等
+   */
   renderFieldInputs = () => {
     const { form, instance } = this.props;
     const { getFieldDecorator } = form;
@@ -68,16 +96,20 @@ class Sidebar extends Component {
       title,
       label,
     } = fieldProps;
-    return [<FormItem key={1} label="title">
-      {getFieldDecorator('fieldProps.title', {
-        initialValue: title,
-      })(<Input />)}
-    </FormItem>,
-    <FormItem key={2} label="label">
-      {getFieldDecorator('fieldProps.label', {
-        initialValue: label,
-      })(<Input />)}
-    </FormItem>]
+
+    const obj = {
+      title,
+      label,
+    };
+
+    const fields = ['title', 'label'];
+    return fields.map((field, i) => {
+      return <FormItem key={i} label={field}>
+        {getFieldDecorator('fieldProps.title', {
+          initialValue: obj[field],
+        })(<Input />)}
+      </FormItem>
+    });
   }
 
   /** 
@@ -99,19 +131,85 @@ class Sidebar extends Component {
     return items;
   }
 
-  render() {
+  /** 
+   * 渲染 options
+   */
+  renderOptions = (options) => {
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const existOptions = options.map((option, i) => {
+      return (
+        <Row key={i} gutter={14}>
+          <Col span={12}>
+            <FormItem label="label">
+              {getFieldDecorator(`options[${i}].label`, {
+                initialValue: option.label,
+              })(<Input />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem label="value">
+              {getFieldDecorator(`options[${i}].value`, {
+                initialValue: option.value,
+              })(<Input />)}
+            </FormItem>
+          </Col>
+        </Row>
+      );
+    });
+    const keys = getFieldValue('keys');
+    if (!keys) {
+      return existOptions;
+    }
+    const newOptions = keys.map((k, index) => {
+      const i = index + options.length;
+      return (
+        <Row key={i} gutter={14}>
+          <Col span={12}>
+            <FormItem label="label">
+              {getFieldDecorator(`options[${i}].label`, {
+              })(<Input />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem label="value">
+              {getFieldDecorator(`options[${i}].value`, {
+              })(<Input />)}
+            </FormItem>
+          </Col>
+        </Row>
+      );
+    });
 
+    return existOptions.concat(newOptions);
+  }
+
+  render() {
+    const { instance, form } = this.props;
+    const { getFieldDecorator } = form;
     const fieldInputs = this.renderFieldInputs();
     const commonInputs = this.renderCommonInput();
-
+    let optionInputs = null;
+    if (instance.options && instance.options.length) {
+      optionInputs = this.renderOptions(instance.options);
+    }
+    getFieldDecorator('keys', { initialValue: [] });
     return (
       <div className="editor__form">
         <Form>
-          {fieldInputs}
           {commonInputs}
-          <Button type="primary" onClick={this.handleClick}>
-            提交
+          <Divider>Fields</Divider>
+          {fieldInputs}
+          <Divider>Options</Divider>
+          {optionInputs}
+          <Button style={{ width: '100%' }} type="dashed" onClick={this.add}>
+            <Icon type="plus" /> Add field
           </Button>
+          <Divider></Divider>
+          <Form.Item>
+            <Button style={{ width: '100%' }} type="primary" onClick={this.handleClick}>
+              提交
+            </Button>
+          </Form.Item>
         </Form>
       </div>
     );

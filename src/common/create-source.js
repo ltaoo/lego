@@ -13,7 +13,6 @@ const IGNORE_ITEMS = ['children', 'options'];
  */
 function createPropsText(props) {
   const propsText = [];
-  const propsMap = {};
 
   const keys = Object.keys(props);
   for (let i = 0, l = keys.length; i < l; i += 1) {
@@ -31,10 +30,8 @@ function createPropsText(props) {
       }
       if (typeof val === 'string') {
         propsText.push(`${key}="${props[key]}"`);
-        propsMap[key] = `"${val}"`;
       } else if (typeof val === 'boolean') {
         propsText.push(`${key}=${props[key]}`);
-        propsMap[key] = val;
       } else if (typeof val === 'function') {
         if (nativeMethods.indexOf(key) > -1) {
           propsText.push(`${key}={this.${props[key].name}}`);
@@ -76,7 +73,7 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   } else if (children && children.length > 0) {
     code += createSourceCode(children);
   }
-
+  // Select 需要处理 Option
   if (Tag === 'Select') {
     const { options } = instance;
     const optionCode = options.map(option => `<Option value={${option.value}}>${option.label}</Option>`).join('');

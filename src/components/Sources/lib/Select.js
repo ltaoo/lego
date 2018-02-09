@@ -19,10 +19,10 @@ export default function getSelectInstance() {
       ...layout,
     },
     methods: `
-  onChange (val) {
-    alert(val);
-  }
-  `,
+      onChange (val) {
+        alert(val);
+      }
+    `,
     options: [{ label: '区域一', value: 0 }, { label: '区域二', value: 1 }],
     props: {
       style: { width: 200 },
