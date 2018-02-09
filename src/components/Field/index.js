@@ -132,9 +132,6 @@ class Field extends React.Component {
         <div className="edit__btn" onClick={this.removeComponent}>
           <Icon type="delete" />
         </div>
-        <div className="edit__btn" onClick={this.previewSource}>
-          <Icon type="eye-o" />
-        </div>
         {layout && <Checkbox onChange={this.selectRow}>勾选后会将组件添加到内部</Checkbox>}
       </div>
     );

@@ -6,7 +6,7 @@ import React from 'react';
 
 import Field from '../Field';
 import EventEmitter from '../../common/emitter';
-import { updateProps } from '../../common/util';
+import { updateProps, removeComponent } from '../../common/util';
 
 class Container extends React.Component {
   constructor(props) {
@@ -40,25 +40,14 @@ class Container extends React.Component {
     });
   }
   /**
-   * 删除指定组件
+   * 移除指定组件
    */
   removeComponent = item => {
-    const { components } = this.state;
-    const index = components.indexOf(item);
-    components.splice(index, 1);
-    const codeObj = this.code;
-    this.setState(
-      {
-        components: [...components],
-      },
-      () => {
-        delete codeObj[item.uuid];
-        const code = this.createSource();
-        this.setState({
-          code,
-        });
-      },
-    );
+    const { instances } = this.state;
+    removeComponent(item.uuid, instances);
+    this.setState({
+      instances: [...instances],
+    });
   };
   /**
    * 切换容器
