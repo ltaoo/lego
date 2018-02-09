@@ -213,7 +213,16 @@ class Sidebar extends Component {
     const commonInputs = this.renderCommonInput();
     let optionInputs = null;
     if (instance.options && instance.options.length) {
-      optionInputs = this.renderOptions(instance.options);
+      optionInputs = (
+        <div>
+          <Divider>Options</Divider>
+          {this.renderOptions(instance.options)}
+          <Button style={{ width: '100%' }} type="dashed" onClick={this.add}>
+            <Icon type="plus" /> Add field
+          </Button>
+          <Divider></Divider>
+        </div>
+      );
     }
     getFieldDecorator('keys', { initialValue: [] });
     return (
@@ -222,12 +231,7 @@ class Sidebar extends Component {
           {commonInputs}
           <Divider>Fields</Divider>
           {fieldInputs}
-          <Divider>Options</Divider>
           {optionInputs}
-          <Button style={{ width: '100%' }} type="dashed" onClick={this.add}>
-            <Icon type="plus" /> Add field
-          </Button>
-          <Divider></Divider>
           <Form.Item>
             <Button style={{ width: '100%' }} type="primary" onClick={this.handleClick}>
               提交
