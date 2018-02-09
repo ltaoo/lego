@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>测试 pretty 格式化代码</title>
+    <script src="https://bundle.run/prettier@1.6.1"></script>
+</head>
+<body>
+    <input id="input" />
+    <button id="btn">点击</button>
+    <pre><code id="code"></code></pre>
+    <script>
+        document.body.onload = function () {
+            const btn = document.querySelector('#btn');
+            const input = document.querySelector('#input');
+            const code = document.querySelector('#code');
+            console.log(prettier);
+            btn.onclick = function () {
+                const val = input.value;
+                const res = prettier.format(val);
+                code.innerText = res;
+            }
+        }
+    </script>
+</body>
+</html>

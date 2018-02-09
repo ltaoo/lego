@@ -1,12 +1,11 @@
 /**
  * @file 创建压缩包
- * @author ltaoo<litaowork@aliyun.com>
+ * @author wuya
  */
 
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
 
-import getIndexPageCode from './create-page';
 import JSZipUtils from './jszip-utils';
 /**
  * 下载文件脚手架文件

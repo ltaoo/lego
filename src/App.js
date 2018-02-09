@@ -7,7 +7,6 @@ import Sources from './components/Sources';
 import Container from './components/Container';
 
 // util
-import EventEmitter from './common/emitter';
 import createSourceCode from './common/create-source';
 import createPageCode from './common/create-page';
 import createZip from './common/create-zip';
@@ -49,8 +48,9 @@ class App extends React.Component {
     const { instances } = this.container.state;
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
+    const formatedCode = window.prettier.format(pageCode);
     this.setState({
-      code: pageCode,
+      code: formatedCode,
     });
     this.showCodeModal();
   };
