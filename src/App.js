@@ -1,7 +1,6 @@
 import React from 'react';
+import { findDOMNode } from 'react-dom';
 import { Layout, Button, Form, Modal } from 'antd';
-// 代码编辑器
-import MonacoEditor from 'react-monaco-editor';
 
 import Sources from './components/Sources';
 import Container from './components/Container';
@@ -49,15 +48,20 @@ class App extends React.Component {
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
     const formatedCode = window.prettier.format(pageCode);
-    this.setState({
-      code: formatedCode,
+    this.showCodeModal(() => {
+      this.setState({
+        code: formatedCode,
+      }, () => {
+        const codeContainer = findDOMNode(this.codeCon);
+        window.hljs.highlightBlock(codeContainer);
+      });
     });
-    this.showCodeModal();
+    
   };
-  showCodeModal = () => {
+  showCodeModal = (cb) => {
     this.setState({
       codeVisible: true,
-    });
+    }, cb);
   };
   hideCodeModal = () => {
     this.setState({
@@ -124,20 +128,10 @@ class App extends React.Component {
           visible={codeVisible}
           onOk={this.hideCodeModal}
           onCancel={this.hideCodeModal}
+          footer={null}
         >
           <div>
-            <MonacoEditor
-              ref={r => (this.editor = r)}
-              height="600"
-              language="javascript"
-              theme="vs-dark"
-              value={code}
-              options={{
-                language: 'javascript',
-                minimap: false,
-                readOnly: true,
-              }}
-            />
+            <pre><code ref={e => this.codeCon = e} className="jsx">{code}</code></pre>
           </div>
         </Modal>
         <Modal
