@@ -83,7 +83,7 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   }
   code += `</${Tag}>`;
   if (isField) {
-    const { title, label, rules, initialValue = false, labelCol, wrapperCol } = fieldProps;
+    const { title, label, rules, initialValue, labelCol, wrapperCol } = fieldProps;
     const rulesText = rules ? `rules: ${JSON.stringify(rules)}` : '';
     const initialValueText = initialValue !== undefined ? `initialValue: ${JSON.stringify(initialValue)}` : '';
     const labelColText = labelCol ? ` labelCol={${JSON.stringify(labelCol)}}` : '';
