@@ -29,41 +29,18 @@ function urlToPromise(url) {
  * @param {string} code 
  * @param {strin} name 
  */
-export default function createZip(code, name = 'IndexPage') {
-    const zip = new JSZip();
-    // / folder
-    const rootDir = '/template';
-    const webpackConfigJs = 'webpack.config.js';
-    zip.file(webpackConfigJs, urlToPromise(`${rootDir}/${webpackConfigJs}`), {
-      binary: true,
-    });
-    const babelrcFile = 'babelrc';
-    zip.file(`.${babelrcFile}`, urlToPromise(`${rootDir}/${babelrcFile}`), {
-      binary: true,
-    });
-    const packageFile = 'package.json';
-    zip.file(packageFile, urlToPromise(`${rootDir}/${packageFile}`), {
-      binary: true,
-    });
-    const gitignoreFile = 'gitignore';
-    zip.file(`.${gitignoreFile}`, urlToPromise(`${rootDir}/${gitignoreFile}`), {
-      binary: true,
-    });
-    // src folder
-    const srcDir = '/template/src';
-    zip.folder('src');
-    const srcFolder = zip.folder('src');
-    srcFolder.file('index.js', urlToPromise(`${srcDir}/index.js`), {
-      binary: true,
-    });
-    srcFolder.file('index.html', urlToPromise(`${srcDir}/index.html`), {
-      binary: true,
-    });
-    // src/routes
-    const routesFolder = srcFolder.folder('routes');
-    routesFolder.file(`${name}.js`, code);
-    zip.generateAsync({ type: 'blob' }).then(function(content) {
-      // see FileSaver.js
-      FileSaver.saveAs(content, 'example.zip');
-    });
+export default function createZip(code) {
+    urlToPromise('/example.zip')
+      .then((data) => {
+        return JSZip.loadAsync(data);
+      })
+      .then((file) => {
+        console.log(file);
+        file.folder('src').folder('routes').file('Index.js', code);
+        // 生成 zip 包
+        file.generateAsync({ type: 'blob' }).then(function(content) {
+          // see FileSaver.js
+          FileSaver.saveAs(content, 'example.zip');
+        });
+      });
 }

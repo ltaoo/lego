@@ -12,7 +12,7 @@ export function updateProps(uuid, instances, values) {
     options,
     rules,
   } = values;
-  // console.log(uuid, instances, fieldProps, props, options);
+  console.log(values);
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     if (instance.uuid === uuid) {
