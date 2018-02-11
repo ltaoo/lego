@@ -22,7 +22,7 @@ export default function getRadioInstance(params = {}) {
     label: 'RadioGroup',
     import: 'Radio',
     extra: 'const { Group: RadioGroup } = Radio;',
-    stateCode: `options${uuid}: ${JSON.stringify(options)}`,
+    stateCode: `options${uuid}:`,
     renderCode: `options${uuid}`,
     // 表单用字段
     isField: true,

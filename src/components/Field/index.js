@@ -112,7 +112,7 @@ class Field extends React.Component {
       const { options } = item;
       const chidlrenOptions = options.map((option, i) => <Option key={i} value={option.value}>{option.label}</Option>);
       instanceCom = <Component {...props}>{chidlrenOptions}</Component>;
-    } else if (objLabel === 'CheckboxGroup' || objLabel === 'RadioGroup') {
+    } else if (objLabel === 'CheckboxGroup' || objLabel === 'RadioGroup' || objLabel === 'Cascader') {
       const { options } = item;
       const newProps = Object.assign({}, {...props}, {
         options,

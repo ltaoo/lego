@@ -31,7 +31,7 @@ function createPropsText(props) {
       if (typeof val === 'string') {
         propsText.push(`${key}="${props[key]}"`);
       } else if (typeof val === 'boolean') {
-        propsText.push(`${key}=${props[key]}`);
+        propsText.push(`${key}={${props[key]}}`);
       } else if (typeof val === 'function') {
         if (nativeMethods.indexOf(key) > -1) {
           propsText.push(`${key}={this.${props[key].name}}`);
@@ -53,8 +53,9 @@ function createPropsText(props) {
  * @param {Object} props 
  */
 function mergeProps(Component, props) {
-  const { propTypes, defaultProps } = Component;
-  return Object.assign({}, propTypes, defaultProps, props);
+  const { propTypes } = Component;
+  // 移除 defaultProps
+  return Object.assign({}, propTypes, props);
 }
 
 /**
@@ -108,7 +109,6 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
  * @param {Array} instances - 实例对象数组
  */
 export default function createSourceCode(instances) {
-  console.log('root', instances);
   let code = '';
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];

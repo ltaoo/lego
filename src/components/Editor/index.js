@@ -3,10 +3,10 @@
  * @author wuya
  */
 import React, { Component } from 'react';
-import { Row, Col, Divider, Icon, Form, Input, InputNumber, Button, Select, Switch } from 'antd';
+import { Row, Col, Divider, Icon, Form, Input, InputNumber, Button, Radio, Switch } from 'antd';
 
 const { Item: FormItem } = Form;
-const { Option } = Select;
+const { Group: RadioGroup } = Radio;
 
 const formItemLayout = {
   labelCol: {
@@ -18,8 +18,6 @@ const formItemLayout = {
     sm: { span: 18 },
   },
 };
-
-let uuid = 0;
 
 class Sidebar extends Component {
   constructor(props) {
@@ -70,15 +68,15 @@ class Sidebar extends Component {
     submit(values);
   };
   /**
-   * 渲染通用的 Input
+   * 渲染 instanceObj 中 props
    */
   renderCommonInput = () => {
     const { form, instance } = this.props;
     const { getFieldDecorator } = form;
     const { Component, props } = instance;
-    const { propTypes, defaultProps } = Component;
+    const { propTypes } = Component;
 
-    const mergedProps = Object.assign({}, propTypes, defaultProps, props);
+    const mergedProps = Object.assign({}, propTypes, props);
     const formItems = [];
     let i = 0;
     for (let key in mergedProps) {
@@ -93,11 +91,19 @@ class Sidebar extends Component {
             </FormItem>
           );
         } else if (typeof val === 'boolean') {
+          const options = [
+            {
+              label: '是',
+              value: 0,
+            }, {
+              label: '否',
+              value: 1,
+            },
+          ];
           formItems.push(
             <FormItem key={i} label={key}>
               {getFieldDecorator(`props.${key}`, {
-                initialValue: mergedProps[key],
-              })(<Select><Option val={true}>True</Option><Option val={false}>False</Option></Select>)}
+              })(<RadioGroup options={options} />)}
             </FormItem>
           );
         }
@@ -202,23 +208,37 @@ class Sidebar extends Component {
 
   /** 
    * 渲染 options
+   * @param {Array} options - 要渲染的项
+   * @param {boolean} child - 是否是子项（改变样式）
    */
-  renderOptions = () => {
-    const { options } = this.state;
+  renderOptions = (options, child, parentIndex, extra = '') => {
     const { getFieldDecorator } = this.props.form;
+    const style = child ? { marginLeft: 20 } : {};
     const existOptions = options.map((option, i) => {
+
+      let baseId = `options`;
+      let extraText = `[${i}]${extra}`;
+      // 没想明白
+      if (child) {
+        extraText = extra;
+      }
+
+      baseId = baseId + extraText;
+      const valueId = `${baseId}.value`;
+      const labelId = `${baseId}.label`;
+
       return (
-        <Row key={i} gutter={14}>
+        <div key={i} gutter={14} style={style}>
           <Col span={10}>
             <FormItem label="label" {...formItemLayout}>
-              {getFieldDecorator(`options[${i}].label`, {
+              {getFieldDecorator(labelId, {
                 initialValue: option.label,
               })(<Input />)}
             </FormItem>
           </Col>
           <Col span={14}>
             <FormItem label="value" {...formItemLayout}>
-              {getFieldDecorator(`options[${i}].value`, {
+              {getFieldDecorator(valueId, {
                 initialValue: option.value,
               })(<InputNumber />)}
               <Icon
@@ -229,13 +249,15 @@ class Sidebar extends Component {
               />
             </FormItem>
           </Col>
-        </Row>
+          {option.children && this.renderOptions(option.children, true, i, `${extraText}.children[0]`)}
+        </div>
       );
     });
     return existOptions;
   }
 
   render() {
+    const { options } = this.state;
     const { instance, form } = this.props;
     const { getFieldDecorator } = form;
     // 表单字段类
@@ -250,7 +272,7 @@ class Sidebar extends Component {
       optionInputs = (
         <div>
           <Divider>Options</Divider>
-          {this.renderOptions(instance.options)}
+          {this.renderOptions(options)}
           <Button style={{ width: '100%' }} type="dashed" onClick={this.add}>
             <Icon type="plus" /> Add field
           </Button>

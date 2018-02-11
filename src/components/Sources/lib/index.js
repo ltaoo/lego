@@ -23,6 +23,7 @@ exportPlugins((exports.optimize = {}), [
   'Input',
   'TextArea',
   'Select',
+  'Cascader',
   'DatePicker',
   'CheckboxGroup',
   'RadioGroup',
