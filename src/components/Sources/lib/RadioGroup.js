@@ -30,7 +30,6 @@ export default function getRadioInstance(params = {}) {
       title: '特殊资源',
       label: 'resource',
       rules: [],
-      initialValue: 1,
       ...layout,
     },
     options,

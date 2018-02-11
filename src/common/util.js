@@ -5,20 +5,28 @@
  * @param {*} fieldProps
  * @param {*} props
  */
-export function updateProps(uuid, instances, fieldProps, props, options, rules) {
-  // todo: 后面的参数优化为一个
+export function updateProps(uuid, instances, values) {
+  const {
+    fieldProps,
+    props,
+    options,
+    rules,
+    initialValue,
+  } = values;
   // console.log(uuid, instances, fieldProps, props, options);
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     if (instance.uuid === uuid) {
-      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps);
+      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps, {
+        initialValue,
+      });
       instance.props = Object.assign({}, instance.props, props);
       instance.options = options;
       instance.rules = rules;
       break;
     }
     if (instance.children && instance.children.length) {
-      updateProps(uuid, instance.children, fieldProps, props, options, rules);
+      updateProps(uuid, instance.children, values);
     }
   }
 }

@@ -33,13 +33,18 @@ export default function (params = {}) {
     extra: 'const { Group: CheckboxGroup } = Checkbox;',
     stateCode: `options${uuid}:`,
     renderCode: `options${uuid}`,
+    constructorCode: 'this.handleClick = this.handleClick.bind(this);',
+    methods: `
+    onChange (val) {
+      console.log(val);
+    }
+    `,
     // 表单用字段
     isField: true,
     fieldProps: {
       title: '活动性质',
       label: 'property',
       rules: [],
-      initialValue: [2],
       ...layout,
     },
     // 实际的 options

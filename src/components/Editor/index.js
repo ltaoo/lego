@@ -3,7 +3,7 @@
  * @author wuya
  */
 import React, { Component } from 'react';
-import { Row, Col, Divider, Icon, Form, Input, InputNumber, Button, Radio, Switch } from 'antd';
+import { Row, Col, Divider, Icon, Form, Input, InputNumber, Button, Radio, Checkbox, Switch } from 'antd';
 
 const { Item: FormItem } = Form;
 const { Group: RadioGroup } = Radio;
@@ -44,6 +44,7 @@ class Sidebar extends Component {
   add = () => {
     const { options } = this.state;
     this.setState({
+      initialValue: [],
       options: [
         ...options,
         {
@@ -58,6 +59,7 @@ class Sidebar extends Component {
    */
   handleClick = () => {
     const { submit, form } = this.props;
+    const { initialValue } = this.state;
     const { getFieldsValue } = form;
     const values = getFieldsValue();
     // 处理下 rules
@@ -65,6 +67,7 @@ class Sidebar extends Component {
       const keys = Object.keys(rule);
       return rule[keys[0]] && rule[keys[1]];
     });
+    values.initialValue = initialValue;
     submit(values);
   };
   /**
@@ -205,7 +208,22 @@ class Sidebar extends Component {
     );
     return items;
   }
-
+  /**
+   * 选择 option 作为默认项
+   */
+  handleChecked = (option, e) => {
+    const { checked } = e.target;
+    const { initialValue = [] } = this.state;
+    if (checked) {
+      this.setState({
+        initialValue: initialValue.concat([option.value]),
+      });
+    } else {
+      this.setState({
+        initialValue: initialValue.filter(item => item !== option.value),
+      });
+    }
+  }
   /** 
    * 渲染 options
    * @param {Array} options - 要渲染的项
@@ -229,7 +247,12 @@ class Sidebar extends Component {
 
       return (
         <div key={i} gutter={14} style={style}>
-          <Col span={10}>
+          <Col span={2}>
+            <FormItem>
+              <Checkbox onChange={this.handleChecked.bind(this, option)} />
+            </FormItem>
+          </Col>
+          <Col span={8}>
             <FormItem label="label" {...formItemLayout}>
               {getFieldDecorator(labelId, {
                 initialValue: option.label,

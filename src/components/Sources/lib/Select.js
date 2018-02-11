@@ -15,7 +15,6 @@ export default function getSelectInstance() {
       title: '活动区域',
       label: 'region',
       rules: [],
-      initialValue: 0,
       ...layout,
     },
     methods: `
