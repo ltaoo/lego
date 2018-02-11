@@ -12,6 +12,7 @@ export default function getSwitchInstance() {
     fieldProps: {
       title: '即时配送',
       label: 'quick',
+      initialValue: false,
       rules: [],
       ...layout,
     },

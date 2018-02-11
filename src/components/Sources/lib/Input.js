@@ -12,12 +12,7 @@ export default function getInputInstance() {
     fieldProps: {
       title: '活动名称',
       label: 'name',
-      rules: [
-        {
-          required: true,
-          message: '请输入活动名称',
-        },
-      ],
+      rules: [],
       ...layout,
     },
     props: {

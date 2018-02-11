@@ -46,10 +46,18 @@ class Sidebar extends Component {
       keys: nextKeys,
     });
   }
+  /**
+   * 提交表单更新组件
+   */
   handleClick = () => {
     const { submit, form } = this.props;
     const { getFieldsValue } = form;
     const values = getFieldsValue();
+    // 处理下 rules
+    values.fieldProps.rules = values.fieldProps.rules.filter(rule => {
+      const keys = Object.keys(rule);
+      return rule[keys[0]] && rule[keys[1]];
+    });
     submit(values);
   };
   /**
@@ -126,19 +134,60 @@ class Sidebar extends Component {
   /** 
    * 渲染校验字段
    */
-  renderValidateInput = () => {
-    const { getFieldDecorator } = this.props.form;
-    const items = [
-      <FormItem key={0} label="是否必选">
-        {getFieldDecorator('rules[0].required', {
-          initialValue: false,
-        })(<Switch />)}
-      </FormItem>,
-      <FormItem key={0} label="提示文案">
-        {getFieldDecorator('rules[0].message', {
-        })(<Input />)}
-      </FormItem>,
-    ];
+  renderValidateInputs = () => {
+    const { instance, form } = this.props;
+    const { getFieldDecorator } = form;
+
+    const MAP = ['Input', 'InputNumber'];
+    const items = (
+      <div>
+        <Row gutter={8}>
+          <Col span={6}>
+            <FormItem label="是否必选">
+              {getFieldDecorator('fieldProps.rules[0].required', {
+                initialValue: false,
+              })(<Switch />)}
+            </FormItem>
+          </Col>
+          <Col span={18}>
+            <FormItem label="提示文案">
+              {getFieldDecorator('fieldProps.rules[0].message', {
+              })(<Input />)}
+            </FormItem>
+          </Col>
+        </Row>
+        { MAP.indexOf(instance.label) > -1 && 
+          <Row>
+            <Col span={6}> 
+              <FormItem label="最大值/长度">
+                {getFieldDecorator('fieldProps.rules[1].max', {
+                })(<InputNumber />)}
+              </FormItem>
+            </Col>
+            <Col span={18}>
+              <FormItem label="提示文案">
+                {getFieldDecorator('fieldProps.rules[1].message', {
+                  initialValue: '请检查输入的长度',
+                })(<Input />)}
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem label="最小值/长度">
+                {getFieldDecorator('fieldProps.rules[2].min', {
+                })(<InputNumber />)}
+              </FormItem>
+            </Col>
+            <Col span={18}>
+              <FormItem label="提示文案">
+                {getFieldDecorator('fieldProps.rules[2].message', {
+                  initialValue: '请检查输入的长度',
+                })(<Input />)}
+              </FormItem>
+            </Col>
+          </Row>
+        }
+      </div>
+    );
     return items;
   }
 
@@ -209,8 +258,13 @@ class Sidebar extends Component {
   render() {
     const { instance, form } = this.props;
     const { getFieldDecorator } = form;
+    // 表单字段类
     const fieldInputs = this.renderFieldInputs();
+    // 校验项
+    const validateInputs = this.renderValidateInputs();
+    // defaultProps
     const commonInputs = this.renderCommonInput();
+    // options
     let optionInputs = null;
     if (instance.options && instance.options.length) {
       optionInputs = (
@@ -231,6 +285,8 @@ class Sidebar extends Component {
           {commonInputs}
           <Divider>Fields</Divider>
           {fieldInputs}
+          <Divider>Validate</Divider>
+          {validateInputs}
           {optionInputs}
           <Form.Item>
             <Button style={{ width: '100%' }} type="primary" onClick={this.handleClick}>
