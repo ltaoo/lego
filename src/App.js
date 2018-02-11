@@ -41,23 +41,41 @@ class App extends React.Component {
     });
   }
   /**
-   * 预览源代码
+   * 生成格式化页面代码
    */
-  previewSource = () => {
+  createCode = () => {
     const { instances } = this.container.state;
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
     const formatedCode = window.prettier.format(pageCode);
+    return formatedCode;
+  }
+  /**
+   * 预览源代码
+   */
+  previewSource = () => {
     this.showCodeModal(() => {
+      const code = this.createCode();
       this.setState({
-        code: formatedCode,
+        code: code,
       }, () => {
         const codeContainer = findDOMNode(this.codeCon);
         window.hljs.highlightBlock(codeContainer);
       });
     });
-    
-  };
+  }
+  /**
+   * 下载单个文件
+   */
+  downloadSingleFile = () => {
+    const code = this.createCode();
+    const blobObj = new Blob([code]);
+    const downloadUrl = URL.createObjectURL(blobObj);
+    const aTag = document.createElement('a');
+    aTag.href = downloadUrl;
+    aTag.download = 'Page.js';
+    aTag.click();
+  }
   showCodeModal = (cb) => {
     this.setState({
       codeVisible: true,
@@ -72,9 +90,7 @@ class App extends React.Component {
    * 生成 Zip 包
    */
   createZip = () => {
-    const { instances } = this.container.state;
-    const code = createSourceCode(instances);
-    const pageCode = window.prettier.format(createPageCode(instances, code, 'Index'));
+    const pageCode = this.createCode();
     createZip(pageCode);
   }
 
@@ -97,7 +113,8 @@ class App extends React.Component {
             <Button type="primary" onClick={this.previewSource}>
               查看源码
             </Button>
-            <Button type="primary"
+            <Button
+              type="primary"
               style={{ marginLeft: 20 }}
               onClick={this.preview}>
               预览
@@ -105,6 +122,12 @@ class App extends React.Component {
             <Button
               style={{ marginLeft: 20 }}
               type="primary"
+              onClick={this.downloadSingleFile}
+            >
+              下载单个文件
+            </Button>
+            <Button
+              style={{ marginLeft: 20 }}
               onClick={this.createZip}
             >
               生成代码压缩包
