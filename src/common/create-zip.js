@@ -30,17 +30,18 @@ function urlToPromise(url) {
  * @param {strin} name 
  */
 export default function createZip(code) {
-    urlToPromise('/example.zip')
-      .then((data) => {
-        return JSZip.loadAsync(data);
-      })
-      .then((file) => {
-        console.log(file);
-        file.folder('src').folder('routes').file('Index.js', code);
-        // 生成 zip 包
-        file.generateAsync({ type: 'blob' }).then(function(content) {
-          // see FileSaver.js
-          FileSaver.saveAs(content, 'example.zip');
-        });
+  const zipUrl = window.location.href.indexOf('build') > -1 ? '/lego/build/example.zip' : '/example.zip';
+  urlToPromise(zipUrl)
+    .then((data) => {
+      return JSZip.loadAsync(data);
+    })
+    .then((file) => {
+      console.log(file);
+      file.folder('src').folder('routes').file('Index.js', code);
+      // 生成 zip 包
+      file.generateAsync({ type: 'blob' }).then(function(content) {
+        // see FileSaver.js
+        FileSaver.saveAs(content, 'example.zip');
       });
+    });
 }
