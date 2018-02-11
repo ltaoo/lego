@@ -66,7 +66,7 @@ class Field extends React.Component {
     this.props.switchContainer(item, checked);
   }
   render() {
-    const { props: changedProps, editorModalVisible } = this.state;
+    const { editorModalVisible } = this.state;
     const { form, item } = this.props;
 
     const { getFieldDecorator } = form;
@@ -80,7 +80,14 @@ class Field extends React.Component {
       isField,
       fieldProps = {},
     } = item;
-    const { title, label, rules, initialValue, labelCol, wrapperCol } = fieldProps;
+    const {
+      title,
+      label,
+      rules,
+      initialValue,
+      labelCol,
+      wrapperCol
+    } = fieldProps;
 
     const childrenComponent = children.length > 0 ? children.map((child, i) => {
       return (
@@ -94,21 +101,26 @@ class Field extends React.Component {
     }) : null;
 
     // todo: 使用策略模式拆分
-    let instanceCom = <Component {...props} {...changedProps}></Component>;
+    let instanceCom = null;
     if (childrenComponent) {
-      instanceCom = <Component {...props} {...changedProps}>{childrenComponent}</Component>;
+      console.log('here');
+      instanceCom = <Component {...props}>{childrenComponent}</Component>;
     }
-
     if (objLabel === 'Col') {
       instanceCom = <div>{childrenComponent}</div>;
-    }
-    if (objLabel === 'Select') {
+    } else if (objLabel === 'Select') {
       const { options } = item;
       const chidlrenOptions = options.map((option, i) => <Option key={i} value={option.value}>{option.label}</Option>);
-      instanceCom = <Component {...props} {...changedProps}>{chidlrenOptions}</Component>;
-    }
-    if (objLabel === 'Checkbox') {
-      // instanceCom = <Component {...props}></Component>;
+      instanceCom = <Component {...props}>{chidlrenOptions}</Component>;
+    } else if (objLabel === 'CheckboxGroup' || objLabel === 'RadioGroup') {
+      const { options } = item;
+      const newProps = Object.assign({}, {...props}, {
+        options,
+        form: this.props.form,
+      });
+      instanceCom = <Component {...newProps}></Component>;
+    } else {
+      instanceCom = <Component {...props}></Component>;
     }
     const modal = (
       <Modal

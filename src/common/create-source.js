@@ -4,7 +4,7 @@
  */
 
 const nativeMethods = ['onClick', 'onChange', 'onInput'];
-const IGNORE_ITEMS = ['children', 'options'];
+const IGNORE_ITEMS = ['children'];
 
 /**
  * 得到属性文本，如 { key: 0, type: 'primary' } 则会返回 'key={0} type="primary"'
@@ -24,7 +24,7 @@ function createPropsText(props) {
     // 只处理简单类型，string、boolean、function
     const val = props[key];
     if (val) {
-      if (key === 'optionsVal') {
+      if (key === 'options') {
         propsText.push(`options={${props[key]}}`);
         continue;
       }

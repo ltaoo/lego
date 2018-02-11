@@ -1,5 +1,5 @@
 /**
- * @file 渲染组件
+ * @file 预览渲染组件
  * @author wuya
  */
 import React from 'react';
@@ -23,6 +23,9 @@ export default function renderComponent(instances, context) {
       const { form } = context;
       const { getFieldDecorator } = form;
 
+      if (options) {
+        props.options = options;
+      }
       let c = <Component {...props}>{renderComponent(children, context)}</Component>;
       if (label === 'Button') {
         c = <Component {...props}>{props.children}</Component>;

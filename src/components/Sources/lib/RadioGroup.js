@@ -33,9 +33,9 @@ export default function getRadioInstance(params = {}) {
       initialValue: 1,
       ...layout,
     },
+    options,
     props: {
-      options,
-      optionsVal: `options${uuid}`,
+      options: `options${uuid}`,
     },
   };
 }

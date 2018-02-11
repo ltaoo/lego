@@ -42,9 +42,11 @@ export default function (params = {}) {
       initialValue: [2],
       ...layout,
     },
+    // 实际的 options
+    options,
     props: {
-      options,
-      optionsVal: `options${uuid}`,
+      // 只是文字
+      options: `options${uuid}`,
       onChange: onChange,
     },
   };

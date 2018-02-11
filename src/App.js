@@ -19,11 +19,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
       codeVisible: false,
       previewModalVisible: false,
       code: '',
-      edittingComponent: null,
     };
     this.container = {};
   }
@@ -102,7 +100,6 @@ class App extends React.Component {
     } = this.state;
     const { state = {} } = this.container;
     const { instances = [] } = state;
-    const content = renderComponent(instances, this.props);
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
@@ -142,7 +139,7 @@ class App extends React.Component {
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
-            Ant Design ©2016 Created by Ant UED
+            Created by KUJIALE
           </Footer>
         </Layout>
         <Modal
@@ -165,7 +162,7 @@ class App extends React.Component {
           footer={null}
           width="90%"
         >
-          {content}
+          {previewModalVisible && renderComponent(instances, this.props)}
         </Modal>
       </Layout>
     );
