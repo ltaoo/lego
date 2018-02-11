@@ -65,6 +65,7 @@ function mergeProps(Component, props) {
  */
 function createCodeWithProps(instance, props, isField, fieldProps) {
   const { label: Tag, children } = instance;
+  // 属性文本
   const propsText = createPropsText(props);
   let code = `<${Tag} ${propsText}>`;
   // 按钮的文本

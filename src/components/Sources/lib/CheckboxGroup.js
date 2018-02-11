@@ -31,7 +31,7 @@ export default function (params = {}) {
     label: 'CheckboxGroup',
     import: 'Checkbox',
     extra: 'const { Group: CheckboxGroup } = Checkbox;',
-    stateCode: `options${uuid}: ${JSON.stringify(options)}`,
+    stateCode: `options${uuid}:`,
     renderCode: `options${uuid}`,
     // 表单用字段
     isField: true,

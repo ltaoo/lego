@@ -22,28 +22,37 @@ const formItemLayout = {
 let uuid = 0;
 
 class Sidebar extends Component {
+  constructor(props) {
+    super(props);
+
+    const { instance } = props;
+    this.state = {
+      options: instance.options,
+    };
+  }
   /**
    * 移除 option
    */
-  remove = (k) => {
-    const { form } = this.props;
-    // can use data-binding to get
-    const keys = form.getFieldValue('keys');
-    // can use data-binding to set
-    form.setFieldsValue({
-      keys: keys.filter(key => key !== k),
+  remove = (i) => {
+    const { options } = this.state;
+    options.splice(i, 1);
+    this.setState({
+      options: [...options],
     });
   }
   /**
    * 新增 option
    */
   add = () => {
-    const { form } = this.props;
-    const keys = form.getFieldValue('keys');
-    const nextKeys = keys.concat(uuid);
-    uuid++;
-    form.setFieldsValue({
-      keys: nextKeys,
+    const { options } = this.state;
+    this.setState({
+      options: [
+        ...options,
+        {
+          label: '',
+          value: '',
+        },
+      ],
     });
   }
   /**
@@ -194,8 +203,9 @@ class Sidebar extends Component {
   /** 
    * 渲染 options
    */
-  renderOptions = (options) => {
-    const { getFieldDecorator, getFieldValue } = this.props.form;
+  renderOptions = () => {
+    const { options } = this.state;
+    const { getFieldDecorator } = this.props.form;
     const existOptions = options.map((option, i) => {
       return (
         <Row key={i} gutter={14}>
@@ -215,44 +225,14 @@ class Sidebar extends Component {
                 className="dynamic-delete-button"
                 style={{ marginLeft: 20 }}
                 type="minus-circle-o"
-                onClick={() => this.removeExistOption()}
+                onClick={this.remove.bind(this, i)}
               />
             </FormItem>
           </Col>
         </Row>
       );
     });
-    const keys = getFieldValue('keys');
-    if (!keys) {
-      return existOptions;
-    }
-    const newOptions = keys.map((k, index) => {
-      const i = index + options.length;
-      return (
-        <Row key={i} gutter={14}>
-          <Col span={10}>
-            <FormItem label="label" {...formItemLayout}>
-              {getFieldDecorator(`options[${i}].label`, {
-              })(<Input />)}
-            </FormItem>
-          </Col>
-          <Col span={14}>
-            <FormItem label="value" {...formItemLayout}>
-              {getFieldDecorator(`options[${i}].value`, {
-              })(<InputNumber />)}
-              <Icon
-                className="dynamic-delete-button"
-                style={{ marginLeft: 20 }}
-                type="minus-circle-o"
-                onClick={() => this.remove(k)}
-              />
-            </FormItem>
-          </Col>
-        </Row>
-      );
-    });
-
-    return existOptions.concat(newOptions);
+    return existOptions;
   }
 
   render() {

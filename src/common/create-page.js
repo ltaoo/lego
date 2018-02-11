@@ -104,9 +104,13 @@ function getStateText(instances) {
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { stateCode } = instance;
+    const { stateCode, options } = instance;
     if (stateCode) {
-      ary.push(stateCode);
+      if (options) {
+        ary.push(stateCode + JSON.stringify(options));
+      } else {
+        ary.push(stateCode);
+      }
     }
   }
   // 去重
