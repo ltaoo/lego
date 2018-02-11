@@ -11,15 +11,12 @@ export function updateProps(uuid, instances, values) {
     props,
     options,
     rules,
-    initialValue,
   } = values;
   // console.log(uuid, instances, fieldProps, props, options);
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     if (instance.uuid === uuid) {
-      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps, {
-        initialValue,
-      });
+      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps);
       instance.props = Object.assign({}, instance.props, props);
       instance.options = options;
       instance.rules = rules;

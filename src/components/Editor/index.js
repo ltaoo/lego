@@ -67,7 +67,9 @@ class Sidebar extends Component {
       const keys = Object.keys(rule);
       return rule[keys[0]] && rule[keys[1]];
     });
-    values.initialValue = initialValue;
+    if (initialValue) {
+      values.fieldProps.initialValue = initialValue;
+    }
     submit(values);
   };
   /**
@@ -123,7 +125,7 @@ class Sidebar extends Component {
   renderFieldInputs = () => {
     const { form, instance } = this.props;
     const { getFieldDecorator } = form;
-    const { isField, fieldProps } = instance;
+    const { isField, fieldProps, label: Tag } = instance;
 
     if (!isField) {
       return null;
@@ -132,19 +134,25 @@ class Sidebar extends Component {
     const {
       title,
       label,
+      initialValue,
     } = fieldProps;
 
     const obj = {
       title,
       label,
+      initialValue,
     };
 
-    const fields = ['title', 'label'];
+    const fields = ['title', 'label', 'initialValue'];
     return fields.map((field, i) => {
+      let input = <Input />;
+      if (field === 'initialValue' && (Tag === 'Select' || Tag === 'RadioGroup')) {
+        input = <InputNumber />
+      }
       return <FormItem key={i} label={field}>
         {getFieldDecorator(`fieldProps.${field}`, {
           initialValue: obj[field],
-        })(<Input />)}
+        })(input)}
       </FormItem>
     });
   }
@@ -224,12 +232,19 @@ class Sidebar extends Component {
       });
     }
   }
+  /**
+   * 单选，Select 或者 Radio
+   */
+  selectSingle = (option, e) => {
+    console.log(option, e);
+  }
   /** 
    * 渲染 options
    * @param {Array} options - 要渲染的项
    * @param {boolean} child - 是否是子项（改变样式）
    */
   renderOptions = (options, child, parentIndex, extra = '') => {
+    const { instance } = this.props;
     const { getFieldDecorator } = this.props.form;
     const style = child ? { marginLeft: 20 } : {};
     const existOptions = options.map((option, i) => {
@@ -245,11 +260,17 @@ class Sidebar extends Component {
       const valueId = `${baseId}.value`;
       const labelId = `${baseId}.label`;
 
+      // let defaultValueInput = <Radio onChange={this.selectSingle.bind(this, option)} />
+      let defaultValueInput = null;
+      if (instance.label === 'CheckboxGroup') {
+        defaultValueInput = <Checkbox onChange={this.handleChecked.bind(this, option)} />;
+      }
+
       return (
         <div key={i} gutter={14} style={style}>
           <Col span={2}>
             <FormItem>
-              <Checkbox onChange={this.handleChecked.bind(this, option)} />
+              {defaultValueInput}
             </FormItem>
           </Col>
           <Col span={8}>
