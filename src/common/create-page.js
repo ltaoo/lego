@@ -104,10 +104,12 @@ function getStateText(instances) {
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { stateCode, options } = instance;
+    const { stateCode, options, columns } = instance;
     if (stateCode) {
       if (options) {
         ary.push(stateCode + JSON.stringify(options));
+      } else if (columns) {
+        ary.push(stateCode + JSON.stringify(columns));
       } else {
         ary.push(stateCode);
       }

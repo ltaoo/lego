@@ -17,7 +17,7 @@ export default function renderComponent(instances, context) {
   const components = [];
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { label, Component, isField, props, fieldProps, uuid, children, options = [] } = instance;
+    const { label, Component, isField, props, fieldProps, uuid, children, options = [], columns = [] } = instance;
     if (isField) {
       const { title, label: id, rules, initialValue, labelCol, wrapperCol } = fieldProps;
       const { form } = context;
@@ -49,11 +49,21 @@ export default function renderComponent(instances, context) {
         </Form.Item>,
       );
     } else {
-      components.push(
-        <Component key={uuid} {...props}>
-          {renderComponent(children, context)}
-        </Component>,
-      );
+      // 这里也很 low ....
+      if (label === 'Table') {
+        const { columns } = instance;
+        components.push(
+          <Component key={uuid} {...props} columns={columns}>
+            {renderComponent(children, context)}
+          </Component>,
+        );
+      } else {
+        components.push(
+          <Component key={uuid} {...props}>
+            {renderComponent(children, context)}
+          </Component>,
+        );
+      }
     }
   }
   return components;

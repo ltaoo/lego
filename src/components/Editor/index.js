@@ -24,8 +24,10 @@ class Sidebar extends Component {
     super(props);
 
     const { instance } = props;
+    const { options, columns } = instance;
     this.state = {
-      options: instance.options,
+      options,
+      columns,
     };
   }
   /**
@@ -55,6 +57,31 @@ class Sidebar extends Component {
     });
   }
   /**
+   * 移除 option
+   */
+  removeColumn = (i) => {
+    const { columns } = this.state;
+    columns.splice(i, 1);
+    this.setState({
+      columns: [...columns],
+    });
+  }
+  /**
+   * 新增 option
+   */
+  addColumn = () => {
+    const { columns } = this.state;
+    this.setState({
+      columns: [
+        ...columns,
+        {
+          title: '',
+          key: '',
+        },
+      ],
+    });
+  }
+  /**
    * 提交表单更新组件
    */
   handleClick = () => {
@@ -63,10 +90,12 @@ class Sidebar extends Component {
     const { getFieldsValue } = form;
     const values = getFieldsValue();
     // 处理下 rules
-    values.fieldProps.rules = values.fieldProps.rules.filter(rule => {
-      const keys = Object.keys(rule);
-      return rule[keys[0]] && rule[keys[1]];
-    });
+    if (values.fieldProps) {
+      values.fieldProps.rules = values.fieldProps.rules.filter(rule => {
+        const keys = Object.keys(rule);
+        return rule[keys[0]] && rule[keys[1]];
+      });
+    }
     if (initialValue) {
       values.fieldProps.initialValue = initialValue;
     }
@@ -299,15 +328,64 @@ class Sidebar extends Component {
     });
     return existOptions;
   }
+  /** 
+   * 渲染 options
+   * @param {Array} options - 要渲染的项
+   * @param {boolean} child - 是否是子项（改变样式）
+   */
+  renderColumns = (columns, child, parentIndex, extra = '') => {
+    const { getFieldDecorator } = this.props.form;
+    const style = child ? { marginLeft: 20 } : {};
+    const existOptions = columns.map((option, i) => {
+
+      let baseId = `columns`;
+      let extraText = `[${i}]${extra}`;
+      // 没想明白
+      if (child) {
+        extraText = extra;
+      }
+
+      baseId = baseId + extraText;
+      const valueId = `${baseId}.title`;
+      const labelId = `${baseId}.key`;
+      return (
+        <div key={i} gutter={14} style={style}>
+          <Col span={8}>
+            <FormItem label="title" {...formItemLayout}>
+              {getFieldDecorator(valueId, {
+                initialValue: option.title,
+              })(<Input />)}
+            </FormItem>
+          </Col>
+          <Col span={16}>
+            <FormItem label="key" {...formItemLayout}>
+              {getFieldDecorator(labelId, {
+                initialValue: option.dataIndex,
+              })(<Input style={{ width: 120 }} />)}
+              <Icon
+                className="dynamic-delete-button"
+                style={{ marginLeft: 20 }}
+                type="minus-circle-o"
+                onClick={this.removeColumn.bind(this, i)}
+              />
+            </FormItem>
+          </Col>
+          {option.children && this.renderColumns(option.children, true, i, `${extraText}.children[0]`)}
+        </div>
+      );
+    });
+    return existOptions;
+  }
 
   render() {
     const { options } = this.state;
     const { instance, form } = this.props;
     const { getFieldDecorator } = form;
+    const { isField } = instance;
     // 表单字段类
-    const fieldInputs = this.renderFieldInputs();
+    const fieldInputs = isField && this.renderFieldInputs();
     // 校验项
-    const validateInputs = this.renderValidateInputs();
+    const validateInputs = isField && this.renderValidateInputs();
     // defaultProps
     const commonInputs = this.renderCommonInput();
     // options
@@ -324,16 +402,33 @@ class Sidebar extends Component {
         </div>
       );
     }
+    // columns
+    let columnsInput = null;
+    if (instance.columns && instance.columns.length) {
+      const { columns } = this.state;
+      columnsInput = (
+        <div>
+          <Divider>Columns</Divider>
+          {this.renderColumns(columns)}
+          <Button style={{ width: '100%' }} type="dashed" onClick={this.addColumn}>
+            <Icon type="plus" /> Add Column
+          </Button>
+          <Divider></Divider>
+        </div>
+      );
+    }
     getFieldDecorator('keys', { initialValue: [] });
+    // options 与 columns 要抽出来作为单独的组件，这部分较为复杂，要支持拖拽排序
     return (
       <div className="editor__form">
         <Form>
           {commonInputs}
-          <Divider>Fields</Divider>
+          { isField && <Divider>Fields</Divider> }
           {fieldInputs}
-          <Divider>Validate</Divider>
+          { isField && <Divider>Validate</Divider> }
           {validateInputs}
           {optionInputs}
+          {columnsInput}
           <Form.Item>
             <Button style={{ width: '100%' }} type="primary" onClick={this.handleClick}>
               提交

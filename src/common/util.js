@@ -10,6 +10,7 @@ export function updateProps(uuid, instances, values) {
     fieldProps,
     props,
     options,
+    columns,
     rules,
   } = values;
   console.log(values);
@@ -20,6 +21,7 @@ export function updateProps(uuid, instances, values) {
       instance.props = Object.assign({}, instance.props, props);
       instance.options = options;
       instance.rules = rules;
+      instance.columns = columns;
       break;
     }
     if (instance.children && instance.children.length) {

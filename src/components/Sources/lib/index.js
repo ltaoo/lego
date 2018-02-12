@@ -30,5 +30,6 @@ exportPlugins((exports.optimize = {}), [
   'Switch',
   'Upload',
   'Button',
+  'Table',
 ]);
 

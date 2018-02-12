@@ -100,7 +100,7 @@ class Field extends React.Component {
       );
     }) : null;
 
-    // todo: 使用策略模式拆分
+    // todo: 使用策略模式拆分，对应的策略从 instanceObj 中读取，并且该部分逻辑在 create-source 以及 renderComponent 中也要用到
     let instanceCom = null;
     if (childrenComponent) {
       instanceCom = <Component {...props}>{childrenComponent}</Component>;
@@ -121,6 +121,12 @@ class Field extends React.Component {
     } else if (Tag === 'Upload') {
       const { Component: Tag, props: childProps } = item.children[0];
       instanceCom = <Component {...props}><Tag {...childProps} /></Component>;
+    } else if (Tag === 'Table') {
+      const { columns } = item;
+      const newProps = Object.assign({}, {...props}, {
+        columns,
+      });
+      instanceCom = <Component {...newProps}></Component>;
     } else {
       instanceCom = <Component {...props}></Component>;
     }

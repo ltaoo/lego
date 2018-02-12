@@ -24,22 +24,26 @@ function createPropsText(props) {
     // 只处理简单类型，string、boolean、function
     const val = props[key];
     if (val) {
-      if (key === 'options') {
-        propsText.push(`options={${props[key].toString()}}`);
+      if (key === 'options' || key === 'columns') {
+        console.log(`${key}={${val}}`);
+        if (Array.isArray(val) && !val.length) {
+        } else {
+          propsText.push(`${key}={${val}}`);
+        }
         continue;
       }
       if (typeof val === 'string') {
-        propsText.push(`${key}="${props[key]}"`);
+        propsText.push(`${key}="${val}"`);
       } else if (typeof val === 'boolean') {
-        propsText.push(`${key}={${props[key]}}`);
+        propsText.push(`${key}={${val}}`);
       } else if (typeof val === 'function') {
         if (nativeMethods.indexOf(key) > -1) {
-          propsText.push(`${key}={this.${props[key].name}}`);
+          propsText.push(`${key}={this.${val.name}}`);
         }
       } else if (typeof val === 'object') {
-        propsText.push(`${key}={${JSON.stringify(props[key])}}`);
+        propsText.push(`${key}={${JSON.stringify(val)}}`);
       } else {
-        propsText.push(`${key}={${props[key]}}`);
+        propsText.push(`${key}={${val}}`);
       }
     } else {
     }
