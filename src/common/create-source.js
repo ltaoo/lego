@@ -25,7 +25,7 @@ function createPropsText(props) {
     const val = props[key];
     if (val) {
       if (key === 'options') {
-        propsText.push(`options={${props[key]}}`);
+        propsText.push(`options={${props[key].toString()}}`);
         continue;
       }
       if (typeof val === 'string') {

@@ -28,6 +28,7 @@ exportPlugins((exports.optimize = {}), [
   'CheckboxGroup',
   'RadioGroup',
   'Switch',
+  'Upload',
   'Button',
 ]);
 

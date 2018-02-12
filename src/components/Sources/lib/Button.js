@@ -3,7 +3,8 @@ import { Button } from 'antd';
 // todo: 和下面的 methods 放到一起
 function handleClick() {}
 
-export default function getButtonInstance() {
+export default function getButtonInstance(params = {}) {
+  const { text = '提交', type = 'primary' } = params;
   return {
     Component: Button,
     label: 'Button',
@@ -29,8 +30,8 @@ export default function getButtonInstance() {
       },
     },
     props: {
-      children: '提交',
-      type: 'primary',
+      children: text,
+      type,
       onClick: handleClick,
     },
   };

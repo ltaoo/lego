@@ -71,7 +71,7 @@ class Field extends React.Component {
 
     const { getFieldDecorator } = form;
     const {
-      label: objLabel,
+      label: Tag,
       // 是否布局容器
       layout,
       Component,
@@ -103,22 +103,24 @@ class Field extends React.Component {
     // todo: 使用策略模式拆分
     let instanceCom = null;
     if (childrenComponent) {
-      console.log('here');
       instanceCom = <Component {...props}>{childrenComponent}</Component>;
     }
-    if (objLabel === 'Col') {
+    if (Tag === 'Col') {
       instanceCom = <div>{childrenComponent}</div>;
-    } else if (objLabel === 'Select') {
+    } else if (Tag === 'Select') {
       const { options } = item;
       const chidlrenOptions = options.map((option, i) => <Option key={i} value={option.value}>{option.label}</Option>);
       instanceCom = <Component {...props}>{chidlrenOptions}</Component>;
-    } else if (objLabel === 'CheckboxGroup' || objLabel === 'RadioGroup' || objLabel === 'Cascader') {
+    } else if (Tag === 'CheckboxGroup' || Tag === 'RadioGroup' || Tag === 'Cascader') {
       const { options } = item;
       const newProps = Object.assign({}, {...props}, {
         options,
         form: this.props.form,
       });
       instanceCom = <Component {...newProps}></Component>;
+    } else if (Tag === 'Upload') {
+      const { Component: Tag, props: childProps } = item.children[0];
+      instanceCom = <Component {...props}><Tag {...childProps} /></Component>;
     } else {
       instanceCom = <Component {...props}></Component>;
     }

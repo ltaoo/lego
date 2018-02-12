@@ -99,7 +99,6 @@ class App extends React.Component {
       code,
     } = this.state;
     const { state = {} } = this.container;
-    const { instances = [] } = state;
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
@@ -134,7 +133,6 @@ class App extends React.Component {
             <div style={{ padding: 24, background: '#fff' }}>
               <Container
                 ref={e => this.container = e}
-                instances={instances}
               />
             </div>
           </Content>
@@ -162,7 +160,7 @@ class App extends React.Component {
           footer={null}
           width="90%"
         >
-          {previewModalVisible && renderComponent(instances, this.props)}
+          {previewModalVisible && renderComponent(state.instances, this.props)}
         </Modal>
       </Layout>
     );

@@ -28,6 +28,11 @@ class Source extends Component {
     };
 
     uuid += 1;
+    // 啊啊啊，这里不应该这么 low
+    if (tag === 'Upload') {
+      // 1 是给 Upload 里面的 Button
+      uuid += 1;
+    }
     EventEmitter.emit('addComponent', instance);
   };
 
