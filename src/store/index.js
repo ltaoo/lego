@@ -1,4 +1,5 @@
 import { createStore } from 'redux';
+import update from 'immutability-helper';
 
 import * as t from '../common/actions';
 import { updateProps, removeComponent } from '../common/util';
@@ -25,10 +26,7 @@ function reducer(state = initialState, action) {
         instances,
       };
     case t.UPDATE_COMPONENT:
-      const {
-        item,
-        values,
-      } = action.payload;
+      const { item, values } = action.payload;
       let { uuid } = item;
       // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
       updateProps(uuid, [...instances], values);
@@ -44,6 +42,15 @@ function reducer(state = initialState, action) {
         ...state,
         instances: temp,
       };
+    case t.SORT:
+      const { dragIndex, hoverIndex } = action.payload;
+      const dragCard = instances[dragIndex];
+      const res = update(state, {
+        instances: {
+          $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
+        },
+      });
+      return res;
     default:
       return state;
   }

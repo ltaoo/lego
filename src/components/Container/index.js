@@ -94,10 +94,11 @@ class Container extends React.Component {
    */
   renderComponent = () => {
     const { instances = [] } = this.props;
-    return instances.map((instance) => {
+    return instances.map((instance, index) => {
       return (
         <Field
           key={instance.uuid}
+          index={index}
           item={instance}
           // 用在获取嵌套组件代码的时候，只当 root === true 时才获取代码
           root
