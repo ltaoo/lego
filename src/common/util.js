@@ -3,6 +3,18 @@
  * @author wuya
  */
 
+export function findInstance(uuid, instances) {
+  for (let i = 0, l = instances.length; i < l; i += 1) {
+    const instance = instances[i];
+    if (instance.uuid === uuid) {
+      return instance;
+    }
+    if (instance.children) {
+      return findInstance(uuid, instance.children);
+    }
+  }
+}
+
 /**
  * 更新属性
  * @param {*} uuid

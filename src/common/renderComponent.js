@@ -17,35 +17,66 @@ export default function renderComponent(instances, context) {
   const components = [];
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { label, Component, isField, props, fieldProps, uuid, children, options = [], columns = [] } = instance;
+    const {
+      label,
+      Component,
+      isField,
+      props,
+      fieldProps,
+      uuid,
+      children,
+      options = [],
+      columns = [],
+    } = instance;
+    console.log(isField);
     if (isField) {
-      const { title, label: id, rules, initialValue, labelCol, wrapperCol } = fieldProps;
+      const {
+        title,
+        label: id,
+        rules,
+        initialValue,
+        labelCol,
+        wrapperCol,
+      } = fieldProps;
       const { form } = context;
       const { getFieldDecorator } = form;
       // 这里
-      const temp = {...props};
+      const temp = { ...props };
       if (options) {
         temp.options = options;
       }
-      let c = <Component {...temp}>{renderComponent(children, context)}</Component>;
+      let c = (
+        <Component {...temp}>{renderComponent(children, context)}</Component>
+      );
       if (label === 'Button') {
         c = <Component {...temp}>{temp.children}</Component>;
       }
       if (label === 'Select') {
-        c = <Component {...temp}>{options.map(option => <Option key={i} value={option.value}>{option.label}</Option>)}</Component>;
+        c = (
+          <Component {...temp}>
+            {options.map(option => (
+              <Option key={i} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </Component>
+        );
       }
 
       const fieldComponent = id
         ? getFieldDecorator(id, {
-          rules,
-          initialValue,
-        })(
-          c
-        )
+            rules,
+            initialValue,
+          })(c)
         : c;
 
       components.push(
-        <Form.Item key={uuid} label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
+        <Form.Item
+          key={uuid}
+          label={title}
+          labelCol={labelCol}
+          wrapperCol={wrapperCol}
+        >
           {fieldComponent}
         </Form.Item>,
       );
@@ -54,7 +85,12 @@ export default function renderComponent(instances, context) {
       if (label === 'Table') {
         const { columns, dataSource } = instance;
         components.push(
-          <Component key={uuid} {...props} columns={columns} dataSource={dataSource}>
+          <Component
+            key={uuid}
+            {...props}
+            columns={columns}
+            dataSource={dataSource}
+          >
             {renderComponent(children, context)}
           </Component>,
         );

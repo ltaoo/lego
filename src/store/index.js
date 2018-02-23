@@ -2,28 +2,24 @@ import { createStore } from 'redux';
 import update from 'immutability-helper';
 
 import * as t from '../common/actions';
-import { updateProps, removeComponent } from '../common/util';
+import {
+  updateProps,
+  removeComponent,
+  findInstance,
+} from '../common/util';
 
 const initialState = {
   instances: [],
-  currentInstance: {},
 };
 
 function reducer(state = initialState, action) {
-  const { instances, currentInstance } = state;
+  const { instances } = state;
   switch (action.type) {
     case t.ADD_COMPONENT:
       const { payload: obj } = action;
-      // 如果是布局组件
-      if (currentInstance.layout) {
-        currentInstance.children = currentInstance.children || [];
-        currentInstance.children.push(obj);
-      } else {
-        instances.push(obj);
-      }
       return {
         ...state,
-        instances,
+        instances: update(instances, {$push: [obj]}),
       };
     case t.UPDATE_COMPONENT:
       const { item, values } = action.payload;
@@ -36,7 +32,7 @@ function reducer(state = initialState, action) {
       };
     case t.REMOVE_COMPONENT:
       uuid = action.payload.uuid;
-      const temp = [...instances];
+      let temp = [...instances];
       removeComponent(uuid, temp);
       return {
         ...state,
@@ -51,6 +47,19 @@ function reducer(state = initialState, action) {
         },
       });
       return res;
+    case t.APPEND_COMPONENT:
+      const { parent } = action.payload;
+      // 如果是布局组件
+      // 找到 parent
+      temp = [...state.instances];
+      const parentInstance = findInstance(parent, temp);
+      parentInstance.children = parentInstance.children || [];
+
+      parentInstance.children.push(action.payload.item);
+      return {
+        ...state,
+        instances: temp,
+      };
     default:
       return state;
   }

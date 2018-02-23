@@ -9,9 +9,11 @@ import { Form, Modal, Icon, Checkbox, Col, Select } from 'antd';
 import { DropTarget, DragSource } from 'react-dnd';
 
 import store from '../../store';
+import addComponent from '../../common/add-component';
 import { 
   UPDATE_COMPONENT,
   SORT,
+  APPEND_COMPONENT,
 } from '../../common/actions';
 import { ItemTypes } from '../../common/constants';
 import createSource from '../../common/create-source';
@@ -47,7 +49,8 @@ class Field extends React.Component {
    */
   removeComponent = () => {
     const { item } = this.props;
-    this.props.removeComponent(item);
+    console.log(item);
+    this.props.removeComponent(item.uuid);
   };
   /**
    * 查看源码
@@ -70,14 +73,9 @@ class Field extends React.Component {
       editorModalVisible: false,
     });
   };
-  /**
-   * 选中 Row，接下来选择的组件都会填充到该组件内
-   */
-  selectRow = e => {
-    const checked = e.target.checked;
-    const { item } = this.props;
-    this.props.switchContainer(item, checked);
-  };
+  renderComponent = () => {
+    
+  }
   render() {
     const { editorModalVisible } = this.state;
     const {
@@ -90,8 +88,6 @@ class Field extends React.Component {
     const { getFieldDecorator } = form;
     const {
       label: Tag,
-      // 是否布局容器
-      layout,
       Component,
       props,
       children = [],
@@ -107,27 +103,20 @@ class Field extends React.Component {
       wrapperCol,
     } = fieldProps;
 
-    const childrenComponent =
-      children.length > 0
-        ? children.map((child, i) => {
-            return (
-              <WrappedField
-                key={child.uuid}
-                item={child}
-                removeComponent={this.removeComponent}
-                switchContainer={this.props.switchContainer}
-              />
-            );
-          })
-        : null;
-
     // todo: 使用策略模式拆分，对应的策略从 instanceObj 中读取，并且该部分逻辑在 create-source 以及 renderComponent 中也要用到
     let instanceCom = null;
-    if (childrenComponent) {
+    if (Tag === 'Col' || Tag === 'Row') {
+      const childrenComponent = children.map((child, i) => {
+        return (
+          <WrappedField
+            {...this.props}
+            key={child.uuid}
+            item={child}
+          />
+        );
+      });
+
       instanceCom = <Component {...props}>{childrenComponent}</Component>;
-    }
-    if (Tag === 'Col') {
-      instanceCom = <div>{childrenComponent}</div>;
     } else if (Tag === 'Select') {
       const { options } = item;
       const chidlrenOptions = options.map((option, i) => (
@@ -191,11 +180,6 @@ class Field extends React.Component {
         <div className="edit__btn" onClick={this.removeComponent}>
           <Icon type="delete" />
         </div>
-        {layout && (
-          <Checkbox onChange={this.selectRow}>
-            勾选后会将组件添加到内部
-          </Checkbox>
-        )}
       </div>
     );
     // Button 要使用 Form.Item 布局但是不是字段，所以判断下要不要 getFieldDecorator
@@ -205,7 +189,7 @@ class Field extends React.Component {
           initialValue,
         })(instanceCom)
       : instanceCom;
-    const content = (
+    let content = (
       <div className="field">
         <div className="edit__wrapper">
           {operators}
@@ -220,9 +204,9 @@ class Field extends React.Component {
         {modal}
       </div>
     );
-    if (item.label === 'Col') {
-      return <Col {...props}>{content}</Col>;
-    }
+    // if (item.label === 'Col') {
+    //   return connectDropTarget(connectDragSource(<Col {...props}>{content}</Col>));
+    // }
     return connectDropTarget(connectDragSource(content));
   }
 }
@@ -245,41 +229,38 @@ const fieldSource = {
  * Implements the drag source contract.
  */
 const fieldTarget = {
+  /**
+   * 
+   * @param {*} props 
+   * @param {*} monitor 
+   * @param {*} component 
+   */
   hover(props, monitor, component) {
+    // 如果是从 Sidebar 拖到 Container，dataIndex === undefined
     const dragIndex = monitor.getItem().index;
     const hoverIndex = props.index;
     console.log(dragIndex, hoverIndex);
     // Don't replace items with themselves
+    if (dragIndex === undefined || hoverIndex === undefined) {
+      return;
+    }
     if (dragIndex === hoverIndex) {
       return;
     }
-
     // Determine rectangle on screen
     const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
-
     // Get vertical middle
     const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
     // Determine mouse position
     const clientOffset = monitor.getClientOffset();
-
     // Get pixels to the top
     const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-    // Only perform the move when the mouse has crossed half of the items height
-    // When dragging downwards, only move when the cursor is below 50%
-    // When dragging upwards, only move when the cursor is above 50%
-
-    // Dragging downwards
     if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
       return;
     }
-
-    // Dragging upwards
     if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
       return;
     }
-
     // Time to actually perform the action
     // props.moveCard(dragIndex, hoverIndex);
     store.dispatch({
@@ -289,13 +270,19 @@ const fieldTarget = {
         hoverIndex,
       },
     });
-    // console.log(dragIndex, hoverIndex);
-
-    // Note: we're mutating the monitor item here!
-    // Generally it's better to avoid mutations,
-    // but it's good here for the sake of performance
-    // to avoid expensive index searches.
     monitor.getItem().index = hoverIndex;
+  },
+  drop(props, monitor, component) {
+    console.log(props, monitor, component);
+    const { item } = monitor.getItem();
+    const instance = addComponent(item.label);
+    store.dispatch({
+      type: APPEND_COMPONENT,
+      payload: {
+        parent: props.item.uuid,
+        item: instance,
+      },
+    });
   },
 };
 
@@ -318,6 +305,6 @@ function dropConnect(connect) {
 // 在 Field 内渲染 Field 没有 form 属性
 const WrappedField = Form.create()(Field);
 
-export default DropTarget(ItemTypes.OTHER, fieldTarget, dropConnect)(
+export default DropTarget(ItemTypes.FIELD, fieldTarget, dropConnect)(
   DragSource(ItemTypes.OTHER, fieldSource, collect)(WrappedField),
 );

@@ -5,6 +5,10 @@
 import React, { Component } from 'react';
 import { Input } from 'antd';
 
+import store from '../../store';
+import {
+  ADD_COMPONENT,
+} from '../../common/actions';
 import * as lib from './lib';
 import './index.css';
 import addComponent from '../../common/add-component';
@@ -17,7 +21,12 @@ for (let key in lib.optimize) {
 
 class Source extends Component {
   handleClick = tag => {
-    addComponent(tag);
+    const instance = addComponent(tag);
+
+    store.dispatch({
+      type: ADD_COMPONENT,
+      payload: instance,
+    });
   };
 
   render() {

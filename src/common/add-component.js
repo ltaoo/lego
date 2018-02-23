@@ -10,7 +10,6 @@ for (let key in lib.optimize) {
 
 let uuid = 1;
 export default function addComponent(tag) {
-  console.log(tag);
   // 新增组件
   const instance = {
     uuid,
@@ -26,8 +25,5 @@ export default function addComponent(tag) {
     // 1 是给 Upload 里面的 Button
     uuid += 1;
   }
-  store.dispatch({
-    type: ADD_COMPONENT,
-    payload: instance,
-  });
+  return instance;
 }

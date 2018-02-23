@@ -7,6 +7,7 @@ import { DropTarget } from 'react-dnd';
 
 import store from '../../store';
 import {
+  ADD_COMPONENT,
   REMOVE_COMPONENT,
 } from '../../common/actions';
 import Field from '../Field';
@@ -34,7 +35,11 @@ const chessSquareTarget = {
 
     // Obtain the dragged item
     const { item } = monitor.getItem();
-    addComponent(item.label);
+    const instance = addComponent(item.label);
+    store.dispatch({
+      type: ADD_COMPONENT,
+      payload: instance,
+    });
     // You can do something with it
     // ChessActions.movePiece(item.fromPosition, props.position);
 
@@ -72,11 +77,11 @@ class Container extends React.Component {
   /**
    * 移除指定组件
    */
-  removeComponent = item => {
+  removeComponent = uuid => {
     store.dispatch({
       type: REMOVE_COMPONENT,
       payload: {
-        uuid: item.uuid,
+        uuid,
       },
     });
   };
