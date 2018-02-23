@@ -22,16 +22,17 @@ export default function renderComponent(instances, context) {
       const { title, label: id, rules, initialValue, labelCol, wrapperCol } = fieldProps;
       const { form } = context;
       const { getFieldDecorator } = form;
-
+      // 这里
+      const temp = {...props};
       if (options) {
-        props.options = options;
+        temp.options = options;
       }
-      let c = <Component {...props}>{renderComponent(children, context)}</Component>;
+      let c = <Component {...temp}>{renderComponent(children, context)}</Component>;
       if (label === 'Button') {
-        c = <Component {...props}>{props.children}</Component>;
+        c = <Component {...temp}>{temp.children}</Component>;
       }
       if (label === 'Select') {
-        c = <Component {...props}>{options.map(option => <Option key={i} value={option.value}>{option.label}</Option>)}</Component>;
+        c = <Component {...temp}>{options.map(option => <Option key={i} value={option.value}>{option.label}</Option>)}</Component>;
       }
 
       const fieldComponent = id

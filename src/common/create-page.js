@@ -193,10 +193,10 @@ ${extraComponentCode}
 
 class ${name} extends Component {
   ${constructorCode}
-  ${methodsCode}
   componentDidMount() {
     ${didMountCode}
   }
+  ${methodsCode}
   render() {
     const { form } = this.props;
     const {

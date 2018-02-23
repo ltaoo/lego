@@ -31,18 +31,51 @@ export default function getTableInstance(params = {}) {
     stateCode: [`columns${uuid}:`, `dataSource${uuid}:`],
     renderCode: [`columns${uuid}`, `dataSource${uuid}`],
     didMount: `
-    fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary")
-      .then(res => {
-        return res.json();
-      })
-      .then((res) => {
-        this.setState({
-          dataSource1: res.d
+      this.fetchData();
+    `,
+    methods: `
+    fetchData () {
+      fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary")
+        .then(res => {
+          return res.json();
+        })
+        .then((res) => {
+          this.setState({
+            dataSource1: res.d
+          });
+        })
+        .catch(err => {
+          console.log(err);
         });
+    }
+    createData() {
+      fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary", {
+        method: 'POST',
       })
-      .catch(err => {
-        console.log(err);
-      });
+        .then(res => {
+          return res.json();
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+    deleteData(id) {
+      fetch(\`https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary/$\{id}\`, {
+        method: 'DELETE',
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
     `,
     // 实际的 columns
     columns,
