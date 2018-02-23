@@ -30,7 +30,7 @@ class Item extends React.Component {
 const cardSource = {
   beginDrag(props) {
     return {
-      text: props.text
+      item: props.item,
     };
   }
 };
