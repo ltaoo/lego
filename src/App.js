@@ -1,6 +1,8 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { Layout, Button, Form, Modal } from 'antd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
 
 import Sources from './components/Sources';
 import Container from './components/Container';
@@ -168,4 +170,4 @@ class App extends React.Component {
   }
 }
 
-export default Form.create()(App);
+export default DragDropContext(HTML5Backend)(Form.create()(App));

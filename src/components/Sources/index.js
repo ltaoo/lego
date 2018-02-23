@@ -8,6 +8,7 @@ import { Input } from 'antd';
 import * as lib from './lib';
 import './index.css';
 import EventEmitter from '../../common/emitter';
+import Item from './DragSource';
 
 const COMPONENT_MAP = {};
 for (let key in lib.optimize) {
@@ -40,13 +41,11 @@ class Source extends Component {
     const items = Object.keys(lib.optimize).map((key, i) => {
       const item = lib.optimize[key].default();
       return (
-        <li
+        <Item
           key={i}
-          className="sidebar__component"
+          item={item}
           onClick={this.handleClick.bind(this, item.label)}
-        >
-          {item.label}
-        </li>
+        />
       );
     });
     return (

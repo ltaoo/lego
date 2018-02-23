@@ -3,7 +3,7 @@
  * @author wuya
  */
 import React from 'react';
-import PropType from 'prop-types';
+import PropTypes from 'prop-types';
 import { Form, Modal, Icon, Checkbox, Col, Select } from 'antd';
 
 import EventEmitter from '../../common/emitter';
@@ -187,7 +187,7 @@ class Field extends React.Component {
 }
 
 Field.PropType = {
-  item: PropType.object,
+  item: PropTypes.object,
 };
 
 // 在 Field 内渲染 Field 没有 form 属性
