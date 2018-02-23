@@ -6,7 +6,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Modal, Icon, Checkbox, Col, Select } from 'antd';
 
-import EventEmitter from '../../common/emitter';
+import store from '../../store';
+import {
+  UPDATE_COMPONENT
+} from '../../common/actions';
 import createSource from '../../common/create-source';
 import ComponentEditor from '../Editor';
 
@@ -26,7 +29,13 @@ class Field extends React.Component {
    */
   updateProps = (values) => {
     const { item } = this.props;
-    EventEmitter.emit('updateComponent', item, values);
+    store.dispatch({
+      type: UPDATE_COMPONENT,
+      payload: { 
+        item,
+        values,
+      },
+    });
     this.hideEditorModal();
   }
   /**

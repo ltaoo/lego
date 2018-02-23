@@ -25,7 +25,6 @@ class App extends React.Component {
       previewModalVisible: false,
       code: '',
     };
-    this.container = {};
   }
   /**
    * 预览组件
@@ -44,7 +43,7 @@ class App extends React.Component {
    * 生成格式化页面代码
    */
   createCode = () => {
-    const { instances } = this.container.state;
+    const { instances } = this.props;
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
     // return pageCode;
@@ -101,11 +100,13 @@ class App extends React.Component {
       previewModalVisible,
       code,
     } = this.state;
-    const { state = {} } = this.container;
+    const {
+      instances,
+    } = this.props;
     return (
       <Layout style={{ height: '100vh' }}>
         <Sider>
-          <Sources />
+          <Sources {...this.props} />
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', paddingLeft: 24 }}>
@@ -134,9 +135,7 @@ class App extends React.Component {
           </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
-              <Container
-                ref={e => this.container = e}
-              />
+              <Container {...this.props} />
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
@@ -163,7 +162,7 @@ class App extends React.Component {
           footer={null}
           width="90%"
         >
-          {previewModalVisible && renderComponent(state.instances, this.props)}
+          {previewModalVisible && renderComponent(instances, this.props)}
         </Modal>
       </Layout>
     );

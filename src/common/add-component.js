@@ -1,6 +1,7 @@
 import * as lib from '../components/Sources/lib';
 
-import EventEmitter from './emitter';
+import store from '../store';
+import { ADD_COMPONENT } from './actions';
 
 const COMPONENT_MAP = {};
 for (let key in lib.optimize) {
@@ -25,5 +26,8 @@ export default function addComponent(tag) {
     // 1 是给 Upload 里面的 Button
     uuid += 1;
   }
-  EventEmitter.emit('addComponent', instance);
+  store.dispatch({
+    type: ADD_COMPONENT,
+    payload: instance,
+  });
 }

@@ -5,11 +5,13 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 
+import store from '../../store';
+import {
+  REMOVE_COMPONENT,
+} from '../../common/actions';
 import Field from '../Field';
-import EventEmitter from '../../common/emitter';
 import addComponent from '../../common/add-component';
 import { ItemTypes } from '../../common/constants';
-import { updateProps, removeComponent } from '../../common/util';
 
 /**
  * Specifies the drop target contract.
@@ -67,37 +69,15 @@ class Container extends React.Component {
       currentInstance: {},
     };
   }
-  componentDidMount() {
-    EventEmitter.on('addComponent', (obj) => {
-      const { instances, currentInstance } = this.state;
-      // 如果是布局组件
-      if (currentInstance.layout) {
-        currentInstance.children = currentInstance.children || [];
-        currentInstance.children.push(obj);
-      } else {
-        instances.push(obj);
-      }
-      this.setState({
-        instances: [...instances],
-      });
-    });
-    EventEmitter.on('updateComponent', (item, values) => {
-      const { instances } = this.state;
-      const { uuid } = item;
-      // const { fieldProps: newFieldProps, props: newProps, options } = values;
-
-      // 递归寻找 uuid 对应的那个实例对象并更新 fieldProps 和 props
-      updateProps(uuid, instances, values);
-    });
-  }
   /**
    * 移除指定组件
    */
   removeComponent = item => {
-    const { instances } = this.state;
-    removeComponent(item.uuid, instances);
-    this.setState({
-      instances: [...instances],
+    store.dispatch({
+      type: REMOVE_COMPONENT,
+      payload: {
+        uuid: item.uuid,
+      },
     });
   };
   /**
@@ -113,7 +93,7 @@ class Container extends React.Component {
    * 渲染实例组件
    */
   renderComponent = () => {
-    const { instances } = this.state;
+    const { instances = [] } = this.props;
     return instances.map((instance) => {
       return (
         <Field
@@ -131,10 +111,8 @@ class Container extends React.Component {
   render() {
     const { connectDropTarget } = this.props;
     const fields = this.renderComponent();
-    return connectDropTarget(<div style={{ minHeight: 300 }}>{fields}</div>);
-    // return (<div>{fields}</div>);
+    return connectDropTarget(<div style={{ paddingBottom: 80, minHeight: 300 }}>{fields}</div>);
   }
 }
 
 export default DropTarget(ItemTypes.FIELD, chessSquareTarget, collect)(Container);
-// export default Container;
