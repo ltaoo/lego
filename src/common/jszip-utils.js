@@ -1,5 +1,3 @@
-
-
 var JSZipUtils = {};
 // just use the responseText with xhr1, response with xhr2.
 // The transformation doesn't throw away high-order byte (with responseText)

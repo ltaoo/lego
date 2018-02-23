@@ -2,17 +2,7 @@ import { Table } from 'antd';
 
 function onChange() {}
 
-const dataSource = [{
-  key: '1',
-  name: '胡彦斌',
-  age: 32,
-  address: '西湖区湖底公园1号'
-}, {
-  key: '2',
-  name: '胡彦祖',
-  age: 42,
-  address: '西湖区湖底公园1号'
-}];
+const dataSource = [];
 
 const columns = [
   {
@@ -38,13 +28,29 @@ export default function getTableInstance(params = {}) {
     Component: Table,
     label: 'Table',
     import: 'Table',
-    stateCode: `columns${uuid}:`,
-    renderCode: `columns${uuid}`,
+    stateCode: [`columns${uuid}:`, `dataSource${uuid}:`],
+    renderCode: [`columns${uuid}`, `dataSource${uuid}`],
+    didMount: `
+    fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary")
+      .then(res => {
+        return res.json();
+      })
+      .then((res) => {
+        this.setState({
+          dataSource1: res.d
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    `,
     // 实际的 columns
     columns,
+    dataSource,
     props: {
       onChange,
       columns: `columns${uuid}`,
+      dataSource: `dataSource${uuid}`,
     },
   };
 }

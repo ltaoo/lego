@@ -45,6 +45,7 @@ class App extends React.Component {
     const { instances } = this.container.state;
     const code = createSourceCode(instances);
     const pageCode = createPageCode(instances, code, 'Index');
+    // return pageCode;
     const formatedCode = window.prettier.format(pageCode);
     return formatedCode;
   }

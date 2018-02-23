@@ -122,9 +122,10 @@ class Field extends React.Component {
       const { Component: Tag, props: childProps } = item.children[0];
       instanceCom = <Component {...props}><Tag {...childProps} /></Component>;
     } else if (Tag === 'Table') {
-      const { columns } = item;
+      const { columns, dataSource } = item;
       const newProps = Object.assign({}, {...props}, {
         columns,
+        dataSource,
       });
       instanceCom = <Component {...newProps}></Component>;
     } else {

@@ -24,7 +24,7 @@ function createPropsText(props) {
     // 只处理简单类型，string、boolean、function
     const val = props[key];
     if (val) {
-      if (key === 'options' || key === 'columns') {
+      if (key === 'options' || key === 'columns' || key === 'dataSource') {
         console.log(`${key}={${val}}`);
         if (Array.isArray(val) && !val.length) {
         } else {

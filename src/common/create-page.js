@@ -63,6 +63,7 @@ function getMethods(instances) {
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const { methods, children } = instance;
+    console.log('methods', methods);
     if (methods) {
       ary.push(methods);
     }
@@ -95,7 +96,7 @@ function getConstructorText(instances) {
   return deduplication(ary);
 }
 /**
- * 拼接 const { xx } = Input|Form|DatePicker  中的 xx 部分
+ * 拼接 this.state = { xx } 中的 xx 部分
  * @param {Array} instances - 实例对象
  * @return {Array}
  */
@@ -104,12 +105,22 @@ function getStateText(instances) {
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { stateCode, options, columns } = instance;
+    const {
+      stateCode,
+      options,
+      columns,
+      dataSource,
+    } = instance;
     if (stateCode) {
       if (options) {
         ary.push(stateCode + JSON.stringify(options));
       } else if (columns) {
-        ary.push(stateCode + JSON.stringify(columns));
+        if (Array.isArray(stateCode)) {
+          ary.push(stateCode[0] + JSON.stringify(columns));
+          ary.push(stateCode[1] + JSON.stringify(dataSource));
+        } else {
+          ary.push(stateCode + JSON.stringify(columns));
+        }
       } else {
         ary.push(stateCode);
       }
@@ -136,6 +147,19 @@ function getRenderCode(instances) {
   // 去重
   return deduplication(ary);
 }
+function getDidMountCode(instances) {
+  let ary = [];
+
+  for (let i = 0, l = instances.length; i < l; i += 1) {
+    const instance = instances[i];
+    const { didMount } = instance;
+    if (didMount) {
+      ary.push(didMount);
+    }
+  }
+  // 去重
+  return deduplication(ary);
+}
 /**
  * 生成页面代码
  * @param {Array} instances - 实例对象数组
@@ -144,12 +168,13 @@ function getRenderCode(instances) {
  */
 export default function createPageCode(instances, code, name) {
   // todo 优化
-  const componentCode = getComponentCode(instances).join(',\n\t');
+  const componentCode = getComponentCode(instances).join(',');
   const extraComponentCode = getExtraComponentCode(instances).join('\n');
   const methodsCode = getMethods(instances).join('\n');
-  const constructorText = getConstructorText(instances).join('\n\t\t');
-  const stateCode = getStateText(instances).join(',\n\t\t\t');
-  const renderCode = getRenderCode(instances).join(',\n\t\t\t');
+  const constructorText = getConstructorText(instances).join('');
+  const stateCode = getStateText(instances).join(',');
+  const renderCode = getRenderCode(instances).join(',');
+  const didMountCode = getDidMountCode(instances).join();
 
   const constructorCode = (constructorText || stateCode) ? `constructor(props) {
     super(props);
@@ -169,6 +194,9 @@ ${extraComponentCode}
 class ${name} extends Component {
   ${constructorCode}
   ${methodsCode}
+  componentDidMount() {
+    ${didMountCode}
+  }
   render() {
     const { form } = this.props;
     const {

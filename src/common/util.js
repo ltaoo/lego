@@ -1,9 +1,13 @@
 /**
- * 递归更新属性
+ * @file 处理 instances 的一些方法
+ * @author wuya
+ */
+
+/**
+ * 更新属性
  * @param {*} uuid
  * @param {*} instances
- * @param {*} fieldProps
- * @param {*} props
+ * @param {*} values
  */
 export function updateProps(uuid, instances, values) {
   const {
@@ -32,6 +36,8 @@ export function updateProps(uuid, instances, values) {
 
 /**
  * 移除指定组件
+ * @param {number} uuid - 组件 id
+ * @param {Array|Object} instances
  */
 export function removeComponent(uuid, instances) {
   for (let i = 0, l = instances.length; i < l; i += 1) {

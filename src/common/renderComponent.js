@@ -51,9 +51,9 @@ export default function renderComponent(instances, context) {
     } else {
       // 这里也很 low ....
       if (label === 'Table') {
-        const { columns } = instance;
+        const { columns, dataSource } = instance;
         components.push(
-          <Component key={uuid} {...props} columns={columns}>
+          <Component key={uuid} {...props} columns={columns} dataSource={dataSource}>
             {renderComponent(children, context)}
           </Component>,
         );
