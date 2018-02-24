@@ -112,7 +112,7 @@ class Field extends React.Component {
 
     // todo: 使用策略模式拆分，对应的策略从 instanceObj 中读取，并且该部分逻辑在 create-source 以及 renderComponent 中也要用到
     let instanceCom = null;
-    if (Tag === 'Col' || Tag === 'Row') {
+    if (Tag === 'Col' || Tag === 'Row' || Tag === 'Card') {
       const childrenComponent = children.map((child, i) => {
         return (
           <WrappedField
@@ -202,7 +202,7 @@ class Field extends React.Component {
         })(instanceCom)
       : instanceCom;
 
-    let backgroundColor = item.layout ? 'rgba(0, 0, 0, .1)' : '#fff';
+    let backgroundColor = '#fff';
 		if (item.layout && (isOverCurrent || (isOver && greedy))) {
 			backgroundColor = 'darkgreen'
     }
