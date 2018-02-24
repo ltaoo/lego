@@ -5,7 +5,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
-import { Form, Modal, Icon, Select } from 'antd';
+import { Form, Modal, Icon, Select, Row, Col } from 'antd';
 import { DropTarget, DragSource } from 'react-dnd';
 
 import store from '../../store';
@@ -112,7 +112,7 @@ class Field extends React.Component {
 
     // todo: 使用策略模式拆分，对应的策略从 instanceObj 中读取，并且该部分逻辑在 create-source 以及 renderComponent 中也要用到
     let instanceCom = null;
-    if (Tag === 'Col' || Tag === 'Row' || Tag === 'Card') {
+    if (Tag === 'Col' || Tag === 'Row' || Tag === 'Card' || Tag === 'Modal') {
       const childrenComponent = children.map((child, i) => {
         return (
           <WrappedField
@@ -123,7 +123,11 @@ class Field extends React.Component {
         );
       });
 
-      instanceCom = <Component {...props}>{childrenComponent}</Component>;
+      if (Tag === 'Modal') {
+        instanceCom = <div>{childrenComponent}</div>;
+      } else {
+        instanceCom = <Component {...props}>{childrenComponent}</Component>;
+      }
     } else if (Tag === 'Select') {
       const { options } = item;
       const chidlrenOptions = options.map((option, i) => (
@@ -168,6 +172,7 @@ class Field extends React.Component {
     } else {
       instanceCom = <Component {...props} />;
     }
+      console.log(instanceCom, Tag);
     const modal = (
       <Modal
         title="编辑组件"

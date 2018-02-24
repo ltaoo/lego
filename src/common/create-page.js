@@ -110,6 +110,7 @@ function getStateText(instances) {
       options,
       columns,
       dataSource,
+      visible,
     } = instance;
     if (stateCode) {
       if (options) {

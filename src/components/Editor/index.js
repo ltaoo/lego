@@ -184,7 +184,9 @@ class Sidebar extends Component {
     };
 
     const fields = ['title', 'label', 'initialValue'];
+    let _i = 0;
     const temp = fields.map((field, i) => {
+      _i = i;
       let input = <Input />;
       if (field === 'initialValue' && (Tag === 'Select' || Tag === 'RadioGroup')) {
         input = <InputNumber />
@@ -196,14 +198,14 @@ class Sidebar extends Component {
       </FormItem>
     });
     temp.push((
-      <FormItem label="labelCol">
+      <FormItem key={_i++} label="labelCol">
         {getFieldDecorator(`fieldProps.labelCol.span`, {
           initialValue: labelCol.span,
         })(<InputNumber />)}
       </FormItem>
     ));
     temp.push((
-      <FormItem label="wrapperCol">
+      <FormItem key={_i++} label="wrapperCol">
         {getFieldDecorator(`fieldProps.wrapperCol.span`, {
           initialValue: wrapperCol.span,
         })(<InputNumber />)}

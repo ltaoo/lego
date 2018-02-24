@@ -3,7 +3,7 @@
  * @author wuya
  */
 
-const nativeMethods = ['onClick', 'onChange', 'onInput'];
+const nativeMethods = ['onClick', 'onChange', 'onInput', 'onOk', 'onCancel'];
 const IGNORE_ITEMS = ['children'];
 
 /**
@@ -23,8 +23,9 @@ function createPropsText(props) {
     }
     // 只处理简单类型，string、boolean、function
     const val = props[key];
-    if (val) {
-      if (key === 'options' || key === 'columns' || key === 'dataSource') {
+    console.log(key, val);
+    if (val !== undefined) {
+      if (key === 'options' || key === 'columns' || key === 'dataSource' || key === 'visible') {
         console.log(`${key}={${val}}`);
         if (Array.isArray(val) && !val.length) {
         } else {

@@ -94,6 +94,15 @@ export default function renderComponent(instances, context) {
             {renderComponent(children, context)}
           </Component>,
         );
+      } else if (label === 'Modal') {
+        const newProps = {...props};
+        newProps.visible = false;
+
+        components.push(
+          <Component key={uuid} {...newProps}>
+            {renderComponent(children, context)}
+          </Component>,
+        );
       } else {
         components.push(
           <Component key={uuid} {...props}>
