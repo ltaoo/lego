@@ -21,6 +21,7 @@ exportPlugins((exports.optimize = {}), [
   'Row',
   'Col',
   'Card',
+  'Divider',
   'Input',
   'TextArea',
   'Select',

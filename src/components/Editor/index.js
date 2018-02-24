@@ -140,6 +140,14 @@ class Sidebar extends Component {
               })(<RadioGroup options={options} />)}
             </FormItem>
           );
+        } else if (typeof val === 'number') {
+          formItems.push(
+            <FormItem key={i} label={key}>
+              {getFieldDecorator(`props.${key}`, {
+                initialValue: val,
+              })(<InputNumber />)}
+            </FormItem>
+          );
         }
       }
       
@@ -164,6 +172,9 @@ class Sidebar extends Component {
       title,
       label,
       initialValue,
+      // 布局相关
+      labelCol,
+      wrapperCol,
     } = fieldProps;
 
     const obj = {
@@ -173,7 +184,7 @@ class Sidebar extends Component {
     };
 
     const fields = ['title', 'label', 'initialValue'];
-    return fields.map((field, i) => {
+    const temp = fields.map((field, i) => {
       let input = <Input />;
       if (field === 'initialValue' && (Tag === 'Select' || Tag === 'RadioGroup')) {
         input = <InputNumber />
@@ -184,6 +195,21 @@ class Sidebar extends Component {
         })(input)}
       </FormItem>
     });
+    temp.push((
+      <FormItem label="labelCol">
+        {getFieldDecorator(`fieldProps.labelCol.span`, {
+          initialValue: labelCol.span,
+        })(<InputNumber />)}
+      </FormItem>
+    ));
+    temp.push((
+      <FormItem label="wrapperCol">
+        {getFieldDecorator(`fieldProps.wrapperCol.span`, {
+          initialValue: wrapperCol.span,
+        })(<InputNumber />)}
+      </FormItem>
+    ));
+    return temp;
   }
 
   /** 
