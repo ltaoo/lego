@@ -49,13 +49,15 @@ function reducer(state = initialState, action) {
       return res;
     case t.APPEND_COMPONENT:
       const { parent } = action.payload;
-      // 如果是布局组件
       // 找到 parent
       temp = [...state.instances];
       const parentInstance = findInstance(parent, temp);
-      parentInstance.children = parentInstance.children || [];
+      console.log(parent, instances, parentInstance);
+      if (parentInstance) {
+        parentInstance.children = parentInstance.children || [];
 
-      parentInstance.children.push(action.payload.item);
+        parentInstance.children.push(action.payload.item);
+      }
       return {
         ...state,
         instances: temp,

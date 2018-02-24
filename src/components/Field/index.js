@@ -28,6 +28,8 @@ class Field extends React.Component {
 
     this.state = {
       editorModalVisible: false,
+      hasDropped: false,
+      hasDroppedOnChild: false,
     };
   }
   /**
@@ -83,7 +85,12 @@ class Field extends React.Component {
       item,
       connectDragSource,
       connectDropTarget,
+      greedy,
+      isOver,
+      isOverCurrent,
     } = this.props;
+
+    console.log(item.label, isOver, isOverCurrent);
 
     const { getFieldDecorator } = form;
     const {
@@ -189,8 +196,14 @@ class Field extends React.Component {
           initialValue,
         })(instanceCom)
       : instanceCom;
+
+    let backgroundColor = 'rgba(0, 0, 0, .5)'
+
+		if (isOverCurrent || (isOver && greedy)) {
+			backgroundColor = 'darkgreen'
+		}
     let content = (
-      <div className="field">
+      <div className="field" style={{ background: backgroundColor }}>
         <div className="edit__wrapper">
           {operators}
           {isField ? (
@@ -207,6 +220,7 @@ class Field extends React.Component {
     // if (item.label === 'Col') {
     //   return connectDropTarget(connectDragSource(<Col {...props}>{content}</Col>));
     // }
+  
     return connectDropTarget(connectDragSource(content));
   }
 }
@@ -273,7 +287,15 @@ const fieldTarget = {
     monitor.getItem().index = hoverIndex;
   },
   drop(props, monitor, component) {
-    console.log(props, monitor, component);
+    console.log(monitor.didDrop());
+    const hasDroppedOnChild = monitor.didDrop();
+    if (hasDroppedOnChild && !props.greedy) {
+			return;
+    }
+    component.setState({
+			hasDropped: true,
+			hasDroppedOnChild,
+		});
     const { item } = monitor.getItem();
     const instance = addComponent(item.label);
     store.dispatch({
@@ -296,15 +318,16 @@ function collect(connect, monitor) {
   };
 }
 
-function dropConnect(connect) {
+function dropConnect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    isOverCurrent: monitor.isOver({ shallow: true }),
   };
 }
 
 // 在 Field 内渲染 Field 没有 form 属性
-const WrappedField = Form.create()(Field);
-
-export default DropTarget(ItemTypes.FIELD, fieldTarget, dropConnect)(
-  DragSource(ItemTypes.OTHER, fieldSource, collect)(WrappedField),
+const WrappedField = DropTarget(ItemTypes.FIELD, fieldTarget, dropConnect)(
+  DragSource(ItemTypes.OTHER, fieldSource, collect)(Form.create()(Field)),
 );
+export default WrappedField;

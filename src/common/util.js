@@ -4,15 +4,19 @@
  */
 
 export function findInstance(uuid, instances) {
+  let res = null;
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
+    console.log(instance, uuid);
     if (instance.uuid === uuid) {
-      return instance;
+      res = instance;
+      break;
     }
     if (instance.children) {
-      return findInstance(uuid, instance.children);
+      res = findInstance(uuid, instance.children);
     }
   }
+  return res;
 }
 
 /**
