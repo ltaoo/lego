@@ -39,6 +39,7 @@ function reducer(state = initialState, action) {
         instances: temp,
       };
     case t.SORT:
+      console.log('sort');
       const { dragIndex, hoverIndex } = action.payload;
       const dragCard = instances[dragIndex];
       const res = update(state, {
@@ -48,15 +49,18 @@ function reducer(state = initialState, action) {
       });
       return res;
     case t.APPEND_COMPONENT:
-      const { parent } = action.payload;
+      const { parent, remove } = action.payload;
+      const child = {...action.payload.item};
       // 找到 parent
       temp = [...state.instances];
       const parentInstance = findInstance(parent, temp);
       console.log(parent, instances, parentInstance);
+      if (remove) {
+        removeComponent(child.uuid, temp);
+      }
       if (parentInstance) {
         parentInstance.children = parentInstance.children || [];
-
-        parentInstance.children.push(action.payload.item);
+        parentInstance.children.push(child);
       }
       return {
         ...state,

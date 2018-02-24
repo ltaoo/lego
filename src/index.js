@@ -8,7 +8,6 @@ import registerServiceWorker from './registerServiceWorker';
 
 store.subscribe(function () {
     const state = store.getState();
-    console.log(state);
     ReactDOM.render(
         <App {...state} />,
         document.getElementById('root')

@@ -35,6 +35,16 @@ const chessSquareTarget = {
 
     // Obtain the dragged item
     const { item } = monitor.getItem();
+    if (item.uuid !== undefined) {
+      return {
+        moved: true,
+      };
+    }
+    if (!item || !item.label) {
+      return {
+        moved: true,
+      };
+    }
     const instance = addComponent(item.label);
     store.dispatch({
       type: ADD_COMPONENT,

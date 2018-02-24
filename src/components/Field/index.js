@@ -5,7 +5,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
-import { Form, Modal, Icon, Checkbox, Col, Select } from 'antd';
+import { Form, Modal, Icon, Select } from 'antd';
 import { DropTarget, DragSource } from 'react-dnd';
 
 import store from '../../store';
@@ -88,9 +88,9 @@ class Field extends React.Component {
       greedy,
       isOver,
       isOverCurrent,
+      isDragging,
+      connectDragPreview,
     } = this.props;
-
-    console.log(item.label, isOver, isOverCurrent);
 
     const { getFieldDecorator } = form;
     const {
@@ -187,6 +187,11 @@ class Field extends React.Component {
         <div className="edit__btn" onClick={this.removeComponent}>
           <Icon type="delete" />
         </div>
+        {connectDragSource(
+          <div className="edit__btn">
+            <Icon type="pushpin" />
+          </div>
+        )}
       </div>
     );
     // Button 要使用 Form.Item 布局但是不是字段，所以判断下要不要 getFieldDecorator
@@ -197,13 +202,13 @@ class Field extends React.Component {
         })(instanceCom)
       : instanceCom;
 
-    let backgroundColor = 'rgba(0, 0, 0, .5)'
-
-		if (isOverCurrent || (isOver && greedy)) {
+    let backgroundColor = item.layout ? 'rgba(0, 0, 0, .1)' : '#fff';
+		if (item.layout && (isOverCurrent || (isOver && greedy))) {
 			backgroundColor = 'darkgreen'
-		}
+    }
+    const opacity = isDragging ? 0 : 1;
     let content = (
-      <div className="field" style={{ background: backgroundColor }}>
+      <div className="field" style={{ background: backgroundColor, opacity }}>
         <div className="edit__wrapper">
           {operators}
           {isField ? (
@@ -221,7 +226,8 @@ class Field extends React.Component {
     //   return connectDropTarget(connectDragSource(<Col {...props}>{content}</Col>));
     // }
   
-    return connectDropTarget(connectDragSource(content));
+    // return connectDropTarget(connectDragSource(content));
+    return connectDragPreview(connectDropTarget(content));
   }
 }
 
@@ -236,6 +242,7 @@ const fieldSource = {
     return {
       id: props.id,
       index: props.index,
+      item: props.item,
     };
   },
 };
@@ -287,22 +294,24 @@ const fieldTarget = {
     monitor.getItem().index = hoverIndex;
   },
   drop(props, monitor, component) {
-    console.log(monitor.didDrop());
     const hasDroppedOnChild = monitor.didDrop();
-    if (hasDroppedOnChild && !props.greedy) {
+    if (hasDroppedOnChild) {
 			return;
     }
-    component.setState({
-			hasDropped: true,
-			hasDroppedOnChild,
-		});
-    const { item } = monitor.getItem();
-    const instance = addComponent(item.label);
+    // dropTarget
+    const { item: source } = monitor.getItem();
+    const target = props.item;
+    if ((source.uuid === target.uuid) || !target.layout) {
+      return;
+    }
+    const instance = source.uuid === undefined ? addComponent(source.label) : source;
     store.dispatch({
       type: APPEND_COMPONENT,
       payload: {
-        parent: props.item.uuid,
+        parent: target.uuid,
         item: instance,
+        // 是否要移除原先的
+        remove: source.uuid !== undefined,
       },
     });
   },
@@ -315,6 +324,7 @@ function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging(),
+    connectDragPreview: connect.dragPreview(),
   };
 }
 
@@ -328,6 +338,6 @@ function dropConnect(connect, monitor) {
 
 // 在 Field 内渲染 Field 没有 form 属性
 const WrappedField = DropTarget(ItemTypes.FIELD, fieldTarget, dropConnect)(
-  DragSource(ItemTypes.OTHER, fieldSource, collect)(Form.create()(Field)),
+  DragSource(ItemTypes.FIELD, fieldSource, collect)(Form.create()(Field)),
 );
 export default WrappedField;
