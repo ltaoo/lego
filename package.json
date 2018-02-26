@@ -1,7 +1,6 @@
 {
   "name": "lego",
   "version": "0.1.0",
-  "homepage": "https://ltaoo.github.io/lego/build",
   "dependencies": {
     "antd": "^3.1.1",
     "autoprefixer": "7.1.6",
