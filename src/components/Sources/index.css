@@ -1,3 +1,7 @@
+.sidebar {
+    overflow-y: auto;
+    max-height: 100vh;
+}
 .sidebar__search {
     padding: 10px;
 }

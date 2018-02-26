@@ -30,7 +30,7 @@ function urlToPromise(url) {
  * @param {strin} name 
  */
 export default function createZip(code) {
-  const zipUrl = './example.zip';
+  const zipUrl = './lib/example.zip';
   urlToPromise(zipUrl)
     .then((data) => {
       return JSZip.loadAsync(data);
