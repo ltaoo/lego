@@ -4,6 +4,7 @@
  * @author wuya
  */
 
+const mixPropsAry = ['dataSource', 'renderItem'];
 /** 
  * 去重
  */
@@ -106,13 +107,25 @@ function getStateText(instances) {
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     const {
+      uuid,
       stateCode,
       options,
       columns,
       dataSource,
-      visible,
+      mixProps,
     } = instance;
     if (stateCode) {
+      if (mixProps) {
+        const keys = Object.keys(mixProps);
+        for (let j = 0, len = keys.length; j < len; j += 1) {
+          const key = keys[j];
+          const val = mixProps[key];
+          if (typeof val !== 'function') {
+            ary.push(key + uuid + ':' + JSON.stringify(mixProps[key]));
+          }
+        }
+        continue;
+      }
       if (options) {
         ary.push(stateCode + JSON.stringify(options));
       } else if (columns) {
@@ -122,6 +135,8 @@ function getStateText(instances) {
         } else {
           ary.push(stateCode + JSON.stringify(columns));
         }
+      } else if (dataSource && !columns) {
+        ary.push(stateCode + JSON.stringify(columns));
       } else {
         ary.push(stateCode);
       }

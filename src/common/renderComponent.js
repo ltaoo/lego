@@ -27,6 +27,7 @@ export default function renderComponent(instances, context) {
       children,
       options = [],
       columns = [],
+      mixProps,
     } = instance;
     console.log(isField);
     if (isField) {
@@ -81,6 +82,19 @@ export default function renderComponent(instances, context) {
         </Form.Item>,
       );
     } else {
+      if (mixProps) {
+        console.log('has mix props', mixProps);
+        components.push(
+          <Component
+            key={uuid}
+            {...props}
+            {...mixProps}
+          >
+            {renderComponent(children, context)}
+          </Component>,
+        );
+        continue;
+      }
       // 这里也很 low ....
       if (label === 'Table') {
         const { columns, dataSource } = instance;

@@ -5,6 +5,7 @@
 
 const nativeMethods = ['onClick', 'onChange', 'onInput', 'onOk', 'onCancel'];
 const IGNORE_ITEMS = ['children'];
+const mixProps = ['dataSource', 'renderItem'];
 
 /**
  * 得到属性文本，如 { key: 0, type: 'primary' } 则会返回 'key={0} type="primary"'
@@ -25,6 +26,10 @@ function createPropsText(props) {
     const val = props[key];
     console.log(key, val);
     if (val !== undefined) {
+      if (mixProps.indexOf(key) > -1) {
+        propsText.push(`${key}={${val}}`);
+        continue;
+      }
       if (key === 'options' || key === 'columns' || key === 'dataSource' || key === 'visible') {
         console.log(`${key}={${val}}`);
         if (Array.isArray(val) && !val.length) {
@@ -40,6 +45,8 @@ function createPropsText(props) {
       } else if (typeof val === 'function') {
         if (nativeMethods.indexOf(key) > -1) {
           propsText.push(`${key}={this.${val.name}}`);
+        } else {
+          // propsText.push(`${key}={${val}`);
         }
       } else if (typeof val === 'object') {
         propsText.push(`${key}={${JSON.stringify(val)}}`);

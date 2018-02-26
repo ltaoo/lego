@@ -100,6 +100,7 @@ class Field extends React.Component {
       children = [],
       isField,
       fieldProps = {},
+      mixProps,
     } = item;
     const {
       title,
@@ -166,6 +167,22 @@ class Field extends React.Component {
         {
           columns,
           dataSource,
+        },
+      );
+      instanceCom = <Component {...newProps} />;
+    } else if (mixProps) {
+      const {
+        mixProps: {
+          dataSource,
+          renderItem,
+        },
+      } = item;
+      const newProps = Object.assign(
+        {},
+        { ...props },
+        {
+          dataSource,
+          renderItem,
         },
       );
       instanceCom = <Component {...newProps} />;

@@ -33,6 +33,7 @@ exportPlugins((exports.optimize = {}), [
   'Upload',
   'Button',
   'Table',
+  'ListItem',
   'Modal',
 ]);
 
