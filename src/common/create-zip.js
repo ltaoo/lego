@@ -30,7 +30,7 @@ function urlToPromise(url) {
  * @param {strin} name 
  */
 export default function createZip(code) {
-  const zipUrl = window.location.href.indexOf('build') > -1 ? '/lego/build/example.zip' : '/example.zip';
+  const zipUrl = '/lego/example.zip';
   urlToPromise(zipUrl)
     .then((data) => {
       return JSZip.loadAsync(data);
