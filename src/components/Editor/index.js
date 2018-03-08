@@ -3,7 +3,9 @@
  * @author wuya
  */
 import React, { Component } from 'react';
-import { Row, Col, Divider, Icon, Form, Input, InputNumber, Button, Radio, Checkbox, Switch } from 'antd';
+import { Row, Col, Divider, Icon, Input, InputNumber, Button, Radio, Checkbox, Switch } from 'antd';
+
+import Form from "react-jsonschema-form";
 
 const { Item: FormItem } = Form;
 const { Group: RadioGroup } = Radio;
@@ -19,7 +21,7 @@ const formItemLayout = {
   },
 };
 
-class Sidebar extends Component {
+class Editor extends Component {
   constructor(props) {
     super(props);
 
@@ -405,67 +407,22 @@ class Sidebar extends Component {
     return existOptions;
   }
 
+  handleSubmit = (data) => {
+    console.log(data);
+  }
+
   render() {
-    const { options } = this.state;
-    const { instance, form } = this.props;
-    const { getFieldDecorator } = form;
-    const { isField } = instance;
-    // 表单字段类
-    const fieldInputs = isField && this.renderFieldInputs();
-    // 校验项
-    const validateInputs = isField && this.renderValidateInputs();
-    // defaultProps
-    const commonInputs = this.renderCommonInput();
-    // options
-    let optionInputs = null;
-    if (instance.options && instance.options.length) {
-      optionInputs = (
-        <div>
-          <Divider>Options</Divider>
-          {this.renderOptions(options)}
-          <Button style={{ width: '100%' }} type="dashed" onClick={this.add}>
-            <Icon type="plus" /> Add field
-          </Button>
-          <Divider></Divider>
-        </div>
-      );
-    }
-    // columns
-    let columnsInput = null;
-    if (instance.columns && instance.columns.length) {
-      const { columns } = this.state;
-      columnsInput = (
-        <div>
-          <Divider>Columns</Divider>
-          {this.renderColumns(columns)}
-          <Button style={{ width: '100%' }} type="dashed" onClick={this.addColumn}>
-            <Icon type="plus" /> Add Column
-          </Button>
-          <Divider></Divider>
-        </div>
-      );
-    }
-    getFieldDecorator('keys', { initialValue: [] });
-    // options 与 columns 要抽出来作为单独的组件，这部分较为复杂，要支持拖拽排序
+    const { schema, uiSchema } = this.props.instance;
     return (
       <div className="editor__form">
-        <Form>
-          {commonInputs}
-          { isField && <Divider>Fields</Divider> }
-          {fieldInputs}
-          { isField && <Divider>Validate</Divider> }
-          {validateInputs}
-          {optionInputs}
-          {columnsInput}
-          <Form.Item>
-            <Button style={{ width: '100%' }} type="primary" onClick={this.handleClick}>
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+        <Form 
+          schema={schema} 
+          uiSchema={uiSchema} 
+          onSubmit={this.handleSubmit}
+        />
       </div>
     );
   }
 }
 
-export default Form.create()(Sidebar);
+export default Editor;

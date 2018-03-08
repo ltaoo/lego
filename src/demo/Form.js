@@ -18,7 +18,14 @@ class FormDemo extends Component {
         return (
             <div>
                 <FormItem label="name">
-                    {getFieldDecorator('name')(
+                    {getFieldDecorator('name', {
+                        rules: [
+                            {
+                                required: true,
+                                message: '请填写用户名',
+                            },
+                        ],
+                    })(
                         <Input />
                     )}
                 </FormItem>

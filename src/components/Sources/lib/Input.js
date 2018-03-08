@@ -18,5 +18,7 @@ export default function getInputInstance() {
     props: {
       placeholder: '请输入活动名称',
     },
+    schema: {
+    },
   };
 }

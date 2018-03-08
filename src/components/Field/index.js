@@ -94,13 +94,12 @@ class Field extends React.Component {
 
     const { getFieldDecorator } = form;
     const {
-      label: Tag,
       Component,
       props,
       children = [],
       isField,
       fieldProps = {},
-      mixProps,
+      mergedProps,
     } = item;
     const {
       title,
@@ -113,8 +112,9 @@ class Field extends React.Component {
 
     // todo: 使用策略模式拆分，对应的策略从 instanceObj 中读取，并且该部分逻辑在 create-source 以及 renderComponent 中也要用到
     let instanceCom = null;
-    if (Tag === 'Col' || Tag === 'Row' || Tag === 'Card' || Tag === 'Modal') {
-      const childrenComponent = children.map((child, i) => {
+    let childrenComponent = null;
+    if (children) {
+      childrenComponent = children.map((child, i) => {
         return (
           <WrappedField
             {...this.props}
@@ -123,73 +123,23 @@ class Field extends React.Component {
           />
         );
       });
-
-      if (Tag === 'Modal') {
-        instanceCom = <div>{childrenComponent}</div>;
-      } else {
-        instanceCom = <Component {...props}>{childrenComponent}</Component>;
-      }
-    } else if (Tag === 'Select') {
-      const { options } = item;
-      const chidlrenOptions = options.map((option, i) => (
-        <Option key={i} value={option.value}>
-          {option.label}
-        </Option>
-      ));
-      instanceCom = <Component {...props}>{chidlrenOptions}</Component>;
-    } else if (
-      Tag === 'CheckboxGroup' ||
-      Tag === 'RadioGroup' ||
-      Tag === 'Cascader'
-    ) {
-      const { options } = item;
-      const newProps = Object.assign(
+    }
+    let newProps = props;
+    if (mergedProps) {
+      newProps = Object.assign(
         {},
         { ...props },
         {
-          options,
+          ...mergedProps,
           form: this.props.form,
         },
       );
-      instanceCom = <Component {...newProps} />;
-    } else if (Tag === 'Upload') {
-      const { Component: Tag, props: childProps } = item.children[0];
-      instanceCom = (
-        <Component {...props}>
-          <Tag {...childProps} />
-        </Component>
-      );
-    } else if (Tag === 'Table') {
-      const { columns, dataSource } = item;
-      const newProps = Object.assign(
-        {},
-        { ...props },
-        {
-          columns,
-          dataSource,
-        },
-      );
-      instanceCom = <Component {...newProps} />;
-    } else if (mixProps) {
-      const {
-        mixProps: {
-          dataSource,
-          renderItem,
-        },
-      } = item;
-      const newProps = Object.assign(
-        {},
-        { ...props },
-        {
-          dataSource,
-          renderItem,
-        },
-      );
-      instanceCom = <Component {...newProps} />;
-    } else {
-      instanceCom = <Component {...props} />;
     }
-      console.log(instanceCom, Tag);
+
+    instanceCom = (children && children.length)
+      ? <Component {...newProps}>{childrenComponent}</Component>
+      : <Component {...newProps} />;
+    
     const modal = (
       <Modal
         title="编辑组件"
@@ -216,14 +166,7 @@ class Field extends React.Component {
         )}
       </div>
     );
-    // Button 要使用 Form.Item 布局但是不是字段，所以判断下要不要 getFieldDecorator
-    const fieldInstance = label
-      ? getFieldDecorator(label, {
-          rules,
-          initialValue,
-        })(instanceCom)
-      : instanceCom;
-
+    // 用以拖拽时标志 container
     let backgroundColor = '#fff';
 		if (item.layout && (isOverCurrent || (isOver && greedy))) {
 			backgroundColor = 'darkgreen'
@@ -235,7 +178,7 @@ class Field extends React.Component {
           {operators}
           {isField ? (
             <FormItem label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
-              {fieldInstance}
+              {instanceCom}
             </FormItem>
           ) : (
             instanceCom
@@ -244,11 +187,6 @@ class Field extends React.Component {
         {modal}
       </div>
     );
-    // if (item.label === 'Col') {
-    //   return connectDropTarget(connectDragSource(<Col {...props}>{content}</Col>));
-    // }
-  
-    // return connectDropTarget(connectDragSource(content));
     return connectDragPreview(connectDropTarget(content));
   }
 }
