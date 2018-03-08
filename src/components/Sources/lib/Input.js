@@ -19,7 +19,9 @@ export default function getInputInstance() {
       }],
       ...layout,
     },
-    props: {},
+    props: {
+      placeholder: '请输入活动名称',
+    },
     // 编辑属性表单用的 schema
     schema: {
       ...getSchema(

@@ -4,8 +4,30 @@
  */
 
 const nativeMethods = ['onClick', 'onChange', 'onInput', 'onOk', 'onCancel'];
+// 忽略项
 const IGNORE_ITEMS = ['children'];
-const mixProps = ['dataSource', 'renderItem'];
+const MERGED_PROPS = ['dataSource', 'renderItem'];
+
+const HANDLER = {
+  string(key, val) {
+    return `${key}="${val}"`;
+  },
+  boolean(key, val) {
+    return `${key}={${val}}`;
+  },
+  function(key, val) {
+    if (nativeMethods.indexOf(key) > -1) {
+      return `${key}={this.${val.name}}`;
+    }
+    return '';
+  },
+  object(key, val) {
+    return `${key}={${JSON.stringify(val)}}`;
+  },
+  default(key, val) {
+    return `${key}={${val}}`;
+  },
+}
 
 /**
  * 得到属性文本，如 { key: 0, type: 'primary' } 则会返回 'key={0} type="primary"'
@@ -24,45 +46,25 @@ function createPropsText(props) {
     }
     // 只处理简单类型，string、boolean、function
     const val = props[key];
-    console.log(key, val);
     if (val !== undefined) {
-      if (mixProps.indexOf(key) > -1) {
+      // 一些特殊的属性
+      if (MERGED_PROPS.indexOf(key) > -1) {
         propsText.push(`${key}={${val}}`);
         continue;
       }
-      if (key === 'options' || key === 'columns' || key === 'dataSource' || key === 'visible') {
-        console.log(`${key}={${val}}`);
-        if (Array.isArray(val) && !val.length) {
-        } else {
-          propsText.push(`${key}={${val}}`);
-        }
-        continue;
-      }
-      if (typeof val === 'string') {
-        propsText.push(`${key}="${val}"`);
-      } else if (typeof val === 'boolean') {
-        propsText.push(`${key}={${val}}`);
-      } else if (typeof val === 'function') {
-        if (nativeMethods.indexOf(key) > -1) {
-          propsText.push(`${key}={this.${val.name}}`);
-        } else {
-          // propsText.push(`${key}={${val}`);
-        }
-      } else if (typeof val === 'object') {
-        propsText.push(`${key}={${JSON.stringify(val)}}`);
-      } else {
-        propsText.push(`${key}={${val}}`);
-      }
-    } else {
+      const type = typeof val || 'default';
+      const text = HANDLER[type](key, val);
+      propsText.push(text);
     }
   }
   return propsText.join(' ');
 }
 
 /**
- * 
+ * 将 propTypes 上的属性拿到，就知道这个组件需要哪些属性了
  * @param {Antd Component} Component 
  * @param {Object} props 
+ * @return {Object}
  */
 function mergeProps(Component, props) {
   const { propTypes } = Component;
@@ -74,14 +76,13 @@ function mergeProps(Component, props) {
  * 标签与属性生成代码
  * @param {Object} instance 
  * @param {Object} props 
- * @param {boolean} isField - 是否是表单
  */
-function createCodeWithProps(instance, props, isField, fieldProps) {
-  const { label: Tag, children } = instance;
+function createCodeWithProps(instance, props) {
+  const { label: Tag, children, isField, fieldProps } = instance;
   // 属性文本
   const propsText = createPropsText(props);
+  // 最基本的情况
   let code = `<${Tag} ${propsText}>`;
-  // 按钮的文本
   if (props.children && typeof props.children === 'string') {
     code += props.children;
   } else if (children && children.length > 0) {
@@ -116,17 +117,21 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
   return code;
 }
 
+function createSingleComponentCode(instance) {
+  const { Component, props, mergedProps } = instance;
+  const newProps = mergeProps(Component, props, mergedProps);
+  return createCodeWithProps(instance, newProps);
+}
 /**
  * 根据实例对象拼接字符串代码
  * @param {Array} instances - 实例对象数组
+ * @return {string}
  */
 export default function createSourceCode(instances = []) {
   let code = '';
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
-    const { Component, props } = instance;
-    const mergedProps = mergeProps(Component, props);
-    code += createCodeWithProps(instance, mergedProps, instance.isField, instance.fieldProps);
+    code += createSingleComponentCode(instance);
   }
   return code;
 }
