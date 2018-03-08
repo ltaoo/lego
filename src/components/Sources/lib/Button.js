@@ -25,6 +25,7 @@ export default function getButtonInstance(params = {}) {
       title: '',
       label: null,
       rules: [],
+      labelCol: {},
       wrapperCol: {
         offset: 2,
       },

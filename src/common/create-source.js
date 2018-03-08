@@ -120,7 +120,7 @@ function createCodeWithProps(instance, props, isField, fieldProps) {
  * 根据实例对象拼接字符串代码
  * @param {Array} instances - 实例对象数组
  */
-export default function createSourceCode(instances) {
+export default function createSourceCode(instances = []) {
   let code = '';
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];

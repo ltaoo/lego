@@ -16,7 +16,7 @@ function deduplication(ary) {
  * @param {Array} instances - 实例对象
  * @return {Array}
  */
-function getComponentCode(instances) {
+function getComponentCode(instances = []) {
   let ary = [];
 
   for (let i = 0, l = instances.length; i < l; i += 1) {
@@ -182,7 +182,7 @@ function getDidMountCode(instances) {
  * @param {string} code 
  * @param {string} name - 页面名称
  */
-export default function createPageCode(instances, code, name) {
+export default function createPageCode(instances = [], code, name) {
   // todo 优化
   const componentCode = getComponentCode(instances).join(',');
   const extraComponentCode = getExtraComponentCode(instances).join('\n');
@@ -220,7 +220,7 @@ class ${name} extends Component {
      } = this.state;
     const { getFieldDecorator } = form;
     return (
-      <div style={{ margin: '0 auto', width: 980 }}>
+      <div>
         ${code}
       </div>
     );
