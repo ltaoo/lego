@@ -110,8 +110,8 @@ class Field extends React.Component {
       wrapperCol,
     } = fieldProps;
 
-    // todo: 使用策略模式拆分，对应的策略从 instanceObj 中读取，并且该部分逻辑在 create-source 以及 renderComponent 中也要用到
     let instanceCom = null;
+    // 处理 children
     let childrenComponent = null;
     if (children) {
       childrenComponent = children.map((child, i) => {
@@ -124,6 +124,7 @@ class Field extends React.Component {
         );
       });
     }
+    // 处理 props
     let newProps = props;
     if (mergedProps) {
       newProps = Object.assign(
@@ -178,7 +179,10 @@ class Field extends React.Component {
           {operators}
           {isField ? (
             <FormItem label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
-              {instanceCom}
+              {getFieldDecorator(label, {
+                rules,
+                initialValue,
+              })(instanceCom)}
             </FormItem>
           ) : (
             instanceCom
