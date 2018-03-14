@@ -78,7 +78,7 @@ function mergeProps(Component, props) {
  * @param {Object} props 
  */
 function createCodeWithProps(instance, props) {
-  const { label: Tag, children, isField, fieldProps } = instance;
+  const { label: Tag, children, field } = instance;
   // 属性文本
   const propsText = createPropsText(props);
   // 最基本的情况
@@ -95,8 +95,8 @@ function createCodeWithProps(instance, props) {
     code += optionCode;
   }
   code += `</${Tag}>`;
-  if (isField) {
-    const { title, label, rules, initialValue, labelCol, wrapperCol } = fieldProps;
+  if (field) {
+    const { title, label, rules, initialValue, labelCol, wrapperCol } = field;
     const rulesText = rules ? `rules: ${JSON.stringify(rules)}` : '';
     const initialValueText = initialValue !== undefined ? `initialValue: ${JSON.stringify(initialValue)}` : '';
     const labelColText = labelCol ? ` labelCol={${JSON.stringify(labelCol)}}` : '';

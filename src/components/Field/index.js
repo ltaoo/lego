@@ -97,8 +97,7 @@ class Field extends React.Component {
       Component,
       props,
       children = [],
-      isField,
-      fieldProps = {},
+      field,
       mergedProps,
     } = item;
     const {
@@ -108,7 +107,7 @@ class Field extends React.Component {
       initialValue,
       labelCol,
       wrapperCol,
-    } = fieldProps;
+    } = field;
 
     let instanceCom = null;
     // 处理 children
@@ -173,20 +172,23 @@ class Field extends React.Component {
 			backgroundColor = 'darkgreen'
     }
     const opacity = isDragging ? 0 : 1;
+
+    if (field) {
+      instanceCom = (
+        <FormItem label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
+          {getFieldDecorator(label, {
+            rules,
+            initialValue,
+          })(instanceCom)}
+        </FormItem>
+      );
+    }
+
     let content = (
       <div className="field" style={{ background: backgroundColor, opacity }}>
         <div className="edit__wrapper">
           {operators}
-          {isField ? (
-            <FormItem label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
-              {getFieldDecorator(label, {
-                rules,
-                initialValue,
-              })(instanceCom)}
-            </FormItem>
-          ) : (
-            instanceCom
-          )}
+          {instanceCom}
         </div>
         {modal}
       </div>
