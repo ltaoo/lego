@@ -408,7 +408,7 @@ class Editor extends Component {
   }
 
   handleSubmit = (data) => {
-    console.log(data);
+    this.props.submit(data);
   }
 
   render() {

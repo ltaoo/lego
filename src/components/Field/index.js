@@ -33,15 +33,17 @@ class Field extends React.Component {
     };
   }
   /**
-   * 更新属性
+   * 从表单中获取值，更新 instance
+   * @param {Object} values - 表单值
    */
   updateProps = values => {
+    const { formData } = values;
     const { item } = this.props;
     store.dispatch({
       type: UPDATE_COMPONENT,
       payload: {
         item,
-        values,
+        values: formData,
       },
     });
     this.hideEditorModal();
@@ -101,7 +103,7 @@ class Field extends React.Component {
       mergedProps,
     } = item;
     const {
-      title,
+      id,
       label,
       rules,
       initialValue,
@@ -175,8 +177,8 @@ class Field extends React.Component {
 
     if (field) {
       instanceCom = (
-        <FormItem label={title} labelCol={labelCol} wrapperCol={wrapperCol}>
-          {getFieldDecorator(label, {
+        <FormItem label={label} labelCol={labelCol} wrapperCol={wrapperCol}>
+          {getFieldDecorator(id, {
             rules,
             initialValue,
           })(instanceCom)}

@@ -9,8 +9,8 @@ export default function getInputInstance() {
     import: 'Input',
     // 表单用字段
     field: {
-      title: '活动名称',
-      label: 'name',
+      label: '活动名称',
+      id: 'name',
       rules: [{
         required: true,
         messsage: '请填写活动名称',
@@ -46,14 +46,24 @@ export default function getInputInstance() {
               default: '活动名称',
             },
             labelCol: {
-              type: 'integer',
-              title: 'labelCol',
-              default: 2,
+              type: 'object',
+              properties: {
+                span: {
+                  type: 'integer',
+                  title: 'labelCol',
+                  default: 2,
+                },
+              },
             },
             wrapperCol: {
-              type: 'integer',
-              title: 'labelCol',
-              default: 22,
+              type: 'object',
+              properties: {
+                span: {
+                  type: 'integer',
+                  title: 'wrapperCol',
+                  default: 22,
+                },
+              },
             },
             // 校验规则
             rules: {

@@ -27,20 +27,17 @@ export function findInstance(uuid, instances) {
  */
 export function updateProps(uuid, instances, values) {
   const {
-    fieldProps,
+    field,
     props,
     options,
     columns,
-    rules,
   } = values;
-  console.log(values);
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     if (instance.uuid === uuid) {
-      instance.fieldProps = Object.assign({}, instance.fieldProps, fieldProps);
+      instance.field = Object.assign({}, instance.fieldProps, field);
       instance.props = Object.assign({}, instance.props, props);
       instance.options = options;
-      instance.rules = rules;
       instance.columns = columns;
       break;
     }

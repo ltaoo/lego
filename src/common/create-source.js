@@ -96,21 +96,21 @@ function createCodeWithProps(instance, props) {
   }
   code += `</${Tag}>`;
   if (field) {
-    const { title, label, rules, initialValue, labelCol, wrapperCol } = field;
+    const { label, id, rules, initialValue, labelCol, wrapperCol } = field;
     const rulesText = rules ? `rules: ${JSON.stringify(rules)}` : '';
     const initialValueText = initialValue !== undefined ? `initialValue: ${JSON.stringify(initialValue)}` : '';
     const labelColText = labelCol ? ` labelCol={${JSON.stringify(labelCol)}}` : '';
     const wrapperColText = wrapperCol ? ` wrapperCol={${JSON.stringify(wrapperCol)}}` : '';
 
     const optionsText = [rulesText, initialValueText].filter(item => !!item).join(',');
-    const decoratorText = label
-      ? `{getFieldDecorator('${label}', {
+    const decoratorText = id
+      ? `{getFieldDecorator('${id}', {
         ${optionsText}
       })(
         ${code}
       )}`
       : code;
-    code = `<Form.Item label="${title}"${labelColText}${wrapperColText}>
+    code = `<Form.Item label="${label}"${labelColText}${wrapperColText}>
           ${decoratorText}
         </Form.Item>`;
   }
