@@ -8,12 +8,14 @@ export default function getSwitchInstance() {
     label: 'Switch',
     import: 'Switch',
     // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '即时配送',
-      label: 'quick',
+    field: {
+      label: '即时配送',
+      id: 'quick',
       initialValue: false,
-      rules: [],
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     props: {},

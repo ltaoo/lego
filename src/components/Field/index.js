@@ -102,15 +102,6 @@ class Field extends React.Component {
       field,
       mergedProps,
     } = item;
-    const {
-      id,
-      label,
-      rules,
-      initialValue,
-      labelCol,
-      wrapperCol,
-    } = field;
-
     let instanceCom = null;
     // 处理 children
     let childrenComponent = null;
@@ -176,6 +167,15 @@ class Field extends React.Component {
     const opacity = isDragging ? 0 : 1;
 
     if (field) {
+      const {
+        id,
+        label,
+        rules,
+        initialValue,
+        labelCol,
+        wrapperCol,
+      } = field;
+
       instanceCom = (
         <FormItem label={label} labelCol={labelCol} wrapperCol={wrapperCol}>
           {getFieldDecorator(id, {

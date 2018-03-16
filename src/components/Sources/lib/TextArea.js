@@ -9,13 +9,16 @@ export default function getTextArea() {
     Component: TextArea,
     label: 'TextArea',
     import: 'Input',
-    isField: true,
-    fieldProps: {
-      title: '活动形式',
-      label: 'type',
+    extra: 'const { TextArea } = Input;',
+    field: {
+      label: '活动形式',
+      id: 'type',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
-    extra: 'const { TextArea } = Input;',
     props: {
       placeholder: '请输入活动形式',
     },

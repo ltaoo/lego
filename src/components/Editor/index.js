@@ -7,6 +7,8 @@ import { Row, Col, Divider, Icon, Input, InputNumber, Button, Radio, Checkbox, S
 
 import Form from "react-jsonschema-form";
 
+import { createSchemaByDefaultValue } from '../../common/util';
+
 const { Item: FormItem } = Form;
 const { Group: RadioGroup } = Radio;
 
@@ -412,7 +414,14 @@ class Editor extends Component {
   }
 
   render() {
-    const { schema, uiSchema } = this.props.instance;
+    const { field, props, uiSchema } = this.props.instance;
+    const defaultValue = {
+      props,
+    };
+    if (field) {
+      defaultValue.field = field;
+    }
+    const schema = createSchemaByDefaultValue(defaultValue);
     return (
       <div className="editor__form">
         <Form 

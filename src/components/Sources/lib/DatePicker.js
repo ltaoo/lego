@@ -7,10 +7,13 @@ export default function getDatePickerInstance() {
     Component: DatePicker,
     label: 'DatePicker',
     import: 'DatePicker',
-    isField: true,
-    fieldProps: {
-      title: '活动时间',
-      label: 'date',
+    field: {
+      label: '活动时间',
+      id: 'date',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     props: {

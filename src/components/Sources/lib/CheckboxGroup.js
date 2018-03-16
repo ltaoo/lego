@@ -40,11 +40,13 @@ export default function (params = {}) {
     }
     `,
     // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '活动性质',
-      label: 'property',
-      rules: [],
+    field: {
+      label: '活动性质',
+      id: 'property',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     // 实际的 options

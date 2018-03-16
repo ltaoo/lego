@@ -10,11 +10,13 @@ export default function getSelectInstance() {
     extra: 'const { Option } = Select;',
     constructorCode: 'this.onChange = this.onChange.bind(this);',
     // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '活动区域',
-      label: 'region',
-      rules: [],
+    field: {
+      label: '活动区域',
+      id: 'region',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     methods: `

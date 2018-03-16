@@ -54,11 +54,13 @@ export default function getRadioInstance(params = {}) {
     stateCode: `options${uuid}:`,
     renderCode: `options${uuid}`,
     // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '特殊资源',
-      label: 'resource',
-      rules: [],
+    field: {
+      label: '特殊资源',
+      id: 'resource',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     mergedProps: {
@@ -67,13 +69,5 @@ export default function getRadioInstance(params = {}) {
     props: {
       options: `options${uuid}`,
     },
-    schema: {
-      ...getSchema(fieldSchema({
-        title: '特殊资源',
-        label: 'resource',
-        initialValue: 2,
-      }), schema),
-    },
-    uiSchema: {},
   };
 }

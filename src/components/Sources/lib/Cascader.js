@@ -46,11 +46,13 @@ export default function getCascader(params = {}) {
     stateCode: `options${uuid}:`,
     renderCode: `options${uuid}`,
     // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '城市选择',
-      label: 'city',
-      rules: [],
+    field: {
+      label: '城市选择',
+      id: 'city',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     options,

@@ -12,11 +12,13 @@ export default function getUploadInstance(params = {}) {
     label: 'Upload',
     import: 'Upload',
     // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '上传文件',
-      label: 'files',
-      rules: [],
+    field: {
+      label: '上传文件',
+      id: 'files',
+      rules: [{
+        required: true,
+        messsage: '请填写活动名称',
+      }],
       ...layout,
     },
     children: [

@@ -19,17 +19,6 @@ export default function getButtonInstance(params = {}) {
       alert(JSON.stringify(values));
     }
     `,
-    // 表单用字段
-    isField: true,
-    fieldProps: {
-      title: '',
-      label: null,
-      rules: [],
-      labelCol: {},
-      wrapperCol: {
-        offset: 2,
-      },
-    },
     props: {
       children: text,
       type,

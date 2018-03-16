@@ -65,3 +65,47 @@ export function removeComponent(uuid, instances) {
     }
   }
 }
+
+/**
+ * 获取变量类型
+ * @param {*} variable 
+ * @return string
+ */
+export function getType(variable) {
+  const type = Object.prototype.toString.call(variable);
+  return type.slice(8, -1);
+}
+
+/**
+ * 根据 defaultValue 生成 schema
+ * @param {*} defaultValue 
+ */
+export function createSchemaByDefaultValue(defaultValue, key) {
+  if (getType(defaultValue) === 'Object') {
+    const properties = {};
+    for (let key in defaultValue) {
+      properties[key] = createSchemaByDefaultValue(defaultValue[key], key);
+    }
+    return {
+      type: 'object',
+      properties: properties,
+    };
+  }
+  if (getType(defaultValue) === 'Array') {
+    return {
+      type: 'array',
+      items: defaultValue.map(item => createSchemaByDefaultValue(item)),
+    };
+  }
+
+  if (getType(defaultValue) === 'Function') {
+    return {
+      type: 'string',
+    };
+  }
+  return {
+    type: typeof defaultValue,
+    title: key,
+    default: defaultValue,
+  };
+}
