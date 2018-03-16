@@ -50,7 +50,9 @@ export default function (params = {}) {
       ...layout,
     },
     // 实际的 options
-    options,
+    mergedProps: {
+      options,
+    },
     props: {
       // 只是文字
       options: `options${uuid}`,

@@ -6,11 +6,14 @@
 const nativeMethods = ['onClick', 'onChange', 'onInput', 'onOk', 'onCancel'];
 // 忽略项
 const IGNORE_ITEMS = ['children'];
-const MERGED_PROPS = ['dataSource', 'renderItem'];
+const MERGED_PROPS = ['options', 'dataSource', 'renderItem'];
 
 const HANDLER = {
   string(key, val) {
     return `${key}="${val}"`;
+  },
+  number(key, val) {
+    return `${key}={${val}}`;
   },
   boolean(key, val) {
     return `${key}={${val}}`;
@@ -53,6 +56,7 @@ function createPropsText(props) {
         continue;
       }
       const type = typeof val || 'default';
+      console.log('type', type);
       const text = HANDLER[type](key, val);
       propsText.push(text);
     }
@@ -90,7 +94,10 @@ function createCodeWithProps(instance, props) {
   }
   // Select 需要处理 Option
   if (Tag === 'Select') {
-    const { options } = instance;
+    const { mergedProps } = instance;
+    const {
+      options,
+    } = mergedProps;
     const optionCode = options.map(option => `<Option value={${option.value}}>${option.label}</Option>`).join('');
     code += optionCode;
   }

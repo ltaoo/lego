@@ -29,16 +29,16 @@ export function updateProps(uuid, instances, values) {
   const {
     field,
     props,
-    options,
-    columns,
+    mergedProps
   } = values;
   for (let i = 0, l = instances.length; i < l; i += 1) {
     const instance = instances[i];
     if (instance.uuid === uuid) {
       instance.field = Object.assign({}, instance.fieldProps, field);
       instance.props = Object.assign({}, instance.props, props);
-      instance.options = options;
-      instance.columns = columns;
+      instance.mergedProps = Object.assign({}, instance.mergedProps, mergedProps);
+      // instance.options = options;
+      // instance.columns = columns;
       break;
     }
     if (instance.children && instance.children.length) {
@@ -92,6 +92,23 @@ export function createSchemaByDefaultValue(defaultValue, key) {
     };
   }
   if (getType(defaultValue) === 'Array') {
+    if (key && key === 'options') {
+      return {
+        type: 'array',
+        default: defaultValue,
+        items: {
+          type: 'object',
+          properties: {
+            label: {
+              type: 'string',
+            },
+            value: {
+              type: 'integer',
+            },
+          },
+        },
+      };
+    }
     return {
       type: 'array',
       items: defaultValue.map(item => createSchemaByDefaultValue(item)),

@@ -77,9 +77,6 @@ class Field extends React.Component {
       editorModalVisible: false,
     });
   };
-  renderComponent = () => {
-    
-  }
   render() {
     const { editorModalVisible } = this.state;
     const {
@@ -128,6 +125,8 @@ class Field extends React.Component {
         },
       );
     }
+
+    console.log(newProps);
 
     instanceCom = (children && children.length)
       ? <Component {...newProps}>{childrenComponent}</Component>

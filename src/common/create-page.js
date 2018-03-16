@@ -109,19 +109,21 @@ function getStateText(instances) {
     const {
       uuid,
       stateCode,
-      options,
       columns,
       dataSource,
-      mixProps,
+      mergedProps,
     } = instance;
     if (stateCode) {
-      if (mixProps) {
-        const keys = Object.keys(mixProps);
+      const {
+        options,
+      } = mergedProps;
+      if (mergedProps) {
+        const keys = Object.keys(mergedProps);
         for (let j = 0, len = keys.length; j < len; j += 1) {
           const key = keys[j];
-          const val = mixProps[key];
+          const val = mergedProps[key];
           if (typeof val !== 'function') {
-            ary.push(key + uuid + ':' + JSON.stringify(mixProps[key]));
+            ary.push(key + uuid + ':' + JSON.stringify(mergedProps[key]));
           }
         }
         continue;

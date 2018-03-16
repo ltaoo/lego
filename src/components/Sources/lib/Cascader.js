@@ -55,7 +55,9 @@ export default function getCascader(params = {}) {
       }],
       ...layout,
     },
-    options,
+    mergedProps: {
+      options,
+    },
     props: {
       options: `options${uuid}`,
       placeholder: '请选择城市',

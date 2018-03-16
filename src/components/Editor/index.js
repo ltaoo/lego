@@ -414,12 +414,23 @@ class Editor extends Component {
   }
 
   render() {
-    const { field, props, uiSchema } = this.props.instance;
-    const defaultValue = {
+    const { 
+      field, 
+      props, 
+      mergedProps,
+      uiSchema,
+    } = this.props.instance;
+    let defaultValue = {
       props,
     };
     if (field) {
       defaultValue.field = field;
+    }
+    if (mergedProps) {
+      defaultValue = {
+        ...defaultValue,
+        mergedProps,
+      }
     }
     const schema = createSchemaByDefaultValue(defaultValue);
     return (

@@ -1,11 +1,9 @@
 import { Radio } from 'antd';
 
 import layout from './fieldLayout';
-import { getSchema, fieldSchema } from './commonSchema';
 
 const { Group: RadioGroup } = Radio;
 
-// 希望这个也是可以填写的
 const options = [
   {
     label: '线上品牌赞助',
@@ -19,33 +17,6 @@ const options = [
 
 export default function getRadioInstance(params = {}) {
   const { uuid } = params;
-  const schema = {
-    size: {
-      type: 'string',
-      enum: ['default', 'large', 'small'],
-      enumNames: ['default', 'large', 'small'],
-      default: 'default',
-    },
-    optionsName: {
-      type: 'string',
-      default: `options${uuid}`,
-    },
-    options: {
-      type: 'array',
-      default: options,
-      items: {
-        type: 'object',
-        properties: {
-          label: {
-            type: 'string',
-          },
-          value: {
-            type: 'integer',
-          },
-        },
-      },
-    },
-  };
   return {
     Component: RadioGroup,
     label: 'RadioGroup',
@@ -63,11 +34,11 @@ export default function getRadioInstance(params = {}) {
       }],
       ...layout,
     },
-    mergedProps: {
-      options,
-    },
     props: {
       options: `options${uuid}`,
+    },
+    mergedProps: {
+      options,
     },
   };
 }

@@ -78,8 +78,10 @@ export default function getTableInstance(params = {}) {
     }
     `,
     // 实际的 columns
-    columns,
-    dataSource,
+    mergedProps: {
+      columns,
+      dataSource,
+    },
     props: {
       onChange,
       columns: `columns${uuid}`,
