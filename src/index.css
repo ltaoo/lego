@@ -35,4 +35,7 @@ body {
   border: 1px dashed #eee;
   min-height: 60px;
 }
+.field .ant-card {
+  min-height: 60px;
+}
 

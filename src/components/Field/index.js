@@ -172,7 +172,6 @@ class Field extends React.Component {
         labelCol,
         wrapperCol,
       } = field;
-      console.log('this is a field');
       instanceCom = (
         <FormItem label={label} labelCol={labelCol} wrapperCol={wrapperCol}>
           {getFieldDecorator(id, {

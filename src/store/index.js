@@ -66,6 +66,11 @@ function reducer(state = initialState, action) {
         ...state,
         instances: temp,
       };
+    case t.EMPTY_PAGE:
+      return {
+        ...state,
+        instances: [],
+      };
     default:
       return state;
   }

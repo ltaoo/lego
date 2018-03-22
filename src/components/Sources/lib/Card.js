@@ -5,6 +5,7 @@ export default function getCardInstance() {
     Component: Card,
     label: 'Card',
     import: 'Card',
+    layout: true,
     props: {
       bordered: true,
     },

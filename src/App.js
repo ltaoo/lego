@@ -7,6 +7,8 @@ import { DragDropContext } from 'react-dnd';
 import Sources from './components/Sources';
 import Container from './components/Container';
 
+import * as t from './common/actions';
+import store from './store';
 // util
 import createSourceCode from './common/create-source';
 import createPageCode from './common/create-page';
@@ -93,6 +95,20 @@ class App extends React.Component {
     const pageCode = this.createCode();
     createZip(pageCode);
   }
+  /** 
+   * 初始化 KMS 模板页
+   */
+  initKMSPage = () => {
+
+  }
+  /** 
+   * 清空所有组件
+   */
+  emptyCompnents = () => {
+    store.dispatch({
+      type: t.EMPTY_PAGE,
+    });
+  }
 
   render() {
     const {
@@ -110,7 +126,17 @@ class App extends React.Component {
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', paddingLeft: 24 }}>
-            <Button type="primary" onClick={this.previewSource}>
+            <Button 
+              type="primary" 
+              onClick={this.initKMSPage}
+            >
+              初始化 KMS 模板页
+            </Button>
+            <Button 
+              type="primary" 
+              style={{ marginLeft: 20 }}
+              onClick={this.previewSource}
+            >
               查看源码
             </Button>
             <Button
@@ -131,6 +157,12 @@ class App extends React.Component {
               onClick={this.createZip}
             >
               生成代码压缩包
+            </Button>
+            <Button
+              style={{ marginLeft: 20 }}
+              onClick={this.emptyCompnents}
+            >
+              清空页面
             </Button>
           </Header>
           <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
