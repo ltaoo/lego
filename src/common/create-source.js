@@ -6,7 +6,7 @@
 const nativeMethods = ['onClick', 'onChange', 'onInput', 'onOk', 'onCancel'];
 // 忽略项
 const IGNORE_ITEMS = ['children'];
-const MERGED_PROPS = ['options', 'dataSource', 'renderItem'];
+const MERGED_PROPS = ['options', 'dataSource', 'columns', 'renderItem'];
 
 const HANDLER = {
   string(key, val) {
