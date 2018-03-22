@@ -4,7 +4,7 @@ function onChange() {}
 
 const dataSource = [];
 
-const columns = [
+const defaultColumns = [
   {
     title: '姓名',
     dataIndex: 'name',
@@ -23,7 +23,11 @@ const columns = [
 ];
 
 export default function getTableInstance(params = {}) {
-  const { uuid } = params;
+  const {
+    uuid,
+    columns = defaultColumns,
+    modalUuid,
+  } = params;
   return {
     Component: Table,
     label: 'Table',
@@ -41,40 +45,52 @@ export default function getTableInstance(params = {}) {
         })
         .then((res) => {
           this.setState({
-            dataSource1: res.d
+            dataSource${uuid}: res.d
           });
         })
         .catch(err => {
           console.log(err);
         });
     }
-    createData() {
+    createData = (data) => {
+      const { resetFields } = this.props.form;
       fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary", {
         method: 'POST',
+        data: data,
       })
         .then(res => {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
+          resetFields();
+          this.hideModal${modalUuid}();
+          Modal.success({
+            content: '新增成功',
+          });
+          this.fetchData();
         })
         .catch(err => {
           console.log(err);
         });
     }
     deleteData(id) {
-      fetch(\`https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary/$\{id}\`, {
-        method: 'DELETE',
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      Modal.confirm({
+        content: '确认要删除该记录吗？',
+        onOk: () => {
+          fetch(\`https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary/$\{id}\`, {
+            method: 'DELETE',
+          })
+            .then(res => {
+              return res.json();
+            })
+            .then((res) => {
+              console.log(res);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        },
+      });
     }
     `,
     // 实际的 columns

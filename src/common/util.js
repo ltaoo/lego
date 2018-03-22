@@ -2,6 +2,15 @@
  * @file 处理 instances 的一些方法
  * @author wuya
  */
+import React from 'react';
+import {
+  Button,
+} from 'antd';
+
+import getButtonInstance from '../components/Sources/lib/Button';
+import getTableInstance from '../components/Sources/lib/Table';
+import getModalInstance from '../components/Sources/lib/Modal';
+import getInputInstance from '../components/Sources/lib/Input';
 
 export function findInstance(uuid, instances) {
   let res = null;
@@ -154,3 +163,98 @@ export function createSchemaByDefaultValue(defaultValue, key) {
     default: defaultValue,
   };
 }
+
+/**
+ * 创建表单
+ * @return {Array}
+ */
+function createForm(schema, i) {
+  return schema.filter(item => {
+    return item !== 'id';
+  }).map(item => {
+    i += 1
+    return {
+      uuid: i,
+      ...getInputInstance({
+        uuid: i,
+        label: item,
+        id: item,
+      }),
+    };
+  });
+}
+
+/** 
+ * 生成 instances，以 banner 配置为例
+ * {
+    id: 0,
+    title: '这是第一个 Banner',
+    pic: '//www.kujiale.com/img.jpg',
+    url: '//www.kujiale.com'
+ * }
+ */
+export const createInstances = (function () {
+  let i = 0;
+  return function (schema) {
+    const instances = [];
+    const keys = Object.keys(schema);
+    // Table
+    const columns = keys.map((key, i) => {
+      return {
+        title: key,
+        dataIndex: key,
+        key,
+      };
+    });
+    instances.push({
+      uuid: i,
+      ...getTableInstance({
+        uuid: i,
+        columns,
+        modalUuid: i + 1,
+      })
+    });
+    i += 1;
+    // Modal
+    instances.push({
+      uuid: i,
+      ...getModalInstance({
+        uuid: i,
+        title: '新增数据',
+        children: createForm(keys),
+        onOk: `
+          this.createItem();
+        `,
+        onCancel: `
+          this.hideModal${i}();
+        `,
+      }),
+    });
+    i += 1;
+    // 新增按钮
+    instances.unshift({
+      uuid: i,
+      ...getButtonInstance({
+        uuid: i,
+        text: '新增',
+        click: `
+          handleClick() {
+            this.showModal${--i}();
+          }
+        `,
+      }),
+    });
+    i += 1;
+    // 暂时没有编辑功能
+    // instances.push({
+    //   uuid: i,
+    //   ...getModalInstance({
+    //     uuid: i,
+    //     title: '更新数据',
+    //     children: createForm(keys),
+    //   }),
+    // });
+    // i += 1;
+    return instances;
+  };
+}())

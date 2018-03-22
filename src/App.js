@@ -15,6 +15,7 @@ import createPageCode from './common/create-page';
 import createZip from './common/create-zip';
 
 import renderComponent from './common/renderComponent';
+import { createInstances } from './common/util';
 
 import './App.css';
 
@@ -99,7 +100,17 @@ class App extends React.Component {
    * 初始化 KMS 模板页
    */
   initKMSPage = () => {
-
+    const instances = createInstances({
+      id: 0,
+      title: '这是第一个 Banner',
+      pic: '//www.kujiale.com/img.jpg',
+      url: '//www.kujiale.com',
+    });
+    console.log(instances);
+    store.dispatch({
+      type: t.REPLACE_INSTANCES,
+      payload: instances,
+    });
   }
   /** 
    * 清空所有组件

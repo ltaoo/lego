@@ -93,13 +93,13 @@ class Field extends React.Component {
 
     const { getFieldDecorator } = form;
     const {
+      label: Tag,
       Component,
       props,
       children = [],
       field,
       mergedProps,
     } = item;
-    let instanceCom = null;
     // 处理 children
     let childrenComponent = null;
     if (children) {
@@ -126,9 +126,14 @@ class Field extends React.Component {
       );
     }
 
-    instanceCom = (children && children.length)
-      ? <Component {...newProps}>{childrenComponent}</Component>
-      : <Component {...newProps} />;
+    let instanceCom = <Component {...newProps} />;
+    if (children && children.length) {
+      instanceCom = <Component {...newProps}>{childrenComponent}</Component>;
+    }
+    // Modal 要特殊处理
+    if (Tag === 'Modal') {
+      instanceCom = <div><p>Modal</p>{childrenComponent}</div>;
+    }
     
     const modal = (
       <Modal

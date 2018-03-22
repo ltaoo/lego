@@ -71,6 +71,11 @@ function reducer(state = initialState, action) {
         ...state,
         instances: [],
       };
+    case t.REPLACE_INSTANCES:
+      return {
+        ...state,
+        instances: action.payload,
+      };
     default:
       return state;
   }

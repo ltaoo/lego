@@ -2,27 +2,30 @@ import { Input } from 'antd';
 
 import layout from './fieldLayout';
 
-const defaultValue = {
-  // 表单用字段
-  field: {
-    label: '活动名称',
-    id: 'name',
-    rules: [{
-      required: true,
-      messsage: '请填写活动名称',
-    }],
-    ...layout,
-  },
-  props: {
-    placeholder: '请输入活动名称',
-  },
-};
+const defaultLabel = '活动名称';
+const defaultId = 'name';
 
-export default function getInputInstance() {
+export default function getInputInstance(params = {}) {
+  const {
+    label = defaultLabel,
+    id = defaultId,
+  } = params;
   return {
     Component: Input,
     label: 'Input',
     import: 'Input',
-    ...defaultValue,
+    // 表单用字段
+    field: {
+      label,
+      id,
+      rules: [{
+        required: true,
+        messsage: '请填写',
+      }],
+      ...layout,
+    },
+    props: {
+      placeholder: '请输入',
+    },
   };
 }

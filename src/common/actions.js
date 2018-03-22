@@ -6,3 +6,4 @@ export const SORT = 'SORT';
 export const APPEND_COMPONENT = 'APPEND_COMPONENT';
 
 export const EMPTY_PAGE = 'EMPTY_PAGE';
+export const REPLACE_INSTANCES = 'REPLACE_INSTANCES';
