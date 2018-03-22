@@ -27,11 +27,14 @@ export default function getTableInstance(params = {}) {
     uuid,
     columns = defaultColumns,
     modalUuid,
+    api,
   } = params;
+
   return {
     Component: Table,
     label: 'Table',
     import: 'Table',
+    extra: `import { message } from 'antd';`,
     stateCode: [`columns${uuid}:`, `dataSource${uuid}:`],
     renderCode: [`columns${uuid}`, `dataSource${uuid}`],
     didMount: `
@@ -39,7 +42,7 @@ export default function getTableInstance(params = {}) {
     `,
     methods: `
     fetchData () {
-      fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary")
+      fetch("${api}")
         .then(res => {
           return res.json();
         })
@@ -54,7 +57,7 @@ export default function getTableInstance(params = {}) {
     }
     createData = (data) => {
       const { resetFields } = this.props.form;
-      fetch("https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary", {
+      fetch("${api}", {
         method: 'POST',
         data: data,
       })
@@ -64,9 +67,7 @@ export default function getTableInstance(params = {}) {
         .then((res) => {
           resetFields();
           this.hideModal${modalUuid}();
-          Modal.success({
-            content: '新增成功',
-          });
+          message.success('新增成功');
           this.fetchData();
         })
         .catch(err => {
@@ -77,7 +78,7 @@ export default function getTableInstance(params = {}) {
       Modal.confirm({
         content: '确认要删除该记录吗？',
         onOk: () => {
-          fetch(\`https://easy-mock.com/mock/59b77cf5e0dc663341a6b6c2/example/ary/$\{id}\`, {
+          fetch(\`${api}/$\{id}\`, {
             method: 'DELETE',
           })
             .then(res => {

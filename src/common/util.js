@@ -195,7 +195,7 @@ function createForm(schema, i) {
  */
 export const createInstances = (function () {
   let i = 0;
-  return function (schema) {
+  return function ({ schema, api }) {
     const instances = [];
     const keys = Object.keys(schema);
     // Table
@@ -211,6 +211,7 @@ export const createInstances = (function () {
       ...getTableInstance({
         uuid: i,
         columns,
+        api,
         modalUuid: i + 1,
       })
     });

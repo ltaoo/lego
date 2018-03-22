@@ -17,14 +17,9 @@ export default function getModalInstance(params = {}) {
     import: 'Modal',
     stateCode: `visible${uuid}: false`,
     renderCode: `visible${uuid}`,
-    constructorCode: `
-    this.handleOk = this.handleOk.bind(this);
-    this.showModal${uuid} = this.showModal${uuid}.bind(this);
-    this.hideModal${uuid} = this.hideModal${uuid}.bind(this);
-    `,
     layout: true,
     methods: `
-    handleOk() {
+    handleOk = () => {
       const { validateFieldsAndScroll } = this.props.form;
       validateFieldsAndScroll((err, data) => {
         if (err) {
@@ -33,10 +28,13 @@ export default function getModalInstance(params = {}) {
         this.createData(data);
       })
     }
+    handleCancel = () => {
+      this.hideModal${uuid}();
+    }
     /**
      * 展示模态框
      */
-    showModal${uuid}(e) {
+    showModal${uuid} = (e) => {
       this.setState({
         visible${uuid}: true,
       });
@@ -44,7 +42,7 @@ export default function getModalInstance(params = {}) {
     /**
      * 隐藏模态框
      */
-    hideModal${uuid}(e) {
+    hideModal${uuid} = (e) => {
       this.setState({
         visible${uuid}: false,
       });
