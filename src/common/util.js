@@ -217,12 +217,13 @@ export const createInstances = (function () {
     });
     i += 1;
     // Modal
+    const modalUuid = i;
     instances.push({
       uuid: i,
       ...getModalInstance({
         uuid: i,
         title: '新增数据',
-        children: createForm(keys),
+        children: createForm(keys, i),
         onOk: `
           this.createItem();
         `,
@@ -231,7 +232,7 @@ export const createInstances = (function () {
         `,
       }),
     });
-    i += 1;
+    i += keys.length;
     // 新增按钮
     instances.unshift({
       uuid: i,
@@ -240,7 +241,7 @@ export const createInstances = (function () {
         text: '新增',
         click: `
           handleClick() {
-            this.showModal${--i}();
+            this.showModal${modalUuid}();
           }
         `,
       }),
